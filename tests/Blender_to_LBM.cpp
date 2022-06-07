@@ -124,18 +124,18 @@ int main(int argc, char **argv)
 			if (ReadSeg != SIZE) printf("Error reading id data, size \n");
 			fclose(SEGDAT);
             
-            printf("SegData read:\n");
-            for (int i=5;i<6;i++){
-                for (int j=0;j<global_Ny;j++){
-                    for (int k=0;k<global_Nz;k++){
-                        int n=k*global_Nx*global_Ny+j*global_Nx+i;
-                        VALUE = SegData[n];
-                        printf("%d ",VALUE);
-                    }
-                    printf("\n");
-                }
-                printf("\n\n");
-            }
+//            printf("SegData read:\n");
+//            for (int i=5;i<6;i++){
+//                for (int j=0;j<global_Ny;j++){
+//                    for (int k=0;k<global_Nz;k++){
+//                        int n=k*global_Nx*global_Ny+j*global_Nx+i;
+//                        VALUE = SegData[n];
+//                        printf("%d ",VALUE);
+//                    }
+//                    printf("\n");
+//                }
+//                printf("\n\n");
+//            }
 			
 			//SignDist
 			printf("Read data from %s \n",READFILE_SD.c_str());
@@ -146,18 +146,18 @@ int main(int argc, char **argv)
 			if (ReadSD != SIZE) printf("Error reading sd data, size \n");
 			fclose(RayTraceDistance);
             
-            printf("SignDist read:\n");
-            for (int i=5;i<6;i++){
-                for (int j=0;j<global_Ny;j++){
-                    for (int k=0;k<global_Nz;k++){
-                        int n=k*global_Nx*global_Ny+j*global_Nx+i;
-                        DVALUE = SignDist[n];
-                        printf("%.2f ",DVALUE);
-                    }
-                    printf("\n");
-                }
-                printf("\n\n");
-            }
+//            printf("SignDist read:\n");
+//            for (int i=5;i<6;i++){
+//                for (int j=0;j<global_Ny;j++){
+//                    for (int k=0;k<global_Nz;k++){
+//                        int n=k*global_Nx*global_Ny+j*global_Nx+i;
+//                        DVALUE = SignDist[n];
+//                        printf("%.2f ",DVALUE);
+//                    }
+//                    printf("\n");
+//                }
+//                printf("\n\n");
+//            }
 
 			//SignDistMC
 			printf("Read data from %s \n",READFILE_SDMC.c_str());
@@ -361,18 +361,18 @@ int main(int argc, char **argv)
 			}
 		}
         
-        printf("sdmc used to compute VFmask:\n");
-        for (int i=5;i<6;i++){
-            for (int j=1;j<nx+1;j++){
-                for (int k=1;k<nz+1;k++){
-                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-                    DVALUE = sdmc[n];
-                    printf("%.2f ",DVALUE);
-                }
-                printf("\n");
-            }
-            printf("\n\n");
-        }
+//        printf("sdmc used to compute VFmask:\n");
+//        for (int i=5;i<6;i++){
+//            for (int j=1;j<nx+1;j++){
+//                for (int k=1;k<nz+1;k++){
+//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+//                    DVALUE = sdmc[n];
+//                    printf("%.2f ",DVALUE);
+//                }
+//                printf("\n");
+//            }
+//            printf("\n\n");
+//        }
 
         
         Dm->CommInit();
@@ -433,18 +433,18 @@ int main(int argc, char **argv)
         Averages->ComputeVolumeFraction(Averages->SDs, Averages->SDs_x, Averages->SDs_y, Averages->SDs_z, Averages->VFmask, true, rmin, rmax, geometry);
         
         
-        printf("Averages->GradPhiZ:\n");
-        for (int i=5;i<6;i++){
-            for (int j=1;j<nx+1;j++){
-                for (int k=1;k<nz+1;k++){
-                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-                    DVALUE = Averages->GradPhiZ(n);
-                    printf("%.2f ",DVALUE);
-                }
-                printf("\n");
-            }
-            printf("\n\n");
-        }
+//        printf("Averages->GradPhiZ:\n");
+//        for (int i=5;i<6;i++){
+//            for (int j=1;j<nx+1;j++){
+//                for (int k=1;k<nz+1;k++){
+//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+//                    DVALUE = Averages->GradPhiZ(n);
+//                    printf("%.2f ",DVALUE);
+//                }
+//                printf("\n");
+//            }
+//            printf("\n\n");
+//        }
 
      
         fillData.fill(Averages->SDs);
@@ -464,46 +464,46 @@ int main(int argc, char **argv)
 			}
 		}
 
-                printf("sdmc for MC:\n");
-                for (int i=5;i<6;i++){
-                    for (int j=1;j<nx+1;j++){
-                        for (int k=1;k<nz+1;k++){
-                            int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-                            DVALUE = sdmc[n];
-                            printf("%.2f ",DVALUE);
-                        }
-                        printf("\n");
-                    }
-                    printf("\n\n");
-                }
+//                printf("sdmc for MC:\n");
+//                for (int i=5;i<6;i++){
+//                    for (int j=1;j<nx+1;j++){
+//                        for (int k=1;k<nz+1;k++){
+//                            int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+//                            DVALUE = sdmc[n];
+//                            printf("%.2f ",DVALUE);
+//                        }
+//                        printf("\n");
+//                    }
+//                    printf("\n\n");
+//                }
 
 		
-        printf("VFmask:\n");
-        for (int i=5;i<6;i++){
-            for (int j=1;j<nx+1;j++){
-                for (int k=1;k<nz+1;k++){
-                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-                    DVALUE = Averages->VFmask(n);
-                    printf("%.2f ",DVALUE);
-                }
-                printf("\n");
-            }
-            printf("\n\n");
-        }
-        
-        printf("id:\n");
-        for (int i=5;i<6;i++){
-            for (int j=1;j<nx+1;j++){
-                for (int k=1;k<nz+1;k++){
-                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-                    VALUE = id[n];
-                    printf("%d ",VALUE);
-                }
-                printf("\n");
-            }
-            printf("\n\n");
-        }
-       
+//        printf("VFmask:\n");
+//        for (int i=5;i<6;i++){
+//            for (int j=1;j<nx+1;j++){
+//                for (int k=1;k<nz+1;k++){
+//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+//                    DVALUE = Averages->VFmask(n);
+//                    printf("%.2f ",DVALUE);
+//                }
+//                printf("\n");
+//            }
+//            printf("\n\n");
+//        }
+//
+//        printf("id:\n");
+//        for (int i=5;i<6;i++){
+//            for (int j=1;j<nx+1;j++){
+//                for (int k=1;k<nz+1;k++){
+//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+//                    VALUE = id[n];
+//                    printf("%d ",VALUE);
+//                }
+//                printf("\n");
+//            }
+//            printf("\n\n");
+//        }
+//
 
 		int q = 0;
 		for (int i = 0; i < N; i++) {
@@ -616,18 +616,18 @@ int main(int argc, char **argv)
 		fwrite(sd,8,(nx+2)*(ny+2)*(nz+2),SD);
 		fclose(SD);
         
-        printf("sd written:\n");
-        for (int i=5;i<6;i++){
-            for (int j=1;j<nx+1;j++){
-                for (int k=1;k<nz+1;k++){
-                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-                    DVALUE = sd[n];
-                    printf("%.2f ",DVALUE);
-                }
-                printf("\n");
-            }
-            printf("\n\n");
-        }
+//        printf("sd written:\n");
+//        for (int i=5;i<6;i++){
+//            for (int j=1;j<nx+1;j++){
+//                for (int k=1;k<nz+1;k++){
+//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+//                    DVALUE = sd[n];
+//                    printf("%.2f ",DVALUE);
+//                }
+//                printf("\n");
+//            }
+//            printf("\n\n");
+//        }
 
 		sprintf(LocalRankString,"%05d",RANK);
 

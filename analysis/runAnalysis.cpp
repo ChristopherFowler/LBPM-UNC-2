@@ -313,9 +313,9 @@ public:
         
         IO::writeData( timestep, visData, comm.comm );
 
-        char CurrentIDFilename[40];
-        sprintf(CurrentIDFilename,"id_t%d.raw",timestep);
-        Averages.AggregateLabels(CurrentIDFilename);
+//        char CurrentIDFilename[40];
+//        sprintf(CurrentIDFilename,"id_t%d.raw",timestep);
+//        Averages.AggregateLabels(CurrentIDFilename);
 
         PROFILE_STOP("Save Vis",1);
     };

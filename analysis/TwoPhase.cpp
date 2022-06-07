@@ -84,7 +84,9 @@
 
 #define PI 3.14159265359
 
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsometimes-uninitialized"
+#pragma GCC diagnostic ignored "-Wreorder"
 TwoPhase::TwoPhase(std::shared_ptr <Domain> dm, std::array<size_t,3> sub):
 n_nw_pts(0), n_ns_pts(0), n_ws_pts(0), n_nws_pts(0), n_local_sol_pts(0), n_local_nws_pts(0),
 n_nw_tris(0), n_ns_tris(0), n_ws_tris(0), n_nws_seg(0), n_local_sol_tris(0),
@@ -471,6 +473,7 @@ subdivide( sub )
     
     Initialize();
     }
+#pragma GCC diagnostic pop
 
 // Destructor
 TwoPhase::~TwoPhase()
@@ -1369,19 +1372,19 @@ Dm->CommunicateMeshHalo(GradPhiZ);
 //    vcg::tri::io::ExporterOFF<visMyMesh>::Save(vis_n,LocalRankFilename, 1);
     
     
-    double DVALUE = 0;
-    printf("Convex Hull result:\n");
-    for (int i=3;i<4;i++){
-        for (int j=1;j<Ny-1;j++){
-            for (int k=1;k<Nz-1;k++){
-                int n=k*(Nx)*(Ny)+j*(Nz)+i;
-                DVALUE = VolumeFraction(i,j,k);
-                printf("%.2f ",DVALUE);
-            }
-            printf("\n");
-        }
-        printf("\n\n");
-    }
+//    double DVALUE = 0;
+//    printf("Convex Hull result:\n");
+//    for (int i=3;i<4;i++){
+//        for (int j=1;j<Ny-1;j++){
+//            for (int k=1;k<Nz-1;k++){
+//                int n=k*(Nx)*(Ny)+j*(Nz)+i;
+//                DVALUE = VolumeFraction(i,j,k);
+//                printf("%.2f ",DVALUE);
+//            }
+//            printf("\n");
+//        }
+//        printf("\n\n");
+//    }
     
     
 //    for (int k=1; k<Nz-1; k++)
