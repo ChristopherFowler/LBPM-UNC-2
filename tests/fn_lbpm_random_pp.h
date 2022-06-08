@@ -863,10 +863,23 @@ void lbpm_partial_saturation_pp(int argc, char **argv,int rank, int nprocs, MPI_
 //                    }
 //                }
                 
+                // 36^3 case
+//                {
+//                    if ( ((i+(Nx-2)*iproc) > 9) && ((i+(Nx-2)*iproc) < 30) ) {
+//                        if ( ((j+(Ny-2)*jproc) > 9) && ((j+(Ny-2)*jproc) < 30) ) {
+//                            if ( ((k+(Nz-2)*kproc) > 9)  && ((k+(Nz-2)*kproc) < 30) ) {
+//                                if (ReadID[n] == 2) {ReadID[n] = 1;  }
+//                              //  extra_counter = extra_counter + 1;
+//                            }
+//                        }
+//                    }
+//                }
+                
+                // 12^3 case
                 {
-                    if ( ((i+(Nx-2)*iproc) > 9) && ((i+(Nx-2)*iproc) < 30) ) {
-                        if ( ((j+(Ny-2)*jproc) > 9) && ((j+(Ny-2)*jproc) < 30) ) {
-                            if ( ((k+(Nz-2)*kproc) > 9)  && ((k+(Nz-2)*kproc) < 30) ) {
+                    if ( ((i+(Nx-2)*iproc) > 3) && ((i+(Nx-2)*iproc) < 10) ) {
+                        if ( ((j+(Ny-2)*jproc) > 3) && ((j+(Ny-2)*jproc) < 10) ) {
+                            if ( ((k+(Nz-2)*kproc) >= 1)  && ((k+(Nz-2)*kproc) <= 12) ) {
                                 if (ReadID[n] == 2) {ReadID[n] = 1;  }
                               //  extra_counter = extra_counter + 1;
                             }

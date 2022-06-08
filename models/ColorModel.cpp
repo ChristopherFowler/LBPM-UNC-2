@@ -76,6 +76,8 @@ void ScaLBL_ColorModel::ReadParams(string filename){
     outletA=0.f;
     outletB=1.f;
     
+    offsetdistance = domain_db->getScalar<double>("offsetDistance");
+    
     // Read domain parameters
     auto L = domain_db->getVector<double>( "L" );
     auto size = domain_db->getVector<int>( "n" );
@@ -157,7 +159,7 @@ void ScaLBL_ColorModel::SetDomain(){
 
 void ScaLBL_ColorModel::ReadInput(){
 
-    
+  
     size_t readID,read_file;
     Mask->ReadIDs(db);
     for (int i=0; i<Nx*Ny*Nz; i++) Averages->ID(i) = Mask->id[i];
@@ -532,12 +534,33 @@ void ScaLBL_ColorModel::Initialize() {
         for (int j=1; j<Ny-1; j++)
         for (int i=1; i<Nx-1; i++) {
             int n = i + j*Nx + k*Nx*Ny;
-            if (Mask->id[n] == 0) { PhaseLabel[n] = 0;  DenALabel[n] = 0; DenBLabel[n] = 0;}
-            if (Mask->id[n] == 1) { PhaseLabel[n] = 1.0;  DenALabel[n] = 1; DenBLabel[n] = 0;} // NONWETTING PHASE
+            if (Mask->id[n] == 0) { PhaseLabel[n] = -1.0; DenALabel[n] = 0; DenBLabel[n] = 1;}
+            if (Mask->id[n] == 1) { PhaseLabel[n] = -1.0; DenALabel[n] = 0; DenBLabel[n] = 1;}
             if (Mask->id[n] == 2) { PhaseLabel[n] = -1.0; DenALabel[n] = 0; DenBLabel[n] = 1;}
             if (Mask->id[n] == 3) { PhaseLabel[n] = -1.0; DenALabel[n] = 0; DenBLabel[n] = 1;}
             if (Mask->id[n] == 4) { PhaseLabel[n] = -1.0; DenALabel[n] = 0; DenBLabel[n] = 1;}
         }
+        
+        for (int k=1; k<Nz-1; k++)
+        for (int j=1; j<Ny-1; j++)
+        for (int i=1; i<Nx-1; i++) {
+            int n = i + j*Nx + k*Nx*Ny;
+            if (i > 3 && i < 9 && j > 3 && j < 9) PhaseLabel[n] = 1;
+        }
+//
+//
+//                if ( i > 3 && i <= 10 ) {
+//                    if ( j > 3 && j <= 10 ) {
+//                        if ( k >= 1  && k <= 12 ) {
+//
+//                            if (PhaseLabel[n] == -1) {PhaseLabel[n] = 1; DenALabel[n] = 1; DenBLabel[n] = 0;  }
+//                          //  extra_counter = extra_counter + 1;
+//                        }
+//                    }
+//                }
+//
+//
+//        }
 
 
 
@@ -728,6 +751,8 @@ void ScaLBL_ColorModel::Initialize() {
 
 void ScaLBL_ColorModel::Run(string filename){
 
+    printf("COLORMODEL: offsetdistance=%f\n",offsetdistance);
+    Averages->offset_distance = offsetdistance;
   //   for (int i = 0; i < 18*Np; i++) { LIBBqA[i] = 0; LIBBqBC[i] = 1; LIBBqD[i] = 0; }
 
     db = std::make_shared<Database>( filename );
@@ -756,6 +781,22 @@ void ScaLBL_ColorModel::Run(string filename){
     
     
     runAnalysis analysis( analysis_db, rank_info, ScaLBL_Comm, Dm, Np, Regular, beta, Map );
+    
+    while(timestep < timestepMax) {
+        
+        timestep++;
+        analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);
+        
+//        analysis.run6(0, *Averages, Np, Phi);
+        
+//        analysis.run7(0, *Averages, Np, Phi,Velx,Vely,Velz,DenA,DenB);
+        analysis.finish();
+        
+        
+    }
+    timestep+=10000;
+    
+  
     
 //    printf("Before run5\n");
 //    while (timestep < 10) {
@@ -877,7 +918,11 @@ void ScaLBL_ColorModel::Run(string filename){
         printf("\n\n");
     }
     
+    
+    
     //std::cout << " Fx=" << Fx << " Fy=" << Fy << " Fz=" << Fz << std::endl;
+    
+  
 
     while(timestep < timestepMax) {
         ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA2,DenB2,GradPhiX,GradPhiY,GradPhiZ,CField,Velx2,Vely2,Velz2);

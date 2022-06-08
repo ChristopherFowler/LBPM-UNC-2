@@ -464,18 +464,18 @@ int main(int argc, char **argv)
 			}
 		}
 
-//                printf("sdmc for MC:\n");
-//                for (int i=5;i<6;i++){
-//                    for (int j=1;j<nx+1;j++){
-//                        for (int k=1;k<nz+1;k++){
-//                            int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-//                            DVALUE = sdmc[n];
-//                            printf("%.2f ",DVALUE);
-//                        }
-//                        printf("\n");
-//                    }
-//                    printf("\n\n");
-//                }
+                printf("sdmc for MC:\n");
+                for (int i=5;i<6;i++){
+                    for (int j=1;j<nx+1;j++){
+                        for (int k=1;k<nz+1;k++){
+                            int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+                            DVALUE = sdmc[n];
+                            printf("%.2f ",DVALUE);
+                        }
+                        printf("\n");
+                    }
+                    printf("\n\n");
+                }
 
 		
 //        printf("VFmask:\n");
@@ -594,6 +594,19 @@ int main(int argc, char **argv)
                 comp_libbqD[i+q*Np] = libbd[ijk+q*N];
             }
         }
+        
+        printf("libbD:\n");
+        for (int i=5;i<6;i++){
+            for (int j=1;j<nx+1;j++){
+                for (int k=1;k<nz+1;k++){
+                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+                    DVALUE = libbd[n+4*N];
+                    printf("%.2f ",DVALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
 
         delete[] TmpMap;
      
@@ -613,21 +626,21 @@ int main(int argc, char **argv)
 
 		sprintf(LocalRankFilename,"SignDist.%05i",RANK);
 		FILE *SD = fopen(LocalRankFilename,"wb");
-		fwrite(sd,8,(nx+2)*(ny+2)*(nz+2),SD);
+		fwrite(sdmc,8,(nx+2)*(ny+2)*(nz+2),SD);
 		fclose(SD);
         
-//        printf("sd written:\n");
-//        for (int i=5;i<6;i++){
-//            for (int j=1;j<nx+1;j++){
-//                for (int k=1;k<nz+1;k++){
-//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-//                    DVALUE = sd[n];
-//                    printf("%.2f ",DVALUE);
-//                }
-//                printf("\n");
-//            }
-//            printf("\n\n");
-//        }
+        printf("sd:\n");
+        for (int i=5;i<6;i++){
+            for (int j=1;j<nx+1;j++){
+                for (int k=1;k<nz+1;k++){
+                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+                    DVALUE = sd[n];
+                    printf("%.2f ",DVALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
 
 		sprintf(LocalRankString,"%05d",RANK);
 

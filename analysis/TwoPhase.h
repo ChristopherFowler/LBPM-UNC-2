@@ -250,7 +250,7 @@ public: // local averages (to each MPI process)
     double Kwn2_global;
     
     double Ca_global, Re_global;
-    double alpha,sphere_diameter,average_rho_input, average_mu;
+    double alpha,sphere_diameter,average_rho_input, average_mu, offset_distance;
     size_t nwBorderVert, nsBorderVert, wsBorderVert;
     size_t nwBorderFace, nsBorderFace, wsBorderFace;
     size_t nwBorderVert_global, nsBorderVert_global, wsBorderVert_global;
@@ -726,6 +726,7 @@ public: // Internal data
     DoubleArray ParticularSDs;
     
     int time_flag;
+  
     
     DoubleArray SDw;
     DoubleArray SDs;

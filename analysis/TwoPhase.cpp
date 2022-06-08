@@ -108,7 +108,7 @@ right_wwnJnx(0),gradzgradzIIprimezzvwndnn(0),deld_nnz(0), gradzgradz_an(0),nnz_l
 right_gradz(0),wwnz_tcenter(0),wwnx_tcenter(0),wwny_tcenter(0),vwnz(0),vwnx(0),vwny(0),nnnnxz(0),nnnnyz(0),nnnnzz(0),vnsdnn_tcenter(0),gradpz(0),pot_nnw(0),ans_tcenter(0),
 right_wwnJny(0),del_IIprimevwndnn(0),HOvwnz(0),vwndnn_tcenter(0), mesh_euler(0),delpdnn(0),Jnnnz(0),deldIIprimez(0),deld_JwnIIprimeMINUSnnnnz(0),deldelddIIprimennz(0),nzmagvwn(0),
 right_wwnJnz(0),nw_nnnnxz(0), nw_nnnnyz(0),nw_nnnnzz(0), gradz_an(0),grady_an(0),gradx_an(0),deld_wwnJn(0),deld_ewnwwn(0),deldelddIIprimezzvwndnn(0),vwndnnnnx(0), vwndnnnny(0), vwndnnnnz(0),JnJnnnz(0),
-Jns_tcenter(0),Kns_tcenter(0),grad_potential(0),TwoKnnz(0),deld_wwnKn(0),ens(0),ews(0), vnsx(0), vnsy(0), vnsz(0), nnnn_nszz(0), nnnn_nsyz(0), nnnn_nsxz(0),nnsz(0),vwsz(0), n_wsz(0),nwndvwnsnnz(0),
+Jns_tcenter(0),Kns_tcenter(0),grad_potential(0),TwoKnnz(0),deld_wwnKn(0),ens(0),ews(0), vnsx(0), vnsy(0), vnsz(0), nnnn_nszz(0), nnnn_nsyz(0), nnnn_nsxz(0),nnsz(0),vwsz(0), n_wsz(0),nwndvwnsnnz(0),offset_distance(0),
 nwnwwndnnz(0),grav_nw(0),Jwn_tcenter_global(0), Kwn_tcenter_global(0),awn_tcenter_global(0),awn_tminus_global(0),Jwn_tminus_global(0),an_tminus_global(0),aw_tminus_global(0),wwnz_global(0),wwny_global(0),wwnx_global(0),nGaussianCurvature(0),
 nGaussianCurvature_global(0),integrated_cpx(0),integrated_cpy(0),integrated_cpz(0),Jnx(0),Jny(0),Jnz(0),gradz_an_tminus(0),gradz_an_tplus(0), d_gradz_an_dt(0),awn_tplus(0),awn_tminus(0),an_tminus(0),aw_tminus(0),Jwn_tminus(0),deriv(0),
 subdivide( sub )
@@ -122,7 +122,6 @@ subdivide( sub )
     int amax = Dm->amax;
     nodeVolume = 1.0*(double(amax-amin)*double(Nx-2)*double(Ny-2));
     MPI_Allreduce(&nodeVolume,&Volume,1,MPI_DOUBLE,MPI_SUM,Dm->Comm);
-
     VolumeFraction.resize(Nx,Ny,Nz); VolumeFraction.fill(0);
     
     Null3.resize(3);
@@ -1430,6 +1429,18 @@ void TwoPhase::ComputeLocal()
     //...........................................................................
     Dm->CommunicateMeshHalo( SDn_z);
     //...........................................................................
+    
+    
+    pmmc_MeshGradient( SDs, SDs_x, SDs_y, SDs_z,Nx,Ny,Nz);
+    //...........................................................................
+    // Gradient of the phase indicator field
+    //...........................................................................
+    Dm->CommunicateMeshHalo( SDs_x);
+    //...........................................................................
+    Dm->CommunicateMeshHalo( SDs_y);
+    //...........................................................................
+    Dm->CommunicateMeshHalo( SDs_z);
+    //...........................................................................
 
     int amin = Dm->amin;
     int amax = Dm->amax;
@@ -1545,6 +1556,11 @@ void TwoPhase::ComputeLocal()
                             C = P;
                         }
                         
+                        
+                        A.y += offset_distance;
+                        B.y += offset_distance;
+                        C.y += offset_distance;
+                        
                         vcg::tri::Allocator<nwRootMesh>::AddFace(m_nw,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                         
 //                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
@@ -1571,6 +1587,10 @@ void TwoPhase::ComputeLocal()
                             C = P;
                         }
                         
+                       // printf("offset_distance=%f",offset_distance);
+                        A.y += offset_distance;
+                        B.y += offset_distance;
+                        C.y += offset_distance;
 
                         vcg::tri::Allocator<nsMyMesh>::AddFace(m_ns,nsMyMesh::CoordType ( A.x, A.y, A.z),nsMyMesh::CoordType ( B.x, B.y, B.z),nsMyMesh::CoordType ( C.x, C.y, C.z));
                         
@@ -1578,7 +1598,7 @@ void TwoPhase::ComputeLocal()
                     }
                 }
                 if (n_ws_tris > 0) {
-                    printf("n_ws_tris=%d\n",n_ws_tris);
+               //     printf("n_ws_tris=%d\n",n_ws_tris);
                     for (int r=0;r<n_ws_tris;r++) {
                         A = ws_pts(ws_tris(0,r));
                         B = ws_pts(ws_tris(1,r));
@@ -1598,6 +1618,9 @@ void TwoPhase::ComputeLocal()
                             C = P;
                         }
                         
+                        A.y += offset_distance;
+                        B.y += offset_distance;
+                        C.y += offset_distance;
 
                         vcg::tri::Allocator<wsMyMesh>::AddFace(m_ws,wsMyMesh::CoordType ( A.x, A.y, A.z),wsMyMesh::CoordType ( B.x, B.y, B.z),wsMyMesh::CoordType ( C.x, C.y, C.z));
                     }

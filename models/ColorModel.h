@@ -111,6 +111,8 @@ public:
     double * GradPhiY2;
     double * GradPhiZ2;
     
+    double offsetdistance;
+    
     int * InactiveScalarList;
     int * SBScalarList;
     int * ActiveScalarList;

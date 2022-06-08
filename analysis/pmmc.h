@@ -437,57 +437,64 @@ inline bool Interface( DoubleArray &A, const double v, int i, int j, int k) {
     bool Y = 0;
     
     double a1,a2;
-    if ((A(i,j,k)-v)*(A(i+1,j,k)-v) < 0 ){
+    if ((A(i,j,k)-v)*(A(i+1,j,k)-v) <= 0 ){
         Y=1;
     }
     // 2
-    if ((A(i+1,j,k)-v)*(A(i+1,j+1,k)-v) < 0){
+    if ((A(i+1,j,k)-v)*(A(i+1,j+1,k)-v) <= 0){
         Y=1;
     }
     //3
-    if ((A(i+1,j+1,k)-v)*(A(i,j+1,k)-v) < 0){
+    if ((A(i+1,j+1,k)-v)*(A(i,j+1,k)-v) <= 0){
         Y=1;
     }
     //4
-    if ((A(i,j+1,k)-v)*(A(i,j,k)-v) < 0 ){
+    if ((A(i,j+1,k)-v)*(A(i,j,k)-v) <= 0 ){
         Y=1;
+        
+      //  if (A(i,j,k) == 0 && A(i,j+1,k) == 0) { Y = 0;
+            
+         //  if (k==4) printf("(%d,%d,%d)",i,j,k); }
     }
     //5
     if ((A(i,j,k)-v)*(A(i,j,k+1)-v) <= 0 ){
         Y=1;
-       // if (i ==5 && j==5) {
-           // a1 = A(i,j,k);
-           // a2 = A(i,j,k+1);
-     //   int kp1 = k+1;
-          //  printf("k=%d k+1=%d A(i,j,k)=%.2f   A(i,j,k+1)=%.2f\n",k,kp1,a1,a2);
-       // }
+        
+            
+        
+//        if (i ==8 && j==8) {
+//            a1 = A(i,j,k);
+//            a2 = A(i,j,k+1);
+//        int kp1 = k+1;
+//            printf("k=%d k+1=%d A(i,j,k)=%.2f   A(i,j,k+1)=%.2f\n",k,kp1,a1,a2);
+//        }
     }
     //6
-    if ((A(i+1,j,k)-v)*(A(i+1,j,k+1)-v) < 0 ){
+    if ((A(i+1,j,k)-v)*(A(i+1,j,k+1)-v) <= 0 ){
         Y=1;
     }
     //7
-    if ((A(i+1,j+1,k)-v)*(A(i+1,j+1,k+1)-v) < 0 ){
+    if ((A(i+1,j+1,k)-v)*(A(i+1,j+1,k+1)-v) <= 0 ){
         Y=1;
     }
     //8
-    if ((A(i,j+1,k)-v)*(A(i,j+1,k+1)-v) < 0 ){
+    if ((A(i,j+1,k)-v)*(A(i,j+1,k+1)-v) <= 0 ){
         Y=1;
     }
     //9
-    if ((A(i,j,k+1)-v)*(A(i+1,j,k+1)-v) < 0 ){
+    if ((A(i,j,k+1)-v)*(A(i+1,j,k+1)-v) <= 0 ){
         Y=1;
     }
     //10
-    if ((A(i+1,j,k+1)-v)*(A(i+1,j+1,k+1)-v) < 0 ){
+    if ((A(i+1,j,k+1)-v)*(A(i+1,j+1,k+1)-v) <= 0 ){
         Y=1;
     }
     //11
-    if ((A(i+1,j+1,k+1)-v)*(A(i,j+1,k+1)-v) < 0 ){
+    if ((A(i+1,j+1,k+1)-v)*(A(i,j+1,k+1)-v) <= 0 ){
         Y=1;
     }
     //12
-    if ((A(i,j+1,k+1)-v)*(A(i,j,k+1)-v) < 0 ){
+    if ((A(i,j+1,k+1)-v)*(A(i,j,k+1)-v) <= 0 ){
         Y=1;
     }
     return Y;
@@ -496,6 +503,39 @@ inline bool Interface( DoubleArray &A, const double v, int i, int j, int k) {
 
 inline bool Fluid_Interface( DoubleArray &A,  DoubleArray &S, const double v, int i, int j, int k) {
     // returns true if grid cell i, j, k contains a section of the interface
+    
+    double a1,a2,b1,b2;
+    
+//    if (i==4 && j==3 && k==4) {
+//        a1 = A(i,j,k);
+//        a2 = A(i,j+1,k);
+//        b1 = S(i,j,k);
+//        b2 = S(i,j+1,k);
+////        int kp1 = j+1;
+//    printf("Fluid Interface i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//    }
+    
+//    if (i==4 && j==3 && k==8) {
+//        a1 = A(i,j,k);
+//        a2 = A(i,j+1,k);
+//        b1 = S(i,j,k);
+//        b2 = S(i,j+1,k);
+////        int kp1 = j+1;
+//    printf("Fluid Interface i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//    }
+    
+    
+    
+//    if (i==4 && j==3 && k==8) {
+//        a1 = A(i,j,k);
+//        a2 = A(i,j+1,k);
+//        b1 = S(i,j,k);
+//        b2 = S(i,j+1,k);
+////        int kp1 = j+1;
+//    printf("i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//    }
+    
+    
     bool Y = 0;
     
     if ((A(i,j,k)-v)*(A(i+1,j,k)-v) < 0 && S(i,j,k) > 0 && S(i+1,j,k) > 0){
@@ -512,6 +552,24 @@ inline bool Fluid_Interface( DoubleArray &A,  DoubleArray &S, const double v, in
     //4
     if ((A(i,j+1,k)-v)*(A(i,j,k)-v) < 0 && S(i,j,k) > 0 && S(i,j+1,k) > 0){
         Y=1;
+        
+      
+//        if (k==3) {
+//            a1 = A(i,j,k);
+//            a2 = A(i,j+1,k);
+//        b1 = S(i,j,k);
+//        b2 = S(i,j+1,k);
+////        int kp1 = j+1;
+//            printf("i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//        }
+        
+//        if (k==8) {
+//            a1 = A(i,j,k);
+//            a2 = A(i,j+1,k);
+//        int kp1 = j+1;
+//            printf("j=%d j+1=%d A(i,j,k)=%.2f   A(i,j+1,k)=%.2f\n",j,kp1,a1,a2);
+//        }
+        
     }
     //5
     if ((A(i,j,k)-v)*(A(i,j,k+1)-v) < 0 && S(i,j,k) > 0 && S(i,j,k+1) > 0){
@@ -701,6 +759,29 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
         Q = C3;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[3] = CubeValues_B[3] + temp*(CubeValues_B[0]-CubeValues_B[3]);
+        
+//        if (CubeValues[0] == 0 && CubeValues[3] == 0) { // Sign distance values are both 0
+//            if (CubeValues_B[0] * CubeValues_B[3] < 0) {
+            
+//                        if (i==4 && j == 3 && k==4) {
+//                        double px = P.x;
+//                        double py = P.y;
+//                        double pz = P.z;
+//                        double interp = ValueList[3];
+//                        printf("  8: (%d,%d,%d) P=(%.1f,%.1f,%.1f) temp=%.3f interp=%.3f  \n",i,j,k,px,py,pz,temp,interp);
+//                        }
+//
+//                        if (i==4 && j == 4 && k==4) {
+//                        double px = P.x;
+//                        double py = P.y;
+//                        double pz = P.z;
+//                        double interp = ValueList[3];
+//                        printf("  8: (%d,%d,%d) P=(%.1f,%.1f,%.1f) temp=%.3f interp=%.3f  \n",i,j,k,px,py,pz,temp,interp);
+//                        }
+                    
+//                    }
+//                }
+        
     }
     if (edgeTable[CubeIndex] & 16){
         P = VertexInterp(C4,C5,CubeValues[4],CubeValues[5]);
@@ -733,153 +814,162 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
     if (edgeTable[CubeIndex] & 256){
         
         P = VertexInterp(C0,C4,CubeValues[0],CubeValues[4]);
-       // P.z += 0.5;
         VertexList[8] = P;
         Q = C0;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[8] = CubeValues_B[0] + temp*(CubeValues_B[4]-CubeValues_B[0]);
         
-        if (CubeValues[0] > 0 && CubeValues[0] == -CubeValues[4]) {
-            temp = fabs(CubeValues[0]);
-            ValueList[8] = temp;
-            P.z = temp;
-            VertexList[8] = P;
-        }
-
-        if (CubeValues[0] < 0 && CubeValues[0] == -CubeValues[4]) {
-            temp = fabs(CubeValues[0]);
-            ValueList[8] = 1.0 - temp;
-            P.z = 1.0 - temp;
-            VertexList[8] = P;
-        }
+//        if (CubeValues_B[0] == -1 && CubeValues_B[4] == 0) {
+//          //  temp = fabs(CubeValues[0]);
+//            ValueList[8] = temp;
+//            P.z = temp;
+//            VertexList[8] = P;
+//        }
+//
+//        if (CubeValues[0] < 0 && CubeValues[0] == -CubeValues[4]) {
+//            temp = fabs(CubeValues[0]);
+//            ValueList[8] = 1.0 - temp;
+//            P.z = 1.0 - temp;
+//            VertexList[8] = P;
+//        }
         
-        if (CubeValues[0] == -1 && CubeValues[4] == 0) {
-            temp = fabs(CubeValues[0]);
-            ValueList[8] = 1;
-            P.z = 1;
-            VertexList[8] = P;
-
-        }
-        
-        if (CubeValues[0] == 1 && CubeValues[4] == 0) {
-            temp = fabs(CubeValues[0]);
-            ValueList[8] = 0;
-            P.z = 0;
-            VertexList[8] = P;
-
-        }
-        
-        
+//        if (CubeValues[0] == -1 && CubeValues[4] == 0) {
+//            temp = fabs(CubeValues[0]);
+//            ValueList[8] = 1;
+//            P.z = 1;
+//            VertexList[8] = P;
+//
+//        }
+//
+//        if (CubeValues[0] == 1 && CubeValues[4] == 0) {
+//            temp = fabs(CubeValues[0]);
+//            ValueList[8] = 0;
+//            P.z = 0;
+//            VertexList[8] = P;
+//
+//        }
         
         
-        if (i==5 && j == 5) {
-        double px = P.x;
-        double py = P.y;
-        double pz = P.z;
-        double interp = ValueList[8];
-        double CV0 = CubeValues[0];
-        double CV4 = CubeValues[4];
-//        printf("  256: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV0=%.2f CV4=%.2f  \n",k,pz,temp,interp,CV0,CV4);
-        }
+        
+        
+//        if (i==8 && j == 8) {
+//        double px = P.x;
+//        double py = P.y;
+//        double pz = P.z;
+//        double interp = ValueList[8];
+//        double CBV0 = CubeValues_B[0];
+//        double CBV4 = CubeValues_B[4];
+//        printf("  256: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CBV0=%.2f CBV4=%.2f  \n",k,pz,temp,interp,CBV0,CBV4);
+//        }
     }
     if (edgeTable[CubeIndex] & 512){
         P = VertexInterp(C1,C5,CubeValues[1],CubeValues[5]);
-        //P.z += 0.5;
         VertexList[9] =    P;
         Q = C1;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[9] = CubeValues_B[1] + temp*(CubeValues_B[5]-CubeValues_B[1]);
         
-        if (CubeValues[1] > 0 && CubeValues[1] == -CubeValues[5]) {
-            temp = fabs(CubeValues[1]);
-            ValueList[9] = temp;
-            P.z = temp;
-            VertexList[9] = P;
-
-        }
-
-        if (CubeValues[1] < 0 && CubeValues[1] == -CubeValues[5]) {
-            temp = fabs(CubeValues[1]);
-            ValueList[9] = 1.0 - temp;
-            P.z = 1.0 - temp;
-            VertexList[9] = P;
-        }
+//        if (CubeValues_B[1] == -1 && CubeValues_B[5] == 0) {
+//           // temp = fabs(CubeValues[1]);
+//            ValueList[9] = temp;
+//            P.z = temp;
+//            VertexList[9] = P;
+//        }
         
-        if (CubeValues[1] == -1 && CubeValues[5] == 0) {
-            temp = fabs(CubeValues[1]);
-            ValueList[9] = 1;
-            P.z = 1;
-            VertexList[9] = P;
-
-        }
+//        if (CubeValues[1] > 0 && CubeValues[1] == -CubeValues[5]) {
+//            temp = fabs(CubeValues[1]);
+//            ValueList[9] = temp;
+//            P.z = temp;
+//            VertexList[9] = P;
+//
+//        }
+//
+//        if (CubeValues[1] < 0 && CubeValues[1] == -CubeValues[5]) {
+//            temp = fabs(CubeValues[1]);
+//            ValueList[9] = 1.0 - temp;
+//            P.z = 1.0 - temp;
+//            VertexList[9] = P;
+//        }
         
-        if (CubeValues[1] == 1 && CubeValues[5] == 0) {
-            temp = fabs(CubeValues[1]);
-            ValueList[9] = 0;
-            P.z = 0;
-            VertexList[9] = P;
+//        if (CubeValues[1] == -1 && CubeValues[5] == 0) {
+//            temp = fabs(CubeValues[1]);
+//            ValueList[9] = 1;
+//            P.z = 1;
+//            VertexList[9] = P;
+//
+//        }
+//
+//        if (CubeValues[1] == 1 && CubeValues[5] == 0) {
+//            temp = fabs(CubeValues[1]);
+//            ValueList[9] = 0;
+//            P.z = 0;
+//            VertexList[9] = P;
+//
+//        }
 
-        }
-
-        if (i==5 && j == 5) {
-        double px = P.x;
-        double py = P.y;
-        double pz = P.z;
-        double interp = ValueList[9];
-        double CV1 = CubeValues[1];
-        double CV5 = CubeValues[5];
-//        printf("  512: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV1=%.2f CB5=%.2f  \n",k,pz,temp,interp,CV1,CV5);
-        }
+//        if (i==5 && j == 5) {
+//        double px = P.x;
+//        double py = P.y;
+//        double pz = P.z;
+//        double interp = ValueList[9];
+//        double CV1 = CubeValues[1];
+//        double CV5 = CubeValues[5];
+////        printf("  512: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV1=%.2f CB5=%.2f  \n",k,pz,temp,interp,CV1,CV5);
+//        }
     }
     if (edgeTable[CubeIndex] & 1024){
         P = VertexInterp(C2,C6,CubeValues[2],CubeValues[6]);
-       // P.z += 0.5;
-      
         VertexList[10] = P;
         Q = C2;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[10] = CubeValues_B[2] + temp*(CubeValues_B[6]-CubeValues_B[2]);
         
-        if (CubeValues[2]  > 0 && CubeValues[2] == -CubeValues[6]) {
-            temp = fabs(CubeValues[2]);
-            ValueList[10] = temp;
-            P.z = temp;
-            VertexList[10] = P;
-
-        }
-        if (CubeValues[2]  < 0 && CubeValues[2] == -CubeValues[6]) {
-            temp = fabs(CubeValues[2]);
-            ValueList[10] = 1.0 - temp;
-            P.z = 1.0 - temp;
-            VertexList[10] = P;
-
-        }
-        
-        if (CubeValues[2] == -1 && CubeValues[6] == 0) {
-            temp = fabs(CubeValues[2]);
-            ValueList[10] = 1;
-            P.z = 1;
-            VertexList[10] = P;
-
-        }
-        
-        if (CubeValues[2] == 1 && CubeValues[6] == 0) {
-            temp = fabs(CubeValues[2]);
-            ValueList[10] = 0;
-            P.z = 0;
-            VertexList[10] = P;
-
-        }
-        
-        if (i==5 && j == 5) {
-        double px = P.x;
-        double py = P.y;
-        double pz = P.z;
-        double interp = ValueList[10];
-            double CV2 = CubeValues[2];
-            double CV6 = CubeValues[6];
-//            printf(" 1024: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV2=%.2f CV6=%.2f  \n",k,pz,temp,interp,CV2,CV6);
-        }
+//        if (CubeValues_B[2] == -1 && CubeValues_B[6] == 0) {
+//           // temp = fabs(CubeValues[2]);
+//            ValueList[10] = temp;
+//            P.z = temp;
+//            VertexList[10] = P;
+//        }
+//        if (CubeValues[2]  > 0 && CubeValues[2] == -CubeValues[6]) {
+//            temp = fabs(CubeValues[2]);
+//            ValueList[10] = temp;
+//            P.z = temp;
+//            VertexList[10] = P;
+//
+//        }
+//        if (CubeValues[2]  < 0 && CubeValues[2] == -CubeValues[6]) {
+//            temp = fabs(CubeValues[2]);
+//            ValueList[10] = 1.0 - temp;
+//            P.z = 1.0 - temp;
+//            VertexList[10] = P;
+//
+//        }
+//
+//        if (CubeValues[2] == -1 && CubeValues[6] == 0) {
+//            temp = fabs(CubeValues[2]);
+//            ValueList[10] = 1;
+//            P.z = 1;
+//            VertexList[10] = P;
+//
+//        }
+//
+//        if (CubeValues[2] == 1 && CubeValues[6] == 0) {
+//            temp = fabs(CubeValues[2]);
+//            ValueList[10] = 0;
+//            P.z = 0;
+//            VertexList[10] = P;
+//
+//        }
+//
+//        if (i==5 && j == 5) {
+//        double px = P.x;
+//        double py = P.y;
+//        double pz = P.z;
+//        double interp = ValueList[10];
+//            double CV2 = CubeValues[2];
+//            double CV6 = CubeValues[6];
+////            printf(" 1024: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV2=%.2f CV6=%.2f  \n",k,pz,temp,interp,CV2,CV6);
+//        }
     }
     if (edgeTable[CubeIndex] & 2048){
         P = VertexInterp(C3,C7,CubeValues[3],CubeValues[7]);
@@ -889,47 +979,53 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[11] = CubeValues_B[3] + temp*(CubeValues_B[7]-CubeValues_B[3]);
         
-        if (CubeValues[3] > 0 && CubeValues[3] == -CubeValues[7]) {
-            temp = fabs(CubeValues[3]);
-            ValueList[11] = temp;
-            P.z = temp;
-            VertexList[11] = P;
-
-        }
-
-        if (CubeValues[3] < 0 && CubeValues[3] == -CubeValues[7]) {
-            temp = fabs(CubeValues[3]);
-            ValueList[11] = 1.0 - temp;
-            P.z = 1.0 - temp;
-            VertexList[11] = P;
-
-        }
+//        if (CubeValues_B[3] == -1 && CubeValues_B[7] == 0) {
+//        //    temp = fabs(CubeValues[3]);
+//            ValueList[11] = temp;
+//            P.z = temp;
+//            VertexList[11] = P;
+//        }
+//        if (CubeValues[3] > 0 && CubeValues[3] == -CubeValues[7]) {
+//            temp = fabs(CubeValues[3]);
+//            ValueList[11] = temp;
+//            P.z = temp;
+//            VertexList[11] = P;
+//
+//        }
+//
+//        if (CubeValues[3] < 0 && CubeValues[3] == -CubeValues[7]) {
+//            temp = fabs(CubeValues[3]);
+//            ValueList[11] = 1.0 - temp;
+//            P.z = 1.0 - temp;
+//            VertexList[11] = P;
+//
+//        }
         
-        if (CubeValues[3] == -1 && CubeValues[7] == 0) {
-            temp = fabs(CubeValues[3]);
-            ValueList[11] = 1;
-            P.z = 1;
-            VertexList[11] = P;
-
-        }
+//        if (CubeValues[3] == -1 && CubeValues[7] == 0) {
+//            temp = fabs(CubeValues[3]);
+//            ValueList[11] = 1;
+//            P.z = 1;
+//            VertexList[11] = P;
+//
+//        }
+//
+//        if (CubeValues[3] == 1 && CubeValues[7] == 0) {
+//            temp = fabs(CubeValues[3]);
+//            ValueList[11] = 0;
+//            P.z = 0;
+//            VertexList[11] = P;
+//
+//        }
         
-        if (CubeValues[3] == 1 && CubeValues[7] == 0) {
-            temp = fabs(CubeValues[3]);
-            ValueList[11] = 0;
-            P.z = 0;
-            VertexList[11] = P;
-
-        }
-        
-        if (i==5 && j == 5) {
-        double px = P.x;
-        double py = P.y;
-        double pz = P.z;
-        double interp = ValueList[11];
-            double CV3 = CubeValues[3];
-            double CV7 = CubeValues[7];
-//            printf(" 2048: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV3=%.2f CV7=%.2f  \n",k,pz,temp,interp,CV3,CV7);
-        }
+//        if (i==5 && j == 5) {
+//        double px = P.x;
+//        double py = P.y;
+//        double pz = P.z;
+//        double interp = ValueList[11];
+//            double CV3 = CubeValues[3];
+//            double CV7 = CubeValues[7];
+////            printf(" 2048: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV3=%.2f CV7=%.2f  \n",k,pz,temp,interp,CV3,CV7);
+//        }
     }
     
     
@@ -2159,7 +2255,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j;
             P.z = k;
             // Evaluate the function S at the new point
-            if (  solid(i,j,k)*(1-P.x+i) + solid(i+1,j,k)*(P.x-i) > 0 ){
+            if (  solid(i,j,k)*(1-P.x+i) + solid(i+1,j,k)*(P.x-i) >= 0 ){
                 // This point is in the fluid region
                 nw_pts(n_nw_pts++) =  P;
                 N++;
@@ -2176,7 +2272,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j + (A(i+1,j,k)-v)/(A(i+1,j,k)-A(i+1,j+1,k));
             P.z = k;
             // Evaluate the function S at the new point
-            if (  solid(i+1,j,k)*(1-P.y+j) + solid(i+1,j+1,k)*(P.y-j) > 0 ){
+            if (  solid(i+1,j,k)*(1-P.y+j) + solid(i+1,j+1,k)*(P.y-j) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){ // P is a new vertex (not counted twice)
                     nw_pts(n_nw_pts++) =  P;
@@ -2194,7 +2290,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j+1;
             P.z = k;
             // Evaluate the function S at the new point
-            if (  solid(i,j+1,k)*(1-P.x+i) + solid(i+1,j+1,k)*(P.x-i) > 0 ){
+            if (  solid(i,j+1,k)*(1-P.x+i) + solid(i+1,j+1,k)*(P.x-i) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){ // P is a new vertex (not counted twice)
                     nw_pts(n_nw_pts++) =  P;
@@ -2213,7 +2309,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j + (A(i,j,k)-v) / (A(i,j,k)-A(i,j+1,k));
             P.z = k;
             // Evaluate the function S at the new point
-            if (  solid(i,j,k)*(1-P.y+j) + solid(i,j+1,k)*(P.y-j) > 0 ){
+            if (  solid(i,j,k)*(1-P.y+j) + solid(i,j+1,k)*(P.y-j) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){ // P is a new vertex (not counted twice)
                     nw_pts(n_nw_pts++) =  P;
@@ -2232,7 +2328,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j;
             P.z = k + (A(i,j,k)-v) / (A(i,j,k)-A(i,j,k+1));
             // Evaluate the function S at the new point
-            if (  solid(i,j,k)*(1-P.z+k) + solid(i,j,k+1)*(P.z-k) > 0 ){
+            if (  solid(i,j,k)*(1-P.z+k) + solid(i,j,k+1)*(P.z-k) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){ // P is a new vertex (not counted twice)
                     nw_pts(n_nw_pts++) =  P;
@@ -2251,7 +2347,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j;
             P.z = k + (A(i+1,j,k)-v) / (A(i+1,j,k)-A(i+1,j,k+1));
             // Evaluate the function S at the new point
-            if (  solid(i+1,j,k)*(1-P.z+k) + solid(i+1,j,k+1)*(P.z-k) > 0 ){
+            if (  solid(i+1,j,k)*(1-P.z+k) + solid(i+1,j,k+1)*(P.z-k) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2271,7 +2367,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j+1;
             P.z = k + (A(i+1,j+1,k)-v) / (A(i+1,j+1,k)-A(i+1,j+1,k+1));
             // Evaluate the function S at the new point
-            if (  solid(i+1,j+1,k)*(1-P.z+k) + solid(i+1,j+1,k+1)*(P.z-k) > 0 ){
+            if (  solid(i+1,j+1,k)*(1-P.z+k) + solid(i+1,j+1,k+1)*(P.z-k) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2290,7 +2386,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j+1;
             P.z = k + (A(i,j+1,k)-v) / (A(i,j+1,k)-A(i,j+1,k+1));
             // Evaluate the function S at the new point
-            if (  solid(i,j+1,k)*(1-P.z+k) + solid(i,j+1,k+1)*(P.z-k) > 0 ){
+            if (  solid(i,j+1,k)*(1-P.z+k) + solid(i,j+1,k+1)*(P.z-k) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2310,7 +2406,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j;
             P.z = k+1;
             // Evaluate the function S at the new point
-            if (  solid(i,j,k+1)*(1-P.x+i) + solid(i+1,j,k+1)*(P.x-i) > 0 ){
+            if (  solid(i,j,k+1)*(1-P.x+i) + solid(i+1,j,k+1)*(P.x-i) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2329,7 +2425,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j + (A(i+1,j,k+1)-v) / (A(i+1,j,k+1)-A(i+1,j+1,k+1));
             P.z = k+1;
             // Evaluate the function S at the new point
-            if (  solid(i+1,j,k+1)*(1-P.y+j) + solid(i+1,j+1,k+1)*(P.y-j) > 0 ){
+            if (  solid(i+1,j,k+1)*(1-P.y+j) + solid(i+1,j+1,k+1)*(P.y-j) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2349,7 +2445,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j+1;
             P.z = k+1;
             // Evaluate the function S at the new point
-            if (  solid(i,j+1,k+1)*(1-P.x+i) + solid(i+1,j+1,k+1)*(P.x-i) > 0 ){
+            if (  solid(i,j+1,k+1)*(1-P.x+i) + solid(i+1,j+1,k+1)*(P.x-i) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2369,7 +2465,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j + (A(i,j,k+1)-v) / (A(i,j,k+1)-A(i,j+1,k+1));
             P.z = k+1;
             // Evaluate the function S at the new point
-            if (  solid(i,j,k+1)*(1-P.y+j) + solid(i,j+1,k+1)*(P.y-j) > 0 ){
+            if (  solid(i,j,k+1)*(1-P.y+j) + solid(i,j+1,k+1)*(P.y-j) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -4804,7 +4900,37 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
     
     // if there is a solid phase interface in the grid cell
    // printf(".");
+    
+    double a1,a2,b1,b2;
+    if (i==4 && j==4 && k==4) { printf("Before anything\n");
+        a1 = Phase(i,j,k);
+        a2 = Phase(i,j+1,k);
+        b1 = SignDist(i,j,k);
+        b2 = SignDist(i,j+1,k);
+//        int kp1 = j+1;
+    printf("Before anything...: i=%d j=%d k=%d Phase(i,j,k)=%.2f  SignDist(i,j,k)=%.2f  Phase(i,j+1,k)=%.2f  SignDist(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+    }
+   
     if (Interface(SignDist,0.0,i,j,k) == 1) {
+        
+//        double a1,a2,b1,b2;
+        if (i==4 && j==4 && k==4) { printf("Interface passed\n"); }
+//            a1 = Phase(i,j,k);
+//            a2 = Phase(i,j+1,k);
+//            b1 = SignDist(i,j,k);
+//            b2 = SignDist(i,j+1,k);
+//    //        int kp1 = j+1;
+//        printf("Interface passed: i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//        }
+//
+//        if (i==4 && j==3 && k==8) {
+//            a1 = Phase(i,j,k);
+//            a2 = Phase(i,j+1,k);
+//            b1 = SignDist(i,j,k);
+//            b2 = SignDist(i,j+1,k);
+//    //        int kp1 = j+1;
+//        printf("Interface passed: i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//        }
       //  printf("+");
         //if (i==5 && j==5) printf("k=%d\n",k);
         /* CONSTRUCT THE LOCAL SOLID SURFACE */
@@ -4894,12 +5020,36 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
         
         /* CONSTRUCT THE nw SURFACE */
         if ( n_local_nws_pts > 0){
+            
+            double a1,a2,b1,b2;
+            if (i==4 && j==4 && k==4) { printf("n_local_nws_pts > 0 passed\n"); }
+//                a1 = Phase(i,j,k);
+//                a2 = Phase(i,j+1,k);
+//                b1 = SignDist(i,j,k);
+//                b2 = SignDist(i,j+1,k);
+//        //        int kp1 = j+1;
+//            printf("n_local_nws_pts passed: i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//            }
+            
+//            if (i==4 && j==3 && k==8) {
+//                a1 = Phase(i,j,k);
+//                a2 = Phase(i,j+1,k);
+//                b1 = SignDist(i,j,k);
+//                b2 = SignDist(i,j+1,k);
+//        //        int kp1 = j+1;
+//            printf("n_local_nws_pts passed: i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//            }
+           
+            
             n_nw_tris =0;
 //            EDGEQuad(Phase, fluid_isovalue, SignDist,Dx,Dy,Dz, i,j,k, Nx, Ny, Nz, nw_pts, n_nw_pts, nw_tris, n_nw_tris, nws_pts, n_nws_pts);
             EDGE(Phase, fluid_isovalue, SignDist, i,j,k, Nx, Ny, Nz, nw_pts, n_nw_pts, nw_tris, n_nw_tris,nws_pts, n_nws_pts);
+            if (i==4 && j==4 && k==4) { printf("EDGE after n_local_nws_pts > 0 passed\n"); }
         }
         else {
-             MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
+            
+            MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
+            if (i==4 && j==4 && k==4) { printf("MC after n_local_nws_pts > 0 passed\n"); }
 //            MCQuad(Phase, Dx,Dy,Dz, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
         }
     }
@@ -4908,6 +5058,7 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
     else if (Fluid_Interface(Phase,SignDist,fluid_isovalue,i,j,k) == 1){
         // Linear
                 MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
+            if (i==4 && j==4 && k==4) { printf("MC after Fluid_Interface == 1 passed\n"); }
         // Quadratic
 //    MCQuad(Phase, Dx,Dy,Dz, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
         // Cubic

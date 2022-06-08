@@ -176,10 +176,13 @@ void TwoPhase::nsComputeQuantities(nsMyMesh & m_ns, DoubleArray & vx, DoubleArra
         }
     }
     
+    printf("offset_distance=%f",offset_distance);
+    char OffsetString[8];
     char LocalRankString[8];
     char LocalRankFilename[40];
+    sprintf(OffsetString,"%.1f",offset_distance);
     sprintf(LocalRankString,"%05d",Dm->rank());
-    sprintf(LocalRankFilename,"%s%s%s","0_nsdata.",LocalRankString,".off");
+    sprintf(LocalRankFilename,"%s%s%s%s",OffsetString,"_nsdata.",LocalRankString,".off");
     vcg::tri::io::ExporterOFF<nsMyMesh>::Save(m_ns,LocalRankFilename, 1);
     
 }
@@ -476,23 +479,26 @@ void TwoPhase::ComputeAccurateNWInterfaceCurvatures(nwRootMesh & m_root_nw, doub
             }
         }
     }
-    
+    char OffsetString[8];
     char LocalRankString[8];
     char LocalRankFilename[40];
+    sprintf(OffsetString,"%.1f",offset_distance);
     sprintf(LocalRankString,"%05d",Dm->rank());
-    sprintf(LocalRankFilename,"%s%s%s","2_nwdata.",LocalRankString,".off");
+    sprintf(LocalRankFilename,"%s%s%s%s",OffsetString,"_nwdata.",LocalRankString,".off");
     vcg::tri::io::ExporterOFF<nwRootMesh>::Save(m_root_nw,LocalRankFilename, 1);
+    
 }
 
 
 void TwoPhase::wsComputeQuantities(wsMyMesh & m_ws, DoubleArray & vx,DoubleArray & vy,DoubleArray & vz) {
     
     
-    
+    char OffsetString[8];
     char LocalRankString[8];
     char LocalRankFilename[40];
+    sprintf(OffsetString,"%.1f",offset_distance);
     sprintf(LocalRankString,"%05d",Dm->rank());
-    sprintf(LocalRankFilename,"%s%s%s","1_wsdata.",LocalRankString,".off");
+    sprintf(LocalRankFilename,"%s%s%s%s",OffsetString,"_wsdata.",LocalRankString,".off");
     vcg::tri::io::ExporterOFF<wsMyMesh>::Save(m_ws,LocalRankFilename, 1);
     
     
