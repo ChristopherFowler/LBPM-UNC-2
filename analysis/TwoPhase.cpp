@@ -80,7 +80,8 @@
 #define GXY 37
 #define GXZ 38
 #define GYZ 39
-
+using std::cout; using std::ofstream;
+using std::endl; using std::string;
 
 #define PI 3.14159265359
 
@@ -229,7 +230,7 @@ subdivide( sub )
     nw_nnnnzz_.resize(Nx,Ny,Nz);    nw_nnnnzz_.fill(0);
     vwnz_.resize(Nx,Ny,Nz);         vwnz_.fill(0);
   
-    
+    Phasemc.resize(Nx,Ny,Nz);  Phasemc.fill(0);
     
     MagVel.resize(Nx*Ny*Nz);   std::fill(MagVel.begin(), MagVel.end(), 0);
     
@@ -1417,17 +1418,42 @@ void TwoPhase::ComputeLocal()
     Point Q,D,E,F;
     Point R,G,H,I;
     
+    
+    {
+        double p1,p2,p3,p4,p5,p6,p7,p8;
+        for (int i=1;i<Nx-1;i++)
+        for (int j=1;j<Ny-1;j++)
+        for (int k=1;k<Nz-1;k++){
+            int n=k*(Nx)*(Ny)+j*(Nz)+i;
+            p1 = Phase(i,j,k);
+            p2 = Phase(i-1,j,k);
+            p3 = Phase(i,j-1,k);
+            p4 = Phase(i,j,k-1);
+            p5 = Phase(i-1,j,k-1);
+            p6 = Phase(i,j-1,k-1);
+            p7 = Phase(i-1,j-1,k);
+            p8 = Phase(i-1,j-1,k-1);
+            Phasemc(i,j,k) = 0.125*(p1+p2+p3+p4+p5+p6+p7+p8);
+        }
+    }
+    
+    Dm->CommunicateMeshHalo(Phasemc);
+    pmmc_MeshGradient( Phasemc, SDn_x, SDn_y, SDn_z,Nx,Ny,Nz);
+    
+    
+    
+    
     Dm->CommunicateMeshHalo(SDn);
     
-    pmmc_MeshGradient( SDn, SDn_x, SDn_y, SDn_z,Nx,Ny,Nz);
-    //...........................................................................
-    // Gradient of the phase indicator field
-    //...........................................................................
-    Dm->CommunicateMeshHalo( SDn_x);
-    //...........................................................................
-    Dm->CommunicateMeshHalo( SDn_y);
-    //...........................................................................
-    Dm->CommunicateMeshHalo( SDn_z);
+//    pmmc_MeshGradient( SDn, SDn_x, SDn_y, SDn_z,Nx,Ny,Nz);
+//    //...........................................................................
+//    // Gradient of the phase indicator field
+//    //...........................................................................
+//    Dm->CommunicateMeshHalo( SDn_x);
+//    //...........................................................................
+//    Dm->CommunicateMeshHalo( SDn_y);
+//    //...........................................................................
+//    Dm->CommunicateMeshHalo( SDn_z);
     //...........................................................................
     
     
@@ -1530,7 +1556,7 @@ void TwoPhase::ComputeLocal()
                 n_nw_tris=n_ns_tris=n_ws_tris=n_nws_seg=n_local_sol_tris=0;
                 
                 //...........................................................................
-                pmmc_ConstructLocalCube(SDs,  SDn,  SDn_x,  SDn_y,  SDn_z, solid_isovalue, fluid_isovalue, nw_pts, nw_tris, Values, ns_pts, ns_tris, ws_pts, ws_tris,
+                pmmc_ConstructLocalCube(SDs,  Phasemc,  SDn_x,  SDn_y,  SDn_z, solid_isovalue, fluid_isovalue, nw_pts, nw_tris, Values, ns_pts, ns_tris, ws_pts, ws_tris,
                                         local_nws_pts, nws_pts, nws_seg, local_sol_pts, local_sol_tris,
                                         n_local_sol_tris, n_local_sol_pts, n_nw_pts, n_nw_tris,
                                         n_ws_pts, n_ws_tris, n_ns_tris, n_ns_pts, n_local_nws_pts, n_nws_pts, n_nws_seg,
@@ -2232,8 +2258,19 @@ void TwoPhase::PrintAll(int timestep)
                 pw_tminus_global, pn_tminus_global, aw_tminus_global, an_tminus_global, awn_tminus_global, Jwn_tminus_global, Gwn_tminus_global(0));
         fflush(TIMELOG_global);
         
-        printf("Contact Angle=%f\n",efawns_global);
         
+        if (timestep > 19000) {
+            string filename("/Users/cpf/Desktop/build_LBPM_UNC_042522/Testing/Results.txt");
+            fstream file;
+
+            file.open(filename, std::ios_base::app | std::ios_base::in);
+            if (file.is_open() && offset_distance != 28 ) {
+                file << efawns_global << ", ";
+            }
+            if (file.is_open() && offset_distance == 28) {
+                file << efawns_global << endl;
+            }
+        }
     }
     if ( TIMELOG_local ){
 

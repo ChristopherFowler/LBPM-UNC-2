@@ -545,7 +545,7 @@ void ScaLBL_ColorModel::Initialize() {
         for (int j=1; j<Ny-1; j++)
         for (int i=1; i<Nx-1; i++) {
             int n = i + j*Nx + k*Nx*Ny;
-            if (i > 3 && i < 9 && j > 3 && j < 9) PhaseLabel[n] = 1;
+            if (i > 3 && i < 9 && j > 3 && j < 9) { PhaseLabel[n] = 1; DenALabel[n] = 1; DenBLabel[n] = 0; }
         }
 //
 //
@@ -782,19 +782,7 @@ void ScaLBL_ColorModel::Run(string filename){
     
     runAnalysis analysis( analysis_db, rank_info, ScaLBL_Comm, Dm, Np, Regular, beta, Map );
     
-    while(timestep < timestepMax) {
-        
-        timestep++;
-        analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);
-        
-//        analysis.run6(0, *Averages, Np, Phi);
-        
-//        analysis.run7(0, *Averages, Np, Phi,Velx,Vely,Velz,DenA,DenB);
-        analysis.finish();
-        
-        
-    }
-    timestep+=10000;
+   
     
   
     
@@ -837,6 +825,8 @@ void ScaLBL_ColorModel::Run(string filename){
     InitExtrapolatePhaseFieldInactive(dvcInactiveMap, MaskDomain, Phi , Phi2 , ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(), Nx, Nx*Ny,Ni);
     InitExtrapolatePhaseFieldInactive(dvcInactiveMap, MaskDomain, Phi , Phi2 , 0, ScaLBL_Comm->LastInactiveExterior(), Nx, Nx*Ny,Ni);
     save_scalar(Phi2 ,Phi ,N);
+    
+   
 
     save_scalar(Phi ,Phi2 ,N);
     InitExtrapolateScalarField(dvcSBMap, MaskDomain, Phi , Phi2 , ScaLBL_Comm->FirstSBInterior(), ScaLBL_Comm->LastSBInterior(), Nsb, Nx, Nx*Ny);
@@ -856,6 +846,7 @@ void ScaLBL_ColorModel::Run(string filename){
     ScaLBL_CopyToDevice(SBScalarList, sbScalarList, 18*sizeof(int)*Nsb);
     delete[] sbScalarList;
 
+ 
 // double *tmp; tmp = new double[N];
 //	for (int a = 0; a < N; a++) tmp[a] = 0;
 //
@@ -874,6 +865,8 @@ void ScaLBL_ColorModel::Run(string filename){
 //	delete[] tmp;
 
 
+
+    
 #endif
     starttime = MPI_Wtime();
 
@@ -890,38 +883,51 @@ void ScaLBL_ColorModel::Run(string filename){
     if (Averages->sphere_diameter == 0) Averages->sphere_diameter = double(Nz-2)/3.;
     
     
-    int VALUE = 0;
-    double DVALUE = 0;
-    printf("VFmask:\n");
-    for (int i=5;i<6;i++){
-        for (int j=1;j<Nx-1;j++){
-            for (int k=1;k<Nz-1;k++){
-                int n=k*(Nx)*(Ny)+j*(Nx)+i;
-                DVALUE = Averages->VFmask(n);
-                printf("%.2f ",DVALUE);
-            }
-            printf("\n");
-        }
-        printf("\n\n");
-    }
-
-    printf("id:\n");
-    for (int i=5;i<6;i++){
-        for (int j=1;j<Nx-1;j++){
-            for (int k=1;k<Nz-1;k++){
-                int n=k*(Nx)*(Ny)+j*(Nx)+i;
-                VALUE = Mask->id[n];
-                printf("%d ",VALUE);
-            }
-            printf("\n");
-        }
-        printf("\n\n");
-    }
+//    int VALUE = 0;
+//    double DVALUE = 0;
+//    printf("VFmask:\n");
+//    for (int i=5;i<6;i++){
+//        for (int j=1;j<Nx-1;j++){
+//            for (int k=1;k<Nz-1;k++){
+//                int n=k*(Nx)*(Ny)+j*(Nx)+i;
+//                DVALUE = Averages->VFmask(n);
+//                printf("%.2f ",DVALUE);
+//            }
+//            printf("\n");
+//        }
+//        printf("\n\n");
+//    }
+//
+//    printf("id:\n");
+//    for (int i=5;i<6;i++){
+//        for (int j=1;j<Nx-1;j++){
+//            for (int k=1;k<Nz-1;k++){
+//                int n=k*(Nx)*(Ny)+j*(Nx)+i;
+//                VALUE = Mask->id[n];
+//                printf("%d ",VALUE);
+//            }
+//            printf("\n");
+//        }
+//        printf("\n\n");
+//    }
     
     
     
     //std::cout << " Fx=" << Fx << " Fy=" << Fy << " Fz=" << Fz << std::endl;
-    
+//    timestep+= 19000;
+//    while(timestep < timestepMax) {
+//
+//        timestep++;
+//        analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);
+//
+////        analysis.run6(0, *Averages, Np, Phi);
+//
+////        analysis.run7(0, *Averages, Np, Phi,Velx,Vely,Velz,DenA,DenB);
+//        analysis.finish();
+//
+//
+//    }
+//    timestep+=10000;
   
 
     while(timestep < timestepMax) {

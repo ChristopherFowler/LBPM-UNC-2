@@ -4902,19 +4902,19 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
    // printf(".");
     
     double a1,a2,b1,b2;
-    if (i==4 && j==4 && k==4) { printf("Before anything\n");
-        a1 = Phase(i,j,k);
-        a2 = Phase(i,j+1,k);
-        b1 = SignDist(i,j,k);
-        b2 = SignDist(i,j+1,k);
-//        int kp1 = j+1;
-    printf("Before anything...: i=%d j=%d k=%d Phase(i,j,k)=%.2f  SignDist(i,j,k)=%.2f  Phase(i,j+1,k)=%.2f  SignDist(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
-    }
+//    if (i==4 && j==4 && k==4) { printf("Before anything\n");
+//        a1 = Phase(i,j,k);
+//        a2 = Phase(i,j+1,k);
+//        b1 = SignDist(i,j,k);
+//        b2 = SignDist(i,j+1,k);
+////        int kp1 = j+1;
+//    printf("Before anything...: i=%d j=%d k=%d Phase(i,j,k)=%.2f  SignDist(i,j,k)=%.2f  Phase(i,j+1,k)=%.2f  SignDist(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//    }
    
     if (Interface(SignDist,0.0,i,j,k) == 1) {
         
 //        double a1,a2,b1,b2;
-        if (i==4 && j==4 && k==4) { printf("Interface passed\n"); }
+//        if (i==4 && j==4 && k==4) { printf("Interface passed\n"); }
 //            a1 = Phase(i,j,k);
 //            a2 = Phase(i,j+1,k);
 //            b1 = SignDist(i,j,k);
@@ -5022,7 +5022,7 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
         if ( n_local_nws_pts > 0){
             
             double a1,a2,b1,b2;
-            if (i==4 && j==4 && k==4) { printf("n_local_nws_pts > 0 passed\n"); }
+//            if (i==4 && j==4 && k==4) { printf("n_local_nws_pts > 0 passed\n"); }
 //                a1 = Phase(i,j,k);
 //                a2 = Phase(i,j+1,k);
 //                b1 = SignDist(i,j,k);
@@ -5044,12 +5044,12 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
             n_nw_tris =0;
 //            EDGEQuad(Phase, fluid_isovalue, SignDist,Dx,Dy,Dz, i,j,k, Nx, Ny, Nz, nw_pts, n_nw_pts, nw_tris, n_nw_tris, nws_pts, n_nws_pts);
             EDGE(Phase, fluid_isovalue, SignDist, i,j,k, Nx, Ny, Nz, nw_pts, n_nw_pts, nw_tris, n_nw_tris,nws_pts, n_nws_pts);
-            if (i==4 && j==4 && k==4) { printf("EDGE after n_local_nws_pts > 0 passed\n"); }
+//            if (i==4 && j==4 && k==4) { printf("EDGE after n_local_nws_pts > 0 passed\n"); }
         }
         else {
             
             MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
-            if (i==4 && j==4 && k==4) { printf("MC after n_local_nws_pts > 0 passed\n"); }
+//            if (i==4 && j==4 && k==4) { printf("MC after n_local_nws_pts > 0 passed\n"); }
 //            MCQuad(Phase, Dx,Dy,Dz, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
         }
     }
@@ -5058,7 +5058,7 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
     else if (Fluid_Interface(Phase,SignDist,fluid_isovalue,i,j,k) == 1){
         // Linear
                 MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
-            if (i==4 && j==4 && k==4) { printf("MC after Fluid_Interface == 1 passed\n"); }
+//            if (i==4 && j==4 && k==4) { printf("MC after Fluid_Interface == 1 passed\n"); }
         // Quadratic
 //    MCQuad(Phase, Dx,Dy,Dz, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
         // Cubic

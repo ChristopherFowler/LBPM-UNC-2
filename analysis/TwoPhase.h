@@ -795,6 +795,8 @@ public: // Internal data
     
     DoubleArray PhaseVolume;
     
+    DoubleArray Phasemc;
+    
     DoubleArray Null3;
     DoubleArray Null9;
     
