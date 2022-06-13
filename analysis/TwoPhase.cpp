@@ -1419,41 +1419,42 @@ void TwoPhase::ComputeLocal()
     Point R,G,H,I;
     
     
-    {
-        double p1,p2,p3,p4,p5,p6,p7,p8;
-        for (int i=1;i<Nx-1;i++)
-        for (int j=1;j<Ny-1;j++)
-        for (int k=1;k<Nz-1;k++){
-            int n=k*(Nx)*(Ny)+j*(Nz)+i;
-            p1 = Phase(i,j,k);
-            p2 = Phase(i-1,j,k);
-            p3 = Phase(i,j-1,k);
-            p4 = Phase(i,j,k-1);
-            p5 = Phase(i-1,j,k-1);
-            p6 = Phase(i,j-1,k-1);
-            p7 = Phase(i-1,j-1,k);
-            p8 = Phase(i-1,j-1,k-1);
-            Phasemc(i,j,k) = 0.125*(p1+p2+p3+p4+p5+p6+p7+p8);
-        }
-    }
+//    {
+//        double p1,p2,p3,p4,p5,p6,p7,p8;
+//        for (int i=1;i<Nx-1;i++)
+//        for (int j=1;j<Ny-1;j++)
+//        for (int k=1;k<Nz-1;k++){
+//            int n=k*(Nx)*(Ny)+j*(Nz)+i;
+//            p1 = Phase(i,j,k);
+//            p2 = Phase(i-1,j,k);
+//            p3 = Phase(i,j-1,k);
+//            p4 = Phase(i,j,k-1);
+//            p5 = Phase(i-1,j,k-1);
+//            p6 = Phase(i,j-1,k-1);
+//            p7 = Phase(i-1,j-1,k);
+//            p8 = Phase(i-1,j-1,k-1);
+//            Phasemc(i,j,k) = 0.125*(p1+p2+p3+p4+p5+p6+p7+p8);
+//        }
+//    }
     
-    Dm->CommunicateMeshHalo(Phasemc);
-    pmmc_MeshGradient( Phasemc, SDn_x, SDn_y, SDn_z,Nx,Ny,Nz);
+   // Dm->CommunicateMeshHalo(Phasemc);
+    Dm->CommunicateMeshHalo(Phase);
+    pmmc_MeshGradient( Phase, SDn_x, SDn_y, SDn_z,Nx,Ny,Nz);
     
     
     
     
-    Dm->CommunicateMeshHalo(SDn);
+   
     
 //    pmmc_MeshGradient( SDn, SDn_x, SDn_y, SDn_z,Nx,Ny,Nz);
 //    //...........................................................................
 //    // Gradient of the phase indicator field
 //    //...........................................................................
-//    Dm->CommunicateMeshHalo( SDn_x);
-//    //...........................................................................
-//    Dm->CommunicateMeshHalo( SDn_y);
-//    //...........................................................................
-//    Dm->CommunicateMeshHalo( SDn_z);
+    Dm->CommunicateMeshHalo( SDn_x);
+    //...........................................................................
+    Dm->CommunicateMeshHalo( SDn_y);
+    //...........................................................................
+    Dm->CommunicateMeshHalo( SDn_z);
     //...........................................................................
     
     
@@ -1482,17 +1483,22 @@ void TwoPhase::ComputeLocal()
     DoubleArray wwn_tmp(3);
     DoubleArray vwn_tmp(3), vwns_tmp(3), vws_tmp(3), vns_tmp(3), Gwn_tmp(6), Gws_tmp(6), Gns_tmp(6), Gwns_tmp(6);
         
-    for (int k=amin; k<amax; k++) {
+    for (int k=0; k<amax; k++) {
         const int k2 = std::min<int>( ( k - 1) / N2z, subdivide[2] - 1 );
-        for (int j=1; (size_t)j<Ny-1; j++){
+        for (int j=0; (size_t)j<Ny-1; j++){
             const int j2 = std::min<int>( ( j - 1 ) / N2y, subdivide[1] - 1 );
-            for (int i=1; (size_t)i<Nx-1; i++) {
+            for (int i=0; (size_t)i<Nx-1; i++) {
                 const int i2 = std::min<int>( ( i - 1 ) / N2x, subdivide[0] - 1 );
                 
                 vwn_tmp.fill( 0 );  vws_tmp.fill( 0 );  vns_tmp.fill( 0 );  vwns_tmp.fill( 0 );
                 Gwn_tmp.fill( 0 );  Gws_tmp.fill( 0 );  Gns_tmp.fill( 0 );  Gwns_tmp.fill( 0 );
                 wwn_tmp.fill( 0 ); nwOwnO_tmp.fill( 0 ); nwOwsO_tmp.fill( 0 );
                 
+                /*
+                 Fix loop for range of 1 to Nx-1....
+                 
+                 
+                 */
                 // Compute volume averages
                 int n = i + j*Nx + k*Nx*Ny;
                 double vs = VFmask(n);
@@ -1556,7 +1562,7 @@ void TwoPhase::ComputeLocal()
                 n_nw_tris=n_ns_tris=n_ws_tris=n_nws_seg=n_local_sol_tris=0;
                 
                 //...........................................................................
-                pmmc_ConstructLocalCube(SDs,  Phasemc,  SDn_x,  SDn_y,  SDn_z, solid_isovalue, fluid_isovalue, nw_pts, nw_tris, Values, ns_pts, ns_tris, ws_pts, ws_tris,
+                pmmc_ConstructLocalCube(SDs,  Phase,  SDn_x,  SDn_y,  SDn_z, solid_isovalue, fluid_isovalue, nw_pts, nw_tris, Values, ns_pts, ns_tris, ws_pts, ws_tris,
                                         local_nws_pts, nws_pts, nws_seg, local_sol_pts, local_sol_tris,
                                         n_local_sol_tris, n_local_sol_pts, n_nw_pts, n_nw_tris,
                                         n_ws_pts, n_ws_tris, n_ns_tris, n_ns_pts, n_local_nws_pts, n_nws_pts, n_nws_seg,
@@ -1582,6 +1588,9 @@ void TwoPhase::ComputeLocal()
                             C = P;
                         }
                         
+                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                         
                         A.y += offset_distance;
                         B.y += offset_distance;
@@ -1613,6 +1622,9 @@ void TwoPhase::ComputeLocal()
                             C = P;
                         }
                         
+                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                        // printf("offset_distance=%f",offset_distance);
                         A.y += offset_distance;
                         B.y += offset_distance;
@@ -1644,6 +1656,9 @@ void TwoPhase::ComputeLocal()
                             C = P;
                         }
                         
+                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                         A.y += offset_distance;
                         B.y += offset_distance;
                         C.y += offset_distance;
@@ -1684,6 +1699,9 @@ void TwoPhase::ComputeLocal()
 
                                 if (Q == A) {
                                     if (R == B) {
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
@@ -1693,7 +1711,10 @@ void TwoPhase::ComputeLocal()
 
                                     }
                                     if (R == C) {
- A.y += offset_distance;
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
+                                        A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
                                         vcg::tri::Allocator<nwsMyMesh>::AddFace(m_nws,nwsMyMesh::CoordType ( A.x, A.y, A.z),nwsMyMesh::CoordType ( B.x, B.y, B.z),nwsMyMesh::CoordType ( C.x, C.y, C.z));
@@ -1703,7 +1724,9 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == B) {
                                     if (R == A) {
-//
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
@@ -1712,7 +1735,9 @@ void TwoPhase::ComputeLocal()
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == C) {
-//
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
@@ -1723,7 +1748,9 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == C) {
                                     if (R == B) {
-//
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
@@ -1732,7 +1759,9 @@ void TwoPhase::ComputeLocal()
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == A) {
-//
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
@@ -1765,22 +1794,28 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == A) {
                                     if (R == B) {
-//
-//                                       vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
+                             
                                         
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
+                                        vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
                                        vcg::tri::Allocator<nwsMyMesh>::AddFace(m_nws,nwsMyMesh::CoordType ( A.x, A.y, A.z),nwsMyMesh::CoordType ( B.x, B.y, B.z),nwsMyMesh::CoordType ( C.x, C.y, C.z));
                                         
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == C) {
-//
-//                                       vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
+                                     
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
+                                        vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
                                         vcg::tri::Allocator<nwsMyMesh>::AddFace(m_nws,nwsMyMesh::CoordType ( A.x, A.y, A.z),nwsMyMesh::CoordType ( B.x, B.y, B.z),nwsMyMesh::CoordType ( C.x, C.y, C.z));
                                         
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
@@ -1788,21 +1823,27 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == B) {
                                     if (R == A) {
-//
-//                                      vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
+                                  
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
+                                        vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
                                         vcg::tri::Allocator<nwsMyMesh>::AddFace(m_nws,nwsMyMesh::CoordType ( A.x, A.y, A.z),nwsMyMesh::CoordType ( B.x, B.y, B.z),nwsMyMesh::CoordType ( C.x, C.y, C.z));
                                         
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == C) {
-//
-//                                        vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
+                                 
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
+                                        vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
                                         vcg::tri::Allocator<nwsMyMesh>::AddFace(m_nws,nwsMyMesh::CoordType ( A.x, A.y, A.z),nwsMyMesh::CoordType ( B.x, B.y, B.z),nwsMyMesh::CoordType ( C.x, C.y, C.z));
                                         
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
@@ -1810,21 +1851,27 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == C) {
                                     if (R == B) {
-//
-//                                         vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
+                           
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
+                                        vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
                                         vcg::tri::Allocator<nwsMyMesh>::AddFace(m_nws,nwsMyMesh::CoordType ( A.x, A.y, A.z),nwsMyMesh::CoordType ( B.x, B.y, B.z),nwsMyMesh::CoordType ( C.x, C.y, C.z));
                                         
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == A) {
-//
-//                                       vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
+                        
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
+                                        vcg::tri::Allocator<nwMyMesh>::AddFace(m_nw,nwMyMesh::CoordType ( A.x, A.y, A.z),nwMyMesh::CoordType ( B.x, B.y, B.z),nwMyMesh::CoordType ( C.x, C.y, C.z));
                                         vcg::tri::Allocator<nwsMyMesh>::AddFace(m_nws,nwsMyMesh::CoordType ( A.x, A.y, A.z),nwsMyMesh::CoordType ( B.x, B.y, B.z),nwsMyMesh::CoordType ( C.x, C.y, C.z));
                                         
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
@@ -2276,7 +2323,7 @@ void TwoPhase::PrintAll(int timestep)
         fprintf(TIMELOG_global,"%-15.15E %-15.15E %-15.15E ",awn_tcenter_global,ans_tcenter_global,aws_global);
         fprintf(TIMELOG_global,"%-15.15E %-15.15E ",Jwn_tcenter_global, Kwn_tcenter_global);
         fprintf(TIMELOG_global,"%-15.15E ",lwns_global);
-        fprintf(TIMELOG_global,"%-15.15E ",efawns_global);
+        fprintf(TIMELOG_global,"%.1f ",efawns_global);
         fprintf(TIMELOG_global,"%-15.15E %-15.15E ",KNwns_global, KGwns_global);
         fprintf(TIMELOG_global,"%-15.15E %-15.15E %-15.15E ",vw_global(0),vw_global(1),vw_global(2));
         fprintf(TIMELOG_global,"%-15.15E %-15.15E %-15.15E ",vn_global(0),vn_global(1),vn_global(2));

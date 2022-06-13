@@ -545,7 +545,7 @@ void ScaLBL_ColorModel::Initialize() {
         for (int j=1; j<Ny-1; j++)
         for (int i=1; i<Nx-1; i++) {
             int n = i + j*Nx + k*Nx*Ny;
-            if (i > 3 && i < 9 && j > 3 && j < 9) { PhaseLabel[n] = 1; DenALabel[n] = 1; DenBLabel[n] = 0; }
+            if (i > 3 && i <= 9 && j > 3 && j <= 9) { PhaseLabel[n] = 1; DenALabel[n] = 1; DenBLabel[n] = 0; }
         }
 //
 //

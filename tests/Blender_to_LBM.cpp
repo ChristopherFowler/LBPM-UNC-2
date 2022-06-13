@@ -627,7 +627,7 @@ int main(int argc, char **argv)
 
 		sprintf(LocalRankFilename,"SignDist.%05i",RANK);
 		FILE *SD = fopen(LocalRankFilename,"wb");
-		fwrite(sdmc,8,(nx+2)*(ny+2)*(nz+2),SD);
+		fwrite(sd,8,(nx+2)*(ny+2)*(nz+2),SD);
 		fclose(SD);
         
         printf("sd:\n");
