@@ -51,6 +51,7 @@ int main(int argc, char **argv)
 		auto size_global = domain_db->getVector<int>( "N" );
 		auto nproc = domain_db->getVector<int>( "nproc" );
 
+        string READFILE_FluidPhaseID = "FluidPhaseID.raw";
 		string READFILE_ID = "ID.raw";
 		string READFILE_SD = "SD.raw";
 		string READFILE_SDMC = "SDMC.raw";
@@ -100,6 +101,7 @@ int main(int argc, char **argv)
 
 		std::shared_ptr<TwoPhase> Averages;
 
+        char *FluidPhaseSegData = new char[SIZE];
 		char *SegData = new char[SIZE];
 		double *SignDist = new double[SIZE];
 		double *SignDistMC = new double[SIZE];
@@ -123,6 +125,15 @@ int main(int argc, char **argv)
 			ReadSeg=fread(SegData,1,SIZE,SEGDAT);
 			if (ReadSeg != SIZE) printf("Error reading id data, size \n");
 			fclose(SEGDAT);
+            
+            //FluidPhase
+            printf("Read data from %s \n",READFILE_FluidPhaseID.c_str());
+            FILE *FLUIDPHASESEGDAT = fopen(READFILE_FluidPhaseID.c_str(),"rb");
+            if (FLUIDPHASESEGDAT==NULL) ERROR("Error reading fluid phase id data, null \n");
+            int ReadFluidPhaseSeg;
+            ReadFluidPhaseSeg=fread(FluidPhaseSegData,1,SIZE,FLUIDPHASESEGDAT);
+            if (ReadFluidPhaseSeg != SIZE) printf("Error reading fluid phase id data, size \n");
+            fclose(FLUIDPHASESEGDAT);
             
 //            printf("SegData read:\n");
 //            for (int i=5;i<6;i++){
@@ -200,7 +211,10 @@ int main(int argc, char **argv)
 
        
         
-       
+        char * loc_fluidphaseid;
+        loc_fluidphaseid = new char [(nx+2)*(ny+2)*(nz+2)];
+        char * fluidphaseid;
+        fluidphaseid = new char [(nx+2)*(ny+2)*(nz+2)];
 	
 		char * loc_id;
 		loc_id = new char [(nx+2)*(ny+2)*(nz+2)];
@@ -258,6 +272,7 @@ int main(int argc, char **argv)
 									if (!(z<global_Nz))	z=global_Nz-1;
 									int nlocal = k*(nx+2)*(ny+2) + j*(nx+2) + i;
 									int nglobal = z*global_Nx*global_Ny+y*global_Nx+x;
+                                    loc_fluidphaseid[nlocal] = FluidPhaseSegData[nglobal];
 									loc_id[nlocal] = SegData[nglobal];
 									loc_sd[nlocal] = SignDist[nglobal];
 									loc_sdmc[nlocal] = SignDistMC[nglobal];
@@ -293,6 +308,7 @@ int main(int argc, char **argv)
 								for (int j=0;j<ny+2;j++){
 									for (int i=0;i<nx+2;i++){
 										int nlocal = k*(nx+2)*(ny+2) + j*(nx+2) + i;
+                                        fluidphaseid[nlocal] = loc_fluidphaseid[nlocal];
 										id[nlocal] = loc_id[nlocal];
 										sd[nlocal] = loc_sd[nlocal];
 										sdmc[nlocal] = loc_sdmc[nlocal];
@@ -315,6 +331,7 @@ int main(int argc, char **argv)
 						}
 						else{
 							//Send data to other ranks
+                            MPI_Send(loc_fluidphaseid,N,MPI_CHAR,rnk,15,comm);
 							MPI_Send(loc_id,N,MPI_CHAR,rnk,15,comm);
 							MPI_Send(loc_sd,N,MPI_DOUBLE,rnk,15,comm);
 							MPI_Send(loc_sdmc,N,MPI_DOUBLE,rnk,15,comm);
@@ -330,6 +347,7 @@ int main(int argc, char **argv)
 		}
 		else{
 			// Receive the subdomain from rank 0
+            MPI_Recv(fluidphaseid,N,MPI_CHAR,0,15,comm,MPI_STATUS_IGNORE);
 			MPI_Recv(id,N,MPI_CHAR,0,15,comm,MPI_STATUS_IGNORE);
 			MPI_Recv(sd,N,MPI_DOUBLE,0,15,comm,MPI_STATUS_IGNORE);
 			MPI_Recv(sdmc,N,MPI_DOUBLE,0,15,comm,MPI_STATUS_IGNORE);
@@ -596,18 +614,7 @@ int main(int argc, char **argv)
         }
         
         
-//        printf("libbD:\n");
-//        for (int i=5;i<6;i++){
-//            for (int j=1;j<nx+1;j++){
-//                for (int k=1;k<nz+1;k++){
-//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-//                    DVALUE = libbd[n+4*N];
-//                    printf("%.2f ",DVALUE);
-//                }
-//                printf("\n");
-//            }
-//            printf("\n\n");
-//        }
+
 
         delete[] TmpMap;
      
@@ -620,6 +627,25 @@ int main(int argc, char **argv)
         double * TemporaryField = new double[N];
         for (int n = 0; n < N; n++) TemporaryField[n] = 0.0;
 
+        sprintf(LocalRankFilename,"FluidPhaseID.%05i",RANK);
+        FILE *FLUIDPHASEID = fopen(LocalRankFilename,"wb");
+        fwrite(fluidphaseid,1,(nx+2)*(ny+2)*(nz+2),FLUIDPHASEID);
+        fclose(FLUIDPHASEID);
+        
+//            printf("FluidPhaseID:\n");
+//            for (int k=18;k<19;k++){
+//                for (int i=1;i<nx+1;i++){
+//                    for (int j=1;j<ny+1;j++){
+//
+//                            int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+//                            VALUE = fluidphaseid[n];
+//                            printf("%d ",VALUE);
+//                        }
+//                        printf("\n");
+//                    }
+//                    printf("\n\n");
+//                }
+        
 		sprintf(LocalRankFilename,"ID.%05i",RANK);
 		FILE *ID = fopen(LocalRankFilename,"wb");
 		fwrite(id,1,(nx+2)*(ny+2)*(nz+2),ID);
@@ -630,18 +656,18 @@ int main(int argc, char **argv)
 		fwrite(sd,8,(nx+2)*(ny+2)*(nz+2),SD);
 		fclose(SD);
         
-        printf("sd:\n");
-        for (int i=5;i<6;i++){
-            for (int j=1;j<nx+1;j++){
-                for (int k=1;k<nz+1;k++){
-                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-                    DVALUE = sd[n];
-                    printf("%.2f ",DVALUE);
-                }
-                printf("\n");
-            }
-            printf("\n\n");
-        }
+//        printf("sd:\n");
+//        for (int i=5;i<6;i++){
+//            for (int j=1;j<nx+1;j++){
+//                for (int k=1;k<nz+1;k++){
+//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
+//                    DVALUE = sd[n];
+//                    printf("%.2f ",DVALUE);
+//                }
+//                printf("\n");
+//            }
+//            printf("\n\n");
+//        }
 
 		sprintf(LocalRankString,"%05d",RANK);
 

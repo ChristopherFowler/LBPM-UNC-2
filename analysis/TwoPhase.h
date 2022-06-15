@@ -309,6 +309,7 @@ public: // sub-domain averages
     DoubleArray KwnW_sub;                    // average Gaussian curavture - wn interface
     double ans_tcenter;
     double ans_tcenter_global;
+    int time_step;
     DoubleArray Jws_sub;
     DoubleArray Kws_sub;
     

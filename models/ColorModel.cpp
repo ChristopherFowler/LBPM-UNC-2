@@ -527,6 +527,17 @@ void ScaLBL_ColorModel::Initialize() {
 
 
     if (Restart == false) {
+        
+        
+        size_t read_file;
+        auto fluidphaseID= new char[N];
+        sprintf(LocalRankFilename,"FluidPhaseID.%05i",rank);
+        FILE *FlUIDPHASEIDFILE = fopen(LocalRankFilename,"rb");
+        read_file = fread(fluidphaseID,1,N,FlUIDPHASEIDFILE);
+        if (read_file != size_t(N)) printf("Error reading FlUIDPHASEIDFILE \n");
+        fclose(FlUIDPHASEIDFILE);
+        
+        
         auto PhaseLabel = new double[N];
         auto DenALabel = new double[N];
         auto DenBLabel = new double[N];
@@ -541,12 +552,35 @@ void ScaLBL_ColorModel::Initialize() {
             if (Mask->id[n] == 4) { PhaseLabel[n] = -1.0; DenALabel[n] = 0; DenBLabel[n] = 1;}
         }
         
+        
+        {
+            int n; int VALUE;
         for (int k=1; k<Nz-1; k++)
         for (int j=1; j<Ny-1; j++)
         for (int i=1; i<Nx-1; i++) {
-            int n = i + j*Nx + k*Nx*Ny;
-            if (i > 3 && i <= 9 && j > 3 && j <= 9) { PhaseLabel[n] = 1; DenALabel[n] = 1; DenBLabel[n] = 0; }
+            n = i + j*Nx + k*Nx*Ny;
+            VALUE = fluidphaseID[n];
+            if (VALUE == 1) { PhaseLabel[n] = 1;  DenALabel[n] = 1; DenBLabel[n] = 0; }
+            if (VALUE == 2) { PhaseLabel[n] = -1; DenALabel[n] = 0; DenBLabel[n] = 1; }
         }
+        }
+    {
+        int n; int VALUE; double DVALUE;
+        printf("FluidPhaseID:\n");
+        for (int k=18;k<19;k++){
+            for (int i=1;i<Nx-1;i++){
+                for (int j=1;j<Ny-1;j++){
+                    n=k*(Nx)*(Ny)+j*(Nx)+i;
+                    // VALUE = fluidphaseID[n];
+                    DVALUE = PhaseLabel[n];
+                    // printf("%d ",VALUE);
+                    printf("%.0f ",DVALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
 //
 //
 //                if ( i > 3 && i <= 10 ) {
@@ -565,7 +599,7 @@ void ScaLBL_ColorModel::Initialize() {
 
 
         for (size_t n = 0; n < N; n++) Averages->Phase(n)  = PhaseLabel[n];
-        for (size_t n = 0; n < N; n++) Averages->ID(n)  = Mask->id[n];
+        for (size_t n = 0; n < N; n++) Averages->ID(n)  = fluidphaseID[n];
         ScaLBL_CopyToDevice(Phi, PhaseLabel, N*sizeof(double));
         ScaLBL_CopyToDevice(Phi2, PhaseLabel, N*sizeof(double));
         ScaLBL_CopyToDevice(DenA, DenALabel, N*sizeof(double));
@@ -787,7 +821,7 @@ void ScaLBL_ColorModel::Run(string filename){
   
     
 //    printf("Before run5\n");
-//    while (timestep < 10) {
+//    while (timestep < 300) {
 //        timestep++;
 //        analysis.run6(0, *Averages, Np, LIBBqBC);
 //    analysis.finish();
@@ -898,36 +932,21 @@ void ScaLBL_ColorModel::Run(string filename){
 //        printf("\n\n");
 //    }
 //
-//    printf("id:\n");
-//    for (int i=5;i<6;i++){
-//        for (int j=1;j<Nx-1;j++){
-//            for (int k=1;k<Nz-1;k++){
-//                int n=k*(Nx)*(Ny)+j*(Nx)+i;
-//                VALUE = Mask->id[n];
-//                printf("%d ",VALUE);
-//            }
-//            printf("\n");
-//        }
-//        printf("\n\n");
-//    }
-    
-    
-    
-    //std::cout << " Fx=" << Fx << " Fy=" << Fy << " Fz=" << Fz << std::endl;
-//    timestep+= 19000;
-//    while(timestep < timestepMax) {
-//
-//        timestep++;
-//        analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);
-//
-////        analysis.run6(0, *Averages, Np, Phi);
-//
-////        analysis.run7(0, *Averages, Np, Phi,Velx,Vely,Velz,DenA,DenB);
-//        analysis.finish();
-//
-//
-//    }
-//    timestep+=10000;
+   
+
+    while(timestep < timestepMax) {
+
+        timestep++;
+        analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);
+
+//        analysis.run6(0, *Averages, Np, Phi);
+
+//        analysis.run7(0, *Averages, Np, Phi,Velx,Vely,Velz,DenA,DenB);
+        analysis.finish();
+
+
+    }
+    timestep+=10000;
   
 
     while(timestep < timestepMax) {
@@ -1044,10 +1063,6 @@ void ScaLBL_ColorModel::Run(string filename){
 
         timestep++;
         analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);
-        
-//        analysis.run6(0, *Averages, Np, Phi);
-        
-//        analysis.run7(0, *Averages, Np, Phi,Velx,Vely,Velz,DenA,DenB);
         analysis.finish();
 
     }

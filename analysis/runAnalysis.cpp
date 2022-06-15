@@ -295,10 +295,10 @@ public:
         fillData.copy(Averages.SDs_x,SDsxData);
         fillData.copy(Averages.SDs_y,SDsyData);
         fillData.copy(Averages.SDs_z,SDszData);
-        fillData.copy(Averages.Vel_x,libbaData);
-        fillData.copy(Averages.Vel_y,libbbcData);
-        fillData.copy(Averages.Vel_z,libbdData);
-        fillData.copy(Averages.Press,complibbaData);
+        fillData.copy(Averages.GradPhiX,libbaData);
+        fillData.copy(Averages.GradPhiY,libbbcData);
+        fillData.copy(Averages.GradPhiZ,libbdData);
+        fillData.copy(Averages.CField,complibbaData);
         
         ASSERT(visData[0].vars[15]->name=="DenA");
         ASSERT(visData[0].vars[16]->name=="DenB");
@@ -343,19 +343,23 @@ public:
         
         if ( matches(type,AnalysisType::ComputeAverages_tminus) ) {
             Averages.Initialize();
+            Averages.time_step  = timestep;
             Averages.ColorToSignedDistance(1.0,Averages.Phase,Averages.SDn_tminus);
             Averages.ColorToSignedDistance(1.0,Averages.SDn_tminus,Averages.SDn);
             Averages.time_flag = -1;
             Averages.UpdateMeshValues();
             Averages.ComputeDelPhi();
-            Averages.ComputeEwn();
+//            Averages.ComputeEwn();
+            Averages.time_step = timestep;
         }
         
         if ( matches(type,AnalysisType::ComputeAverages_tcenter) ) {
+            Averages.time_step  = timestep;
             Averages.ColorToSignedDistance(1.0,Averages.Phase,Averages.SDn);
         }
         
         if ( matches(type,AnalysisType::ComputeAverages_tplus) ) {
+            Averages.time_step  = timestep;
             Averages.ColorToSignedDistance(1.0,Averages.Phase,Averages.SDn_tplus);
             Averages.time_flag = 0;
             Averages.UpdateMeshValues();
@@ -364,6 +368,7 @@ public:
             Averages.ComputeLocal();
             Averages.Reduce();
             Averages.PrintAll(timestep);
+            
         }
 
     }

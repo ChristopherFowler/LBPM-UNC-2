@@ -176,13 +176,15 @@ void TwoPhase::nsComputeQuantities(nsMyMesh & m_ns, DoubleArray & vx, DoubleArra
         }
     }
     
-    printf("offset_distance=%f",offset_distance);
+    //printf("offset_distance=%f",offset_distance);
+    char TimeString[8];
     char OffsetString[8];
     char LocalRankString[8];
     char LocalRankFilename[40];
     sprintf(OffsetString,"%.1f",offset_distance);
+    sprintf(TimeString,"%.05d",time_step);
     sprintf(LocalRankString,"%05d",Dm->rank());
-    sprintf(LocalRankFilename,"%s%s%s%s",OffsetString,"_nsdata.",LocalRankString,".off");
+    sprintf(LocalRankFilename,"%s%s%s%s%s%s",OffsetString,"_",TimeString,"_nsdata.",LocalRankString,".off");
     vcg::tri::io::ExporterOFF<nsMyMesh>::Save(m_ns,LocalRankFilename, 1);
     
 }
@@ -479,12 +481,14 @@ void TwoPhase::ComputeAccurateNWInterfaceCurvatures(nwRootMesh & m_root_nw, doub
             }
         }
     }
+    char TimeString[8];
     char OffsetString[8];
     char LocalRankString[8];
     char LocalRankFilename[40];
     sprintf(OffsetString,"%.1f",offset_distance);
+    sprintf(TimeString,"%.05d",time_step);
     sprintf(LocalRankString,"%05d",Dm->rank());
-    sprintf(LocalRankFilename,"%s%s%s%s",OffsetString,"_nwdata.",LocalRankString,".off");
+    sprintf(LocalRankFilename,"%s%s%s%s%s%s",OffsetString,"_",TimeString,"_nwdata.",LocalRankString,".off");
     vcg::tri::io::ExporterOFF<nwRootMesh>::Save(m_root_nw,LocalRankFilename, 1);
     
 }
@@ -493,12 +497,14 @@ void TwoPhase::ComputeAccurateNWInterfaceCurvatures(nwRootMesh & m_root_nw, doub
 void TwoPhase::wsComputeQuantities(wsMyMesh & m_ws, DoubleArray & vx,DoubleArray & vy,DoubleArray & vz) {
     
     
+    char TimeString[8];
     char OffsetString[8];
     char LocalRankString[8];
     char LocalRankFilename[40];
     sprintf(OffsetString,"%.1f",offset_distance);
+    sprintf(TimeString,"%.05d",time_step);
     sprintf(LocalRankString,"%05d",Dm->rank());
-    sprintf(LocalRankFilename,"%s%s%s%s",OffsetString,"_wsdata.",LocalRankString,".off");
+    sprintf(LocalRankFilename,"%s%s%s%s%s%s",OffsetString,"_",TimeString,"_wsdata.",LocalRankString,".off");
     vcg::tri::io::ExporterOFF<wsMyMesh>::Save(m_ws,LocalRankFilename, 1);
     
     
@@ -519,12 +525,49 @@ void TwoPhase::nwsComputeQuantities(nwsMyMesh & m_nws, nwMyMesh & m_nw, DoubleAr
         vcg::tri::Clean<nwsMyMesh>::RemoveDegenerateVertex(m_nws);
         vcg::tri::UpdateTopology<nwsMyMesh>::VertexFace(m_nws);
         
+        double x_rank_min;
+        double y_rank_min;
+        double z_rank_min;
+        double x_rank_max;
+        double y_rank_max;
+        double z_rank_max;
         
+        x_rank_min = 0.5;
+        y_rank_min = 0.5 + double(offset_distance);
+        z_rank_min = 0.5;
+        x_rank_max = (Nx-2)+0.5;
+        y_rank_max = (Ny-2)+0.5 + double(offset_distance);
+        z_rank_max = (Nz-2)+0.5;
+        
+        vcg::Point3<double> BottomCorner(x_rank_min,y_rank_min,z_rank_min);
+        vcg::Point3<double> TopCorner(x_rank_max,y_rank_max,z_rank_max);
+        vcg::Box3<double> RankBox(BottomCorner,TopCorner);
+        
+        vcg::tri::UpdateSelection<nwsMyMesh>::VertexClear(m_nws);
+        vcg::tri::UpdateSelection<nwsMyMesh>::FaceClear(m_nws);
+        
+        size_t selCnt = 0;
+        
+        nwsMyMesh::CoordType b(0,0,0);
+        for(nwsMyMesh::FaceIterator fi=m_nws.face.begin(); fi!=m_nws.face.end();++fi) if(!(*fi).IsD()) {
+            b = vcg::Barycenter(*fi);
+            if(RankBox.IsIn(b) ) {
+                (*fi).SetS();
+                selCnt++;
+            }
+        }
+        
+        
+        for(nwsMyMesh::VertexIterator vi = m_nws.vert.begin(); vi != m_nws.vert.end(); ++vi) if(!(*vi).IsD()) {
+            if(RankBox.IsIn((*vi).P()) ) {
+                (*vi).SetS();
+            }
+        }
         
         double RadAngle = 0;
         double DegAngle = 0;
         size_t DegCount = 0;
-        for(nwsMyMesh::FaceIterator fi=m_nws.face.begin(); fi!=m_nws.face.end();++fi) if(!(*fi).IsD())
+        for(nwsMyMesh::FaceIterator fi=m_nws.face.begin(); fi!=m_nws.face.end();++fi) if(!(*fi).IsD()) if ((*fi).IsS())
         {
             for(int z=0; z<(*fi).VN();++z)
             {
