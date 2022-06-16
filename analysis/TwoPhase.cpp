@@ -1482,6 +1482,12 @@ void TwoPhase::ComputeLocal()
     DoubleArray nw_tmp(3);
     DoubleArray wwn_tmp(3);
     DoubleArray vwn_tmp(3), vwns_tmp(3), vws_tmp(3), vns_tmp(3), Gwn_tmp(6), Gws_tmp(6), Gns_tmp(6), Gwns_tmp(6);
+    
+    Phase(0) = Phase(Nx-1) = Phase((Ny-1)*Nx) = Phase((Ny-1)*Nx + Nx-1) = NAN;
+    Phase((Nz-1)*Nx*Ny) = Phase((Nz-1)*Nx*Ny+Nx-1) = Phase((Nz-1)*Nx*Ny+(Ny-1)*Nx) = Phase((Nz-1)*Nx*Ny+(Ny-1)*Nx + Nx-1) = NAN;
+    
+    SDs(0) = SDs(Nx-1) = SDs((Ny-1)*Nx) = SDs((Ny-1)*Nx + Nx-1) = NAN;
+    SDs((Nz-1)*Nx*Ny) = SDs((Nz-1)*Nx*Ny+Nx-1) = SDs((Nz-1)*Nx*Ny+(Ny-1)*Nx) = SDs((Nz-1)*Nx*Ny+(Ny-1)*Nx + Nx-1) = NAN;
         
     for (int k=0; k<amax; k++) {
         const int k2 = std::min<int>( ( k - 1) / N2z, subdivide[2] - 1 );
@@ -1587,15 +1593,15 @@ void TwoPhase::ComputeLocal()
                             A = C;
                             C = P;
                         }
-//                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                        C.z += 1.0*Dm->kproc()*(Nx-2);
                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1629,15 +1635,15 @@ void TwoPhase::ComputeLocal()
                             A = C;
                             C = P;
                         }
-//                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                        C.z += 1.0*Dm->kproc()*(Nx-2);
                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1671,15 +1677,15 @@ void TwoPhase::ComputeLocal()
                             A = C;
                             C = P;
                         }
-//                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                        C.z += 1.0*Dm->kproc()*(Nx-2);
                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1723,15 +1729,15 @@ void TwoPhase::ComputeLocal()
 
                                 if (Q == A) {
                                     if (R == B) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1744,15 +1750,15 @@ void TwoPhase::ComputeLocal()
 
                                     }
                                     if (R == C) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1766,15 +1772,15 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == B) {
                                     if (R == A) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1786,15 +1792,15 @@ void TwoPhase::ComputeLocal()
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == C) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1808,18 +1814,18 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == C) {
                                     if (R == B) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
-//                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
-//                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x +=0.5; A.y +=0.5; A.z+=0.5;
+                                        B.x +=0.5; B.y +=0.5; B.z+=0.5;
+                                        C.x +=0.5; C.y +=0.5; C.z+=0.5;
                                         A.y += offset_distance;
                                         B.y += offset_distance;
                                         C.y += offset_distance;
@@ -1828,15 +1834,15 @@ void TwoPhase::ComputeLocal()
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == A) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1872,15 +1878,15 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == A) {
                                     if (R == B) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1895,15 +1901,15 @@ void TwoPhase::ComputeLocal()
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == C) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1919,15 +1925,15 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == B) {
                                     if (R == A) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1941,15 +1947,15 @@ void TwoPhase::ComputeLocal()
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == C) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1965,15 +1971,15 @@ void TwoPhase::ComputeLocal()
                                 }
                                 if (Q == C) {
                                     if (R == B) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;
@@ -1987,15 +1993,15 @@ void TwoPhase::ComputeLocal()
 //                                        vcg::tri::Allocator<nwRootMesh>::AddFace(m_n,nwRootMesh::CoordType ( A.x, A.y, A.z),nwRootMesh::CoordType ( B.x, B.y, B.z),nwRootMesh::CoordType ( C.x, C.y, C.z));
                                     }
                                     if (R == A) {
-//                                        A.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        A.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        A.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        B.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        B.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        B.z += 1.0*Dm->kproc()*(Nx-2);
-//                                        C.x += 1.0*Dm->iproc()*(Nx-2);
-//                                        C.y += 1.0*Dm->jproc()*(Nx-2);
-//                                        C.z += 1.0*Dm->kproc()*(Nx-2);
+                                        A.x += 1.0*Dm->iproc()*(Nx-2);
+                                        A.y += 1.0*Dm->jproc()*(Nx-2);
+                                        A.z += 1.0*Dm->kproc()*(Nx-2);
+                                        B.x += 1.0*Dm->iproc()*(Nx-2);
+                                        B.y += 1.0*Dm->jproc()*(Nx-2);
+                                        B.z += 1.0*Dm->kproc()*(Nx-2);
+                                        C.x += 1.0*Dm->iproc()*(Nx-2);
+                                        C.y += 1.0*Dm->jproc()*(Nx-2);
+                                        C.z += 1.0*Dm->kproc()*(Nx-2);
                                         A.x +=0.5; A.y +=0.5; A.z+=0.5;
                                         B.x +=0.5; B.y +=0.5; B.z+=0.5;
                                         C.x +=0.5; C.y +=0.5; C.z+=0.5;

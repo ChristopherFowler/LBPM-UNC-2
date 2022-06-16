@@ -594,130 +594,127 @@ bool Domain::ReadIDsAndValidationIDs(){
 
 void Domain::ReadIDs(std::shared_ptr<Database> db){
 
-	auto domain_db = db->getDatabase( "Analysis" );
-  
-    // Read the IDs from input file
-    int nprocs=nprocx()*nprocy()*nprocz();
-    size_t readID;
     
-     char * usr = new char[susr.length() + 1]; std::strcpy(usr,susr.c_str());
-    
-    char LocalRankString[8];
-    char LocalRankFilename[40];
+      // Read the IDs from input file
+      int nprocs=nprocx()*nprocy()*nprocz();
+      size_t readID;
+      
+       char * usr = new char[susr.length() + 1]; std::strcpy(usr,susr.c_str());
+      
+      char LocalRankString[8];
+      char LocalRankFilename[40];
 
-	//Read in reservoir size, ReservoirMin = first voxel outside reservoir region,
-	//ReservoirMax = last voxel inside reservoir region
-	int rmin = 1;
-	int rmax = Nz-1;
-	if (BoundaryCondition > 0){
-		if ( domain_db->keyExists( "ReservoirMin" ) && kproc() == 0){
-			rmin = domain_db->getScalar<int>( "ReservoirMin" );
-		} 
-		if ( domain_db->keyExists( "ReservoirMax" ) && kproc() == (nprocz() - 1)){
-			rmax = domain_db->getScalar<int>( "ReservoirMax" );
-			rmax = Nz-1-((Nz-2)*nprocz() - rmax);
-		}
-	}
-
-    //.......................................................................
-    // if (rank() == 0)    printf("ReadIDs(): Read input media... \n");
-    //.......................................................................
-    sprintf(LocalRankString,"%05d",rank());
-    if (fs == 1 ) sprintf(LocalRankFilename,"%s%s%s%s","/mnt/bb/",usr,"/ID2.",LocalRankString);
-    if (fs == 0 ) sprintf(LocalRankFilename,"%s%s","ID2.",LocalRankString);
-    // .......... READ THE INPUT FILE .......................................
-    // if (rank()==0) printf("\nReading input ID files: solid=0, NWP=1, WP=2 \n");
-    if (fs == 1 ) sprintf(LocalRankFilename,"%s%s/ID2.%05i","/mnt/bb/",usr,rank());
-    if (fs == 0 ) sprintf(LocalRankFilename,"ID2.%05i",rank());
-    FILE *IDFILE = fopen(LocalRankFilename,"rb");
-    if (IDFILE==NULL) ERROR("Domain::ReadIDs --  Error opening file: ID2.xxxxx");
-    readID=fread(id,1,N,IDFILE);
-    if (readID != size_t(N)) printf("Domain::ReadIDs -- Error reading ID2 (rank=%i) \n",rank());
-    fclose(IDFILE);
-    // Compute the porosity
-    double sum,sum_sat;
-    double porosity,saturation, porosity_halo,saturation_halo,porosity_error,saturation_error;
-    double sum_local=0.0;
-    double sum_sat_local=0.0;
-    //double iVol_global = 1.0*(Nx-2)*(Ny-2)*(Nz-2)*nprocs;
-    // int kmin=1; int kmax=Nz-1;
-    // if (BoundaryCondition > 0 && kproc() == 0) kmin=5;
-    // if (BoundaryCondition > 0 && kproc() == (nprocz()-1)) kmax=Nz-1-5;
-    //if (BoundaryCondition > 0) iVol_global = iVol_global - (1.0*(Nx-2)*nprocx()*(Ny-2)*nprocy()*(amin+(Nz-amax)));
-	//iVol_global = 1.0/iVol_global;
-
-    //.........................................................
-    // If external boundary conditions are applied remove solid
-    if (BoundaryCondition >  0  && kproc() == 0){
-        for (int k=0; k<rmin; k++){
-            for (int j=0;j<Ny;j++){
-                for (int i=0;i<Nx;i++){
-                    int n = k*Nx*Ny+j*Nx+i;
-                    id[n] = 1;
-                }
-            }
-        }
-    }
-    if (BoundaryCondition >  0  && kproc() == nprocz()-1){
-        for (int k=rmax; k<Nz; k++){
-            for (int j=0;j<Ny;j++){
-                for (int i=0;i<Nx;i++){
-                    int n = k*Nx*Ny+j*Nx+i;
-                    id[n] = 2;
-				}
-            }
-        }
-    }
-
-	sum_local = 0.0;
-    sum_sat_local = 0.0;
-    sum = 0.0;
-    sum_sat = 0.0;
-
-    for (int k=1;k<Nz-1;k++){
-        for (int j=1;j<Ny-1;j++){
-            for (int i=1;i<Nx-1;i++){
-                int n = k*Nx*Ny+j*Nx+i;
-                if (id[n] == 1 || id[n] == 2){
-                    sum_local+=1.0;
-                }
-                if (id[n] == 1) {
-                    sum_sat_local+=1.0;
-                }
-            }
-        }
-    }
-    MPI_Allreduce(&sum_local,&sum,1,MPI_DOUBLE,MPI_SUM,Comm);
-    //porosity = sum*iVol_global;
-    
+      //.......................................................................
+      // if (rank() == 0)    printf("ReadIDs(): Read input media... \n");
+      //.......................................................................
+      sprintf(LocalRankString,"%05d",rank());
+      if (fs == 1 ) sprintf(LocalRankFilename,"%s%s%s%s","/mnt/bb/",usr,"/ID2.",LocalRankString);
+      if (fs == 0 ) sprintf(LocalRankFilename,"%s%s","ID2.",LocalRankString);
+      // .......... READ THE INPUT FILE .......................................
+      // if (rank()==0) printf("\nReading input ID files: solid=0, NWP=1, WP=2 \n");
+      if (fs == 1 ) sprintf(LocalRankFilename,"%s%s/ID2.%05i","/mnt/bb/",usr,rank());
+      if (fs == 0 ) sprintf(LocalRankFilename,"ID2.%05i",rank());
+      FILE *IDFILE = fopen(LocalRankFilename,"rb");
+      if (IDFILE==NULL) ERROR("Domain::ReadIDs --  Error opening file: ID2.xxxxx");
+      readID=fread(id,1,N,IDFILE);
+      if (readID != size_t(N)) printf("Domain::ReadIDs -- Error reading ID2 (rank=%i) \n",rank());
+      fclose(IDFILE);
+      // Compute the porosity
+      double sum,sum_sat;
+      double porosity,saturation, porosity_halo,saturation_halo,porosity_error,saturation_error;
+      double sum_local=0.0;
+      double sum_sat_local=0.0;
+      double iVol_global = 1.0/(1.0*(Nx-2)*(Ny-2)*(Nz-2)*nprocs);
+      if (BoundaryCondition > 0) iVol_global = 1.0/(1.0*(Nx-2)*nprocx()*(Ny-2)*nprocy()*((Nz-2)*nprocz()));
+      //.........................................................
+      // If external boundary conditions are applied remove solid
+      if (BoundaryCondition >  0  && kproc() == 0){
+          for (int k=0; k<4; k++){
+              for (int j=0;j<Ny;j++){
+                  for (int i=0;i<Nx;i++){
+                      int n = k*Nx*Ny+j*Nx+i;
+                      id[n] = 2;
+                  }
+              }
+          }
+      }
+      if (BoundaryCondition >  0  && kproc() == nprocz()-1){
+          for (int k=Nz-4; k<Nz; k++){
+              for (int j=0;j<Ny;j++){
+                  for (int i=0;i<Nx;i++){
+                      int n = k*Nx*Ny+j*Nx+i;
+                      id[n] = 2;
+                  }
+              }
+          }
+      }
+      for (int k=1;k<Nz-1;k++){
+          for (int j=1;j<Ny-1;j++){
+              for (int i=1;i<Nx-1;i++){
+                  int n = k*Nx*Ny+j*Nx+i;
+                  if (id[n] == 1 || id[n] == 2){
+                      sum_local+=1.0;
+                  }
+                  if (id[n] == 1) {
+                      sum_sat_local+=1.0;
+                  }
+              }
+          }
+      }
+      MPI_Allreduce(&sum_local,&sum,1,MPI_DOUBLE,MPI_SUM,Comm);
+      porosity = sum*iVol_global;
+      
+       
+      
+      MPI_Allreduce(&sum_sat_local,&sum_sat,1,MPI_DOUBLE,MPI_SUM,Comm);
+      MPI_Allreduce(&sum_sat_local,&sum_sat,1,MPI_DOUBLE,MPI_SUM,Comm);
+      saturation = 1.-sum_sat/sum;
+      if (rank() == 0) cout << "MEDIUM PROPERTIES:" << endl;
+      //if (rank()==0)  printf("Porosity (internal)= %-15.15E WP saturation (internal) = %-15.15E\n",porosity,saturation);
+      
+      sum_local = 0.0;
+      sum_sat_local = 0.0;
+      sum = 0;
+      sum_sat = 0.0;
+      
+      const int cube[8][3] = {{0,0,0},{1,0,0},{0,1,0},{1,1,0},{0,0,1},{1,0,1},{0,1,1},{1,1,1}};
+      
+      for (int k=1;k<Nz-1;k++){
+          for (int j=1;j<Ny-1;j++){
+              for (int i=1;i<Nx-1;i++){
+                  for (int p=0; p<8; p++) {
+                      int n = i+cube[p][0] + (j+cube[p][1])*Nx + (k+cube[p][2])*Nx*Ny;
+                      if (id[n] == 1 || id[n] == 2){ sum_local+=0.125; }
+                      if (id[n] == 1) { sum_sat_local+=0.125; }
+                      
+                  }
+              }
+          }
+      }
+      
+      iVol_global = 1.0/(1.0*(Nx-2)*(Ny-2)*(Nz-2)*nprocs);
+      
+      MPI_Allreduce(&sum_local,&sum,1,MPI_DOUBLE,MPI_SUM,Comm);
+      porosity_halo = sum*iVol_global;
+      //if (rank()==0) printf("Porosity (w/ halo) =%-15.15E ",porosity_halo);
+      MPI_Allreduce(&sum_sat_local,&sum_sat,1,MPI_DOUBLE,MPI_SUM,Comm);
+      saturation_halo = 1.-sum_sat/sum;
+      //if (rank()==0) printf(" WP saturation (w/ halo)=%-15.15E\n",saturation_halo);
+      
+      porosity_error = abs(porosity - porosity_halo);
+      saturation_error = abs(saturation - saturation_halo);
+      if (rank()==0) {
+          if (porosity_error == 0 && saturation_error == 0) {
+              printf("Porosity=%-15.15E\nSaturation=%-15.15E\n",porosity_halo,saturation_halo);
+          } else {
+              printf("!!! POROSITY AND/OR SATURATION CONTAIN ERRORS !!!\nPorosity=%-15.15E  Saturation=%-15.15E\nPorosity error =  %-15.15E  Saturation error = %-15.15E\n",porosity_halo,saturation_halo,porosity_error,saturation_error);
+          }
+          }
+      
      
-    
-    MPI_Allreduce(&sum_sat_local,&sum_sat,1,MPI_DOUBLE,MPI_SUM,Comm);
-    //MPI_Allreduce(&sum_sat_local,&sum_sat,1,MPI_DOUBLE,MPI_SUM,Comm);
-    saturation = 1.-sum_sat/sum;
-    //printf("Domain SW: %f \n",saturation);  
+      //.........................................................
+  }
 
-    
-
-    
-    // const int cube[8][3] = {{0,0,0},{1,0,0},{0,1,0},{1,1,0},{0,0,1},{1,0,1},{0,1,1},{1,1,1}};
-    
-    // for (int k=1;k<Nz-1;k++){
-    //     for (int j=1;j<Ny-1;j++){
-    //         for (int i=1;i<Nx-1;i++){
-    //             for (int p=0; p<8; p++) {
-    //                 int n = i+cube[p][0] + (j+cube[p][1])*Nx + (k+cube[p][2])*Nx*Ny;
-    //                 if (id[n] == 1 || id[n] == 2){ sum_local+=0.125; }
-    //                 if (id[n] == 1) { sum_sat_local+=0.125; }
-                    
-    //             }
-    //         }
-    //     }
-    // }
-    
-    // iVol_global = 1.0/(1.0*(Nx-2)*(Ny-2)*(kmax-kmin)*nprocs);
-    //.........................................................
-}
 
 int Domain::PoreCount(){
 	/*
