@@ -850,7 +850,7 @@ void ScaLBL_ColorModel::Run(string filename){
     ScaLBL_CopyToDevice(ActiveScalarList, activeScalarList, 18*sizeof(int)*Np);
     delete[] activeScalarList;
 
-
+//    printf("N=%d Np=%d Ni=%d Nsb=%d\n",N,Np,Ni,Nsb);
 
 #ifdef WBC
     ScaLBL_CopyToDevice(MaskDomain, Mask->id, sizeof(char)*N);
@@ -860,8 +860,6 @@ void ScaLBL_ColorModel::Run(string filename){
     InitExtrapolatePhaseFieldInactive(dvcInactiveMap, MaskDomain, Phi , Phi2 , 0, ScaLBL_Comm->LastInactiveExterior(), Nx, Nx*Ny,Ni);
     save_scalar(Phi2 ,Phi ,N);
     
-   
-
     save_scalar(Phi ,Phi2 ,N);
     InitExtrapolateScalarField(dvcSBMap, MaskDomain, Phi , Phi2 , ScaLBL_Comm->FirstSBInterior(), ScaLBL_Comm->LastSBInterior(), Nsb, Nx, Nx*Ny);
     InitExtrapolateScalarField(dvcSBMap, MaskDomain, Phi , Phi2 , 0, ScaLBL_Comm->LastSBExterior(), Nsb, Nx, Nx*Ny);
@@ -879,26 +877,6 @@ void ScaLBL_ColorModel::Run(string filename){
     ScaLBL_Comm->CreateSBMap(TemporaryMap, Mask->id, Nsb, Nx, Nx*Ny, sbScalarList);
     ScaLBL_CopyToDevice(SBScalarList, sbScalarList, 18*sizeof(int)*Nsb);
     delete[] sbScalarList;
-
- 
-// double *tmp; tmp = new double[N];
-//	for (int a = 0; a < N; a++) tmp[a] = 0;
-//
-//
-//	ScaLBL_CopyToDevice(GradPhiX, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(GradPhiY, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(GradPhiZ, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(Velx, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(Vely, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(Velz, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(Velx2, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(Vely2, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(Velz2, tmp, sizeof(double)*N);
-//	ScaLBL_CopyToDevice(CField, tmp, sizeof(double)*N);
-//
-//	delete[] tmp;
-
-
 
     
 #endif
@@ -972,90 +950,90 @@ void ScaLBL_ColorModel::Run(string filename){
 
 
 
-        ScaLBL_Comm->SendD3Q19AA(fq);
-        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
-        ScaLBL_Comm->RecvD3Q19AA(fq);
-        save_state(fq,savedfq,ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),19,Np);
-        save_state(fq,savedfq,0, ScaLBL_Comm->LastExterior(),19,Np);
-        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
-                                dvcMap, fq, fq2, savedfq, Aq, Bq, DenA2, DenB2, DenA, DenB, Phi, Velx , Vely, Velz, Velx2 , Vely2, Velz2 , Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
-
-
-        if (BoundaryCondition == 3){
-            ScaLBL_Comm->D3Q19_Pressure_BC_z(NeighborList, fq, din, timestep);
-            ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq, dout, timestep);
-        }
-        if (BoundaryCondition == 4){
-            din = ScaLBL_Comm->D3Q19_Flux_BC_z(NeighborList, fq, flux, timestep);
-            ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq, dout, timestep);
-        }
-
-        ScaLBL_DeviceBarrier();
-        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
-                                dvcMap, fq, fq2, savedfq, Aq, Bq, DenA2, DenB2, DenA, DenB, Phi, Velx, Vely, Velz, Velx2, Vely2, Velz2, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
-
-        if (BoundaryCondition > 0) {
-            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA, DenB, inletA, inletB);
-            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA, DenB, outletA, outletB);
-           }
-        if (BoundaryCondition > 0) {
-            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA2, DenB2, inletA, inletB);
-            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA2, DenB2, outletA, outletB);
-           }
-
-
+//        ScaLBL_Comm->SendD3Q19AA(fq);
+//        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+//        ScaLBL_Comm->RecvD3Q19AA(fq);
+//        save_state(fq,savedfq,ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),19,Np);
+//        save_state(fq,savedfq,0, ScaLBL_Comm->LastExterior(),19,Np);
+//        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
+//                                dvcMap, fq, fq2, savedfq, Aq, Bq, DenA2, DenB2, DenA, DenB, Phi, Velx , Vely, Velz, Velx2 , Vely2, Velz2 , Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
+//
+//
+//        if (BoundaryCondition == 3){
+//            ScaLBL_Comm->D3Q19_Pressure_BC_z(NeighborList, fq, din, timestep);
+//            ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq, dout, timestep);
+//        }
+//        if (BoundaryCondition == 4){
+//            din = ScaLBL_Comm->D3Q19_Flux_BC_z(NeighborList, fq, flux, timestep);
+//            ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq, dout, timestep);
+//        }
+//
+//        ScaLBL_DeviceBarrier();
+//        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
+//                                dvcMap, fq, fq2, savedfq, Aq, Bq, DenA2, DenB2, DenA, DenB, Phi, Velx, Vely, Velz, Velx2, Vely2, Velz2, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
+//
+//        if (BoundaryCondition > 0) {
+//            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA, DenB, inletA, inletB);
+//            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA, DenB, outletA, outletB);
+//           }
+//        if (BoundaryCondition > 0) {
+//            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA2, DenB2, inletA, inletB);
+//            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA2, DenB2, outletA, outletB);
+//           }
+//
+//
         timestep++;
-
-        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
-        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
-        ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
-
-        save_scalar(DenA,DenA2,N);
-        save_scalar(DenB,DenB2,N);
-        Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA , DenB, DenA2 , DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-        Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-        Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA , DenB, DenA2 , DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstSBInterior(), ScaLBL_Comm->LastSBInterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-        Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastSBExterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-        save_scalar(DenA2,DenA,N);
-        save_scalar(DenB2,DenB,N);
-
-        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),Np, WBCFlag);
-        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(),Np, WBCFlag);
-        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(),Ni, WBCFlag);
-        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(),Ni, WBCFlag);
-
-
-
-
-        ScaLBL_Comm->SendD3Q19AA(fq2);
-        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
-        ScaLBL_Comm->RecvD3Q19AA(fq2);
-        save_state(fq2,savedfq,ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),19,Np);
-        save_state(fq2,savedfq,0, ScaLBL_Comm->LastExterior(),19,Np);
-        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
-                                dvcMap, fq2, fq, savedfq, Aq, Bq, DenA , DenB , DenA2 , DenB2 , Phi, Velx2 , Vely2, Velz2, Velx, Vely, Velz, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
-        ScaLBL_DeviceBarrier();
-
-        if (BoundaryCondition == 3){
-               ScaLBL_Comm->D3Q19_Pressure_BC_z(NeighborList, fq2, din, timestep);
-               ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq2, dout, timestep);
-           }
-       if (BoundaryCondition == 4){
-           din = ScaLBL_Comm->D3Q19_Flux_BC_z(NeighborList, fq2, flux, timestep);
-           ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq2, dout, timestep);
-       }
-
-        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
-                                dvcMap, fq2, fq, savedfq, Aq, Bq, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, Velx, Vely, Velz, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
-
-        if (BoundaryCondition > 0){
-            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA, DenB, inletA, inletB);
-            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA, DenB, outletA, outletB);
-        }
-        if (BoundaryCondition > 0){
-            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA2, DenB2, inletA, inletB);
-            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA2, DenB2, outletA, outletB);
-        }
+//
+//        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
+//        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+//        ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
+//
+//        save_scalar(DenA,DenA2,N);
+//        save_scalar(DenB,DenB2,N);
+//        Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA , DenB, DenA2 , DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
+//        Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
+//        Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA , DenB, DenA2 , DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstSBInterior(), ScaLBL_Comm->LastSBInterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
+//        Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastSBExterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
+//        save_scalar(DenA2,DenA,N);
+//        save_scalar(DenB2,DenB,N);
+//
+//        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),Np, WBCFlag);
+//        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(),Np, WBCFlag);
+//        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(),Ni, WBCFlag);
+//        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(),Ni, WBCFlag);
+//
+//
+//
+//
+//        ScaLBL_Comm->SendD3Q19AA(fq2);
+//        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+//        ScaLBL_Comm->RecvD3Q19AA(fq2);
+//        save_state(fq2,savedfq,ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),19,Np);
+//        save_state(fq2,savedfq,0, ScaLBL_Comm->LastExterior(),19,Np);
+//        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
+//                                dvcMap, fq2, fq, savedfq, Aq, Bq, DenA , DenB , DenA2 , DenB2 , Phi, Velx2 , Vely2, Velz2, Velx, Vely, Velz, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
+//        ScaLBL_DeviceBarrier();
+//
+//        if (BoundaryCondition == 3){
+//               ScaLBL_Comm->D3Q19_Pressure_BC_z(NeighborList, fq2, din, timestep);
+//               ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq2, dout, timestep);
+//           }
+//       if (BoundaryCondition == 4){
+//           din = ScaLBL_Comm->D3Q19_Flux_BC_z(NeighborList, fq2, flux, timestep);
+//           ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq2, dout, timestep);
+//       }
+//
+//        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
+//                                dvcMap, fq2, fq, savedfq, Aq, Bq, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, Velx, Vely, Velz, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
+//
+//        if (BoundaryCondition > 0){
+//            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA, DenB, inletA, inletB);
+//            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA, DenB, outletA, outletB);
+//        }
+//        if (BoundaryCondition > 0){
+//            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA2, DenB2, inletA, inletB);
+//            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA2, DenB2, outletA, outletB);
+//        }
 
         timestep++;
         analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);

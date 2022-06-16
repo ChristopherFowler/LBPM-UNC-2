@@ -763,175 +763,175 @@ void lbpm_partial_saturation_pp(int argc, char **argv,int rank, int nprocs, MPI_
     if (ReadSignDist != size_t(N)) printf("lbpm_random_pp: Error reading ID file (rank=%i)\n",rank);
     fclose(DIST);
     
-    double porosity = calculate_porosity(ReadID, Nx, Ny, Nz, *Dm, rank);
-    if (rank == 0) cout << "Read ID file porosity=" << porosity << endl;
-    
-    double count = 0;
-    double swcount = 0;
-    double totalGlobal = 0;
-    double swGlobal = 0;
-
-    double denom = 0;
-    double sum_local = 0;
-    
-   // for (int i = 0; i < Nx*Ny*Nz; i++) if (ReadID[n]==)
-    
-    /* Update the Dm->id */
-    for (int k=1; k<Nz-1; k++){
-        for (int j=1; j<Ny-1; j++){
-            for (int i=1; i<Nx-1; i++){
-                n = k*Nx*Ny+j*Nx+i;
-                if (ReadID[n] > 0)  {
-			count = count + 1.0;
-			ReadID[n] = 2;
-		}
-		if (ReadID[n] == 2) {swcount = swcount + 1.0;}
-                
-            }
-        }
-    }
-
-    MPI_Allreduce(&count,&totalGlobal,1,MPI_DOUBLE,MPI_SUM,comm);
-    MPI_Allreduce(&swcount,&swGlobal,1,MPI_DOUBLE,MPI_SUM,comm);
-    double sat = swGlobal/totalGlobal;
-    if (Dm->rank()==0){
-	    printf("count pre: %f \n",count);
-            printf("swcount pre: %f \n",swcount);
-	    printf("SW Pre: %f \n",sat);
-    }
-    //printf("rank Nx Ny Nz: %i %i %i %i \n",Dm->rank(),Nx,Ny,Nz);
-    //printf("rank iproc jproc kproc: %i %i %i %i \n",Dm->rank(),iproc,jproc,kproc);
-
-
-    //double center_k = 2.*double(Nz)/3.-8 + double((Nz-2));
-    //double center_ij = double(Nx)/2.;
-    printf("woof\n");
-
-    //double lower_bd = 0.3*nprocz*(Nz-2);
-    //double upper_bd = 0.7*nprocz*(Nz-2);
-    //int lowerxbd = int(0.3*double(nprocx*(Nx-2)));
-    //int upperxbd = int(0.7*double(nprocx*(Nx-2)));
-//std::cout << "lower bounds:" << lowerxbd << " upper bounds:" << upperxbd << std::endl;   
- 
-   // for (int n=0; n<N; n++){ if (ReadID[n] == 2) ReadID[n] = 1; }
-    //double beta = 0.8;
-    //double betadelta = 1.0-beta;
-    int extra_counter = 0;
-    for (int k=0; k<Nz; k++){
-        for (int j=0; j<Ny; j++){
-            for (int i=0; i<Nx; i++){
-                size_t n = k*Nx*Ny+j*Nx+i;
-		 
-                // //write a cube
-                // if (ReadID[n] > 0){
-                //     if ( ((i+(Nx-2)*iproc) < 40) && ((i+(Nx-2)*iproc) > 20) ) {
-                //         if ( ((j+(Ny-2)*jproc) < 40) && ((j+(Ny-2)*jproc) > 20) ) {
-                //             if ( ((k+(Nz-2)*kproc) < 40)  && ((k+(Nz-2)*kproc) > 20) ) {
-                //                 ReadID[n] = 1;
-                //                 extra_counter = extra_counter + 1;
-                //             }
-                //         }
-                //     }
-                // }
-		
-                // //write hemisphere ORIGINAL for akai solid sphere
-                // if (ReadID[n] > 0 && (k+(Nz-2)*kproc) > 30){
-                //    if ( ((i+(Nx-2)*iproc) - 50)*((i+(Nx-2)*iproc) - 50) + ((j+(Ny-2)*jproc) - 50)*((j+(Ny-2)*jproc) - 50) + 
-                //    ((k+(Nz-2)*kproc) - 30)*((k+(Nz-2)*kproc) - 30) <= 28*28   ){
-                //        ReadID[n] = 1;
-                //    }
-                // }
-
-                // // //write hemisphere excel match
-                // if (ReadID[n] > 0 && (k+(Nz-2)*kproc) > 30){
-                //    if ( ((i+(Nx-2)*iproc) - 50)*((i+(Nx-2)*iproc) - 50) + ((j+(Ny-2)*jproc) - 50)*((j+(Ny-2)*jproc) - 50) + 
-                //    ((k+(Nz-2)*kproc) - 30)*((k+(Nz-2)*kproc) - 30) <= 28*28   ){
-                //        ReadID[n] = 1;
-                //        //extra_counter = extra_counter + 1;
-                //    }
-                // }
-
-                // //write a cube for akai plate
-//                if (ReadID[n] > 0){
-//                    if ( ((i+(Nx-2)*iproc) < 35) && ((i+(Nx-2)*iproc) > 15) ) {
-//                        if ( ((j+(Ny-2)*jproc) < 35) && ((j+(Ny-2)*jproc) > 15) ) {
-//                            if ( ((k+(Nz-2)*kproc) < 20)  && ((k+(Nz-2)*kproc) > 0) ) {
-//                                ReadID[n] = 1;
-//                                extra_counter = extra_counter + 1;
-//                            }
-//                        }
-//                    }
-//                }
-                
-                // 36^3 case
+//    double porosity = calculate_porosity(ReadID, Nx, Ny, Nz, *Dm, rank);
+//    if (rank == 0) cout << "Read ID file porosity=" << porosity << endl;
+//
+//    double count = 0;
+//    double swcount = 0;
+//    double totalGlobal = 0;
+//    double swGlobal = 0;
+//
+//    double denom = 0;
+//    double sum_local = 0;
+//
+//   // for (int i = 0; i < Nx*Ny*Nz; i++) if (ReadID[n]==)
+//
+//    /* Update the Dm->id */
+//    for (int k=1; k<Nz-1; k++){
+//        for (int j=1; j<Ny-1; j++){
+//            for (int i=1; i<Nx-1; i++){
+//                n = k*Nx*Ny+j*Nx+i;
+//                if (ReadID[n] > 0)  {
+//			count = count + 1.0;
+//			ReadID[n] = 2;
+//		}
+//		if (ReadID[n] == 2) {swcount = swcount + 1.0;}
+//
+//            }
+//        }
+//    }
+//
+//    MPI_Allreduce(&count,&totalGlobal,1,MPI_DOUBLE,MPI_SUM,comm);
+//    MPI_Allreduce(&swcount,&swGlobal,1,MPI_DOUBLE,MPI_SUM,comm);
+//    double sat = swGlobal/totalGlobal;
+//    if (Dm->rank()==0){
+//	    printf("count pre: %f \n",count);
+//            printf("swcount pre: %f \n",swcount);
+//	    printf("SW Pre: %f \n",sat);
+//    }
+//    //printf("rank Nx Ny Nz: %i %i %i %i \n",Dm->rank(),Nx,Ny,Nz);
+//    //printf("rank iproc jproc kproc: %i %i %i %i \n",Dm->rank(),iproc,jproc,kproc);
+//
+//
+//    //double center_k = 2.*double(Nz)/3.-8 + double((Nz-2));
+//    //double center_ij = double(Nx)/2.;
+//    printf("woof\n");
+//
+//    //double lower_bd = 0.3*nprocz*(Nz-2);
+//    //double upper_bd = 0.7*nprocz*(Nz-2);
+//    //int lowerxbd = int(0.3*double(nprocx*(Nx-2)));
+//    //int upperxbd = int(0.7*double(nprocx*(Nx-2)));
+////std::cout << "lower bounds:" << lowerxbd << " upper bounds:" << upperxbd << std::endl;
+//
+//   // for (int n=0; n<N; n++){ if (ReadID[n] == 2) ReadID[n] = 1; }
+//    //double beta = 0.8;
+//    //double betadelta = 1.0-beta;
+//    int extra_counter = 0;
+//    for (int k=0; k<Nz; k++){
+//        for (int j=0; j<Ny; j++){
+//            for (int i=0; i<Nx; i++){
+//                size_t n = k*Nx*Ny+j*Nx+i;
+//
+//                // //write a cube
+//                // if (ReadID[n] > 0){
+//                //     if ( ((i+(Nx-2)*iproc) < 40) && ((i+(Nx-2)*iproc) > 20) ) {
+//                //         if ( ((j+(Ny-2)*jproc) < 40) && ((j+(Ny-2)*jproc) > 20) ) {
+//                //             if ( ((k+(Nz-2)*kproc) < 40)  && ((k+(Nz-2)*kproc) > 20) ) {
+//                //                 ReadID[n] = 1;
+//                //                 extra_counter = extra_counter + 1;
+//                //             }
+//                //         }
+//                //     }
+//                // }
+//
+//                // //write hemisphere ORIGINAL for akai solid sphere
+//                // if (ReadID[n] > 0 && (k+(Nz-2)*kproc) > 30){
+//                //    if ( ((i+(Nx-2)*iproc) - 50)*((i+(Nx-2)*iproc) - 50) + ((j+(Ny-2)*jproc) - 50)*((j+(Ny-2)*jproc) - 50) +
+//                //    ((k+(Nz-2)*kproc) - 30)*((k+(Nz-2)*kproc) - 30) <= 28*28   ){
+//                //        ReadID[n] = 1;
+//                //    }
+//                // }
+//
+//                // // //write hemisphere excel match
+//                // if (ReadID[n] > 0 && (k+(Nz-2)*kproc) > 30){
+//                //    if ( ((i+(Nx-2)*iproc) - 50)*((i+(Nx-2)*iproc) - 50) + ((j+(Ny-2)*jproc) - 50)*((j+(Ny-2)*jproc) - 50) +
+//                //    ((k+(Nz-2)*kproc) - 30)*((k+(Nz-2)*kproc) - 30) <= 28*28   ){
+//                //        ReadID[n] = 1;
+//                //        //extra_counter = extra_counter + 1;
+//                //    }
+//                // }
+//
+//                // //write a cube for akai plate
+////                if (ReadID[n] > 0){
+////                    if ( ((i+(Nx-2)*iproc) < 35) && ((i+(Nx-2)*iproc) > 15) ) {
+////                        if ( ((j+(Ny-2)*jproc) < 35) && ((j+(Ny-2)*jproc) > 15) ) {
+////                            if ( ((k+(Nz-2)*kproc) < 20)  && ((k+(Nz-2)*kproc) > 0) ) {
+////                                ReadID[n] = 1;
+////                                extra_counter = extra_counter + 1;
+////                            }
+////                        }
+////                    }
+////                }
+//
+//                // 36^3 case
+////                {
+////                    if ( ((i+(Nx-2)*iproc) > 9) && ((i+(Nx-2)*iproc) < 30) ) {
+////                        if ( ((j+(Ny-2)*jproc) > 9) && ((j+(Ny-2)*jproc) < 30) ) {
+////                            if ( ((k+(Nz-2)*kproc) > 9)  && ((k+(Nz-2)*kproc) < 30) ) {
+////                                if (ReadID[n] == 2) {ReadID[n] = 1;  }
+////                              //  extra_counter = extra_counter + 1;
+////                            }
+////                        }
+////                    }
+////                }
+//
+//                // 12^3 case
 //                {
-//                    if ( ((i+(Nx-2)*iproc) > 9) && ((i+(Nx-2)*iproc) < 30) ) {
-//                        if ( ((j+(Ny-2)*jproc) > 9) && ((j+(Ny-2)*jproc) < 30) ) {
-//                            if ( ((k+(Nz-2)*kproc) > 9)  && ((k+(Nz-2)*kproc) < 30) ) {
+//                    if ( ((i+(Nx-2)*iproc) > 3) && ((i+(Nx-2)*iproc) < 10) ) {
+//                        if ( ((j+(Ny-2)*jproc) > 3) && ((j+(Ny-2)*jproc) < 10) ) {
+//                            if ( ((k+(Nz-2)*kproc) >= 1)  && ((k+(Nz-2)*kproc) <= 12) ) {
 //                                if (ReadID[n] == 2) {ReadID[n] = 1;  }
 //                              //  extra_counter = extra_counter + 1;
 //                            }
 //                        }
 //                    }
 //                }
-                
-                // 12^3 case
-                {
-                    if ( ((i+(Nx-2)*iproc) > 3) && ((i+(Nx-2)*iproc) < 10) ) {
-                        if ( ((j+(Ny-2)*jproc) > 3) && ((j+(Ny-2)*jproc) < 10) ) {
-                            if ( ((k+(Nz-2)*kproc) >= 1)  && ((k+(Nz-2)*kproc) <= 12) ) {
-                                if (ReadID[n] == 2) {ReadID[n] = 1;  }
-                              //  extra_counter = extra_counter + 1;
-                            }
-                        }
-                    }
-                }
-
-            }
-        }
-    }
-    //sum_local = 1.0*double(count); MPI_Allreduce(&sum_local,&denom,1,MPI_DOUBLE,MPI_SUM,comm);
-   
-    
-   //PopulateHalo_Char(ReadID, *Dm, Nx, Ny, Nz, rank);
-    
-    
-    //porosity = calculate_porosity(ReadID, Nx, Ny, Nz, *Dm, rank);
-    //if (rank == 0) cout << "Writing new ID files with porosity=" << porosity << endl;
-    
-    
-
-    count = 0;
-    swcount = 0;
-    totalGlobal = 0;
-    swGlobal = 0;
-
-   // if (Dm->rank()==0){
-   // 	printf("count,swcount,totalGlobal,swGlobal: %f %f %f %f \n",count,swcount,totalGlobal,swGlobal);
-   // }
-
-    for (int k=1; k<Nz-1; k++){
-        for (int j=1; j<Ny-1; j++){
-            for (int i=1; i<Nx-1; i++){
-                n = k*Nx*Ny+j*Nx+i;
-                if (ReadID[n] > 0)  {
-                    count += 1;
-                }
-                if (ReadID[n] == 2) {swcount +=1;}
-                
-            }
-        }
-    }
-
-    MPI_Allreduce(&count,&totalGlobal,1,MPI_DOUBLE,MPI_SUM,comm);
-    MPI_Allreduce(&swcount,&swGlobal,1,MPI_DOUBLE,MPI_SUM,comm);
-    sat = swGlobal/totalGlobal;
-    if (Dm->rank()==0){
-        printf("count post: %f \n",count);
-            printf("swcount post: %f \n",swcount);
-        printf("SW Post: %f \n",sat);
-    }
-
+//
+//            }
+//        }
+//    }
+//    //sum_local = 1.0*double(count); MPI_Allreduce(&sum_local,&denom,1,MPI_DOUBLE,MPI_SUM,comm);
+//
+//
+//   //PopulateHalo_Char(ReadID, *Dm, Nx, Ny, Nz, rank);
+//
+//
+//    //porosity = calculate_porosity(ReadID, Nx, Ny, Nz, *Dm, rank);
+//    //if (rank == 0) cout << "Writing new ID files with porosity=" << porosity << endl;
+//
+//
+//
+//    count = 0;
+//    swcount = 0;
+//    totalGlobal = 0;
+//    swGlobal = 0;
+//
+//   // if (Dm->rank()==0){
+//   // 	printf("count,swcount,totalGlobal,swGlobal: %f %f %f %f \n",count,swcount,totalGlobal,swGlobal);
+//   // }
+//
+//    for (int k=1; k<Nz-1; k++){
+//        for (int j=1; j<Ny-1; j++){
+//            for (int i=1; i<Nx-1; i++){
+//                n = k*Nx*Ny+j*Nx+i;
+//                if (ReadID[n] > 0)  {
+//                    count += 1;
+//                }
+//                if (ReadID[n] == 2) {swcount +=1;}
+//
+//            }
+//        }
+//    }
+//
+//    MPI_Allreduce(&count,&totalGlobal,1,MPI_DOUBLE,MPI_SUM,comm);
+//    MPI_Allreduce(&swcount,&swGlobal,1,MPI_DOUBLE,MPI_SUM,comm);
+//    sat = swGlobal/totalGlobal;
+//    if (Dm->rank()==0){
+//        printf("count post: %f \n",count);
+//            printf("swcount post: %f \n",swcount);
+//        printf("SW Post: %f \n",sat);
+//    }
+//
 
     
     //sprintf(LocalRankFilename,"%s%s/ID.%05i","/mnt/bb/",usr,rank);
@@ -940,7 +940,7 @@ void lbpm_partial_saturation_pp(int argc, char **argv,int rank, int nprocs, MPI_
     fwrite(ReadID,1,N,ID);
     fclose(ID);
     
-    if (rank == 0 ) cout << "End of random saturation pp." << endl << endl;
+   // if (rank == 0 ) cout << "End of random saturation pp." << endl << endl;
 }
 
 

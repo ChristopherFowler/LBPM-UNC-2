@@ -1419,25 +1419,6 @@ void TwoPhase::ComputeLocal()
     Point R,G,H,I;
     
     
-//    {
-//        double p1,p2,p3,p4,p5,p6,p7,p8;
-//        for (int i=1;i<Nx-1;i++)
-//        for (int j=1;j<Ny-1;j++)
-//        for (int k=1;k<Nz-1;k++){
-//            int n=k*(Nx)*(Ny)+j*(Nz)+i;
-//            p1 = Phase(i,j,k);
-//            p2 = Phase(i-1,j,k);
-//            p3 = Phase(i,j-1,k);
-//            p4 = Phase(i,j,k-1);
-//            p5 = Phase(i-1,j,k-1);
-//            p6 = Phase(i,j-1,k-1);
-//            p7 = Phase(i-1,j-1,k);
-//            p8 = Phase(i-1,j-1,k-1);
-//            Phasemc(i,j,k) = 0.125*(p1+p2+p3+p4+p5+p6+p7+p8);
-//        }
-//    }
-    
-   // Dm->CommunicateMeshHalo(Phasemc);
     Dm->CommunicateMeshHalo(Phase);
     pmmc_MeshGradient( Phase, SDn_x, SDn_y, SDn_z,Nx,Ny,Nz);
     
