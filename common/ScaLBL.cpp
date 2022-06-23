@@ -115,98 +115,98 @@ int Fneighbor2(char * id, int ijk, int strideY, int strideZ ) {
 }
 
 
-int Fneighbor(char *id, int ijk, int strideY, int strideZ ) {
+int Fneighbor(double *vfmask, int ijk, int strideY, int strideZ ) {
     
     int count, nn;
         count = 0;
     
         nn = ijk-1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk-strideY;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+strideY;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk-strideZ;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+strideZ;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk-strideY-1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+strideY+1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+strideY-1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk-strideY+1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk-strideZ-1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+strideZ+1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+strideZ-1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk-strideZ+1;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk-strideZ-strideY;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+strideZ+strideY;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk+strideZ-strideY;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
         //........................................................................
         nn = ijk-strideZ+strideY;
-        if (id[nn]==2 || id[nn]==1) {
+        if (vfmask[nn] < 0.5) {
             count++;
         }
 
@@ -673,7 +673,7 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA(IntArray &Map, int *neighborLis
                 n=k*Nx*Ny+j*Nx+i;
                 idx=Map(i,j,k);
                 if (idx > Np) printf("ScaLBL_Communicator::MemoryOptimizedLayout: Map(%i,%i,%i) = %i > %i \n",i,j,k,Map(i,j,k),Np);
-                else if (!(idx<0)){
+                if (!(idx<0)){
                     // store the idx associated with each neighbor
                     // store idx for self if neighbor is in solid or out of domain
                     //D3Q19 = {{1,0,0},{-1,0,0}
@@ -1309,6 +1309,7 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
     Np = (last_interior/16 + 1)*16;
     //printf("    Np=%i \n",Np);
     
+    int nn;
     // Now use Map to determine the neighbors for each lattice direction
     for (k=1;k<Nz-1;k++){
         for (j=1;j<Ny-1;j++){
@@ -1318,45 +1319,63 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
                 if (idx > Np) printf("ScaLBL_Communicator::MemoryOptimizedLayout: Map(%i,%i,%i) = %i > %i \n",i,j,k,Map(i,j,k),Np);
                 else if (!(idx<0)){
                     int neighbor;
+
                     neighbor=Map(i-1,j,k);
                     if (neighbor<0)    {  neighborList[idx]=idx + 2*Np;                 interpolationList[idx]=idx + 1*Np;       }
                     else               {  neighborList[idx]=neighbor + 1*Np;            interpolationList[idx]=0;                }
-                    if (neighbor<0 ) { scalarList[idx] = n;  }
+                    if (neighbor<0 ) {
+                        nn = idx-1;
+                        if (i-1<0)        nn += Nx;
+                        scalarList[idx] = nn;  }
                     else scalarList[idx] = n-1;
                     
                     
                     neighbor=Map(i+1,j,k);
                     if (neighbor<0)    {  neighborList[Np+idx] = idx + 1*Np;            interpolationList[Np+idx]=idx + 2*Np;      }
-                    else               {    neighborList[Np+idx]= neighbor + 2*Np;      interpolationList[Np+idx]=1;               }
-                    if (neighbor<0 ) { scalarList[Np+idx] = n;  }
+                    else               {    neighborList[Np+idx]= neighbor + 2*Np;      interpolationList[Np+idx]=NAN;               }
+                    if (neighbor<0 ) {
+                        nn = idx+1;
+                        if (!(i+1<Nx))    nn -= Nx;
+                        scalarList[Np+idx] = nn;  }
                     else scalarList[Np+idx] = n+1;
                     
                     
                     neighbor=Map(i,j-1,k);
                     if (neighbor<0)    {   neighborList[2*Np+idx]=idx + 4*Np;           interpolationList[2*Np+idx]=idx + 3*Np; }
-                    else               {   neighborList[2*Np+idx]=neighbor + 3*Np;      interpolationList[2*Np+idx]=1;          }
-                    if (neighbor<0 ) { scalarList[2*Np+idx] = n;  }
+                    else               {   neighborList[2*Np+idx]=neighbor + 3*Np;      interpolationList[2*Np+idx]=NAN;          }
+                    if (neighbor<0 ) {
+                        nn = idx-Nx;
+                        if (j-1<0)        nn += Nx*Ny;
+                     scalarList[2*Np+idx] = nn;  }
                     else scalarList[2*Np+idx] = n-strideY;
                     
                     
                     neighbor=Map(i,j+1,k);
                     if (neighbor<0)    {   neighborList[3*Np+idx]=idx + 3*Np;           interpolationList[3*Np+idx]=idx + 4*Np;  }
-                    else               {   neighborList[3*Np+idx]=neighbor + 4*Np;      interpolationList[3*Np+idx]=1;           }
-                    if (neighbor<0 ) { scalarList[3*Np+idx] = n;  }
+                    else               {   neighborList[3*Np+idx]=neighbor + 4*Np;      interpolationList[3*Np+idx]=NAN;           }
+                    if (neighbor<0 ) {
+                        nn = idx+Nx;
+                        if (!(j+1<Ny))    nn -= Nx*Ny;
+                        scalarList[3*Np+idx] = nn;  }
                     else scalarList[3*Np+idx] = n+strideY;
                     
                     
                     neighbor=Map(i,j,k-1);
                     if (neighbor<0)    {   neighborList[4*Np+idx]=idx + 6*Np;           interpolationList[4*Np+idx]=idx + 5*Np;  }
-                    else               {   neighborList[4*Np+idx]=neighbor + 5*Np;      interpolationList[4*Np+idx]=1;           }
-                    if (neighbor<0 ) { scalarList[4*Np+idx] = n;  }
+                    else               {   neighborList[4*Np+idx]=neighbor + 5*Np;      interpolationList[4*Np+idx]=NAN;           }
+                    if (neighbor<0 ) {
+                        nn = idx-Nx*Ny;
+                        if (k-1<0)        nn += Nx*Ny*Nz;
+                        scalarList[4*Np+idx] = nn;  }
                     else scalarList[4*Np+idx] = n-strideZ;
                     
                     
                     neighbor=Map(i,j,k+1);
                     if (neighbor<0)    {   neighborList[5*Np+idx]=idx + 5*Np;           interpolationList[5*Np+idx]=idx + 6*Np;   }
-                    else               {   neighborList[5*Np+idx]=neighbor + 6*Np;      interpolationList[5*Np+idx]=1;         }
-                    if (neighbor<0) { scalarList[5*Np+idx] = n;  }
+                    else               {   neighborList[5*Np+idx]=neighbor + 6*Np;      interpolationList[5*Np+idx]=NAN;         }
+                    if (neighbor<0) { nn = idx+Nx*Ny;
+                        if (!(k+1<Nz))    nn -= Nx*Ny*Nz;
+                        scalarList[5*Np+idx] = nn;  }
                     else scalarList[5*Np+idx] = n+strideZ;
                     
                     
@@ -1368,32 +1387,46 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
                     
                     neighbor=Map(i-1,j-1,k);
                     if (neighbor<0)    {   neighborList[6*Np+idx]=idx + 8*Np;           interpolationList[6*Np+idx]=idx + 7*Np;  }
-                    else               {   neighborList[6*Np+idx]=neighbor + 7*Np;      interpolationList[6*Np+idx]=1;  }
-                    if (neighbor<0) { scalarList[6*Np+idx] = n;  }
+                    else               {   neighborList[6*Np+idx]=neighbor + 7*Np;      interpolationList[6*Np+idx]=NAN;  }
+                    if (neighbor<0) {
+                        nn = idx-Nx-1;
+                        if (i-1<0)            nn += Nx;
+                        if (j-1<0)            nn += Nx*Ny;
+                        scalarList[6*Np+idx] = nn;  }
                     else scalarList[6*Np+idx] = n-1-strideY;
                     
                     
                     
                     neighbor=Map(i+1,j+1,k);
                     if (neighbor<0)    {   neighborList[7*Np+idx]=idx + 7*Np;           interpolationList[7*Np+idx]=idx + 8*Np;  }
-                    else               {   neighborList[7*Np+idx]=neighbor+8*Np;        interpolationList[7*Np+idx]=1;  }
-                    if (neighbor<0 ) { scalarList[7*Np+idx] = n;  }
+                    else               {   neighborList[7*Np+idx]=neighbor+8*Np;        interpolationList[7*Np+idx]=NAN;  }
+                    if (neighbor<0 ) {  nn = idx+Nx+1;
+                        if (!(i+1<Nx))        nn -= Nx;
+                        if (!(j+1<Ny))        nn -= Nx*Ny;
+                        scalarList[7*Np+idx] = nn;  }
                     else scalarList[7*Np+idx] = n+1+strideY;
                     
                     
                     
                     neighbor=Map(i-1,j+1,k);
                     if (neighbor<0)    {   neighborList[8*Np+idx]=idx + 10*Np;          interpolationList[8*Np+idx]=idx + 9*Np;  }
-                    else               {   neighborList[8*Np+idx]=neighbor + 9*Np;      interpolationList[8*Np+idx]=1;  }
-                    if (neighbor<0 ) { scalarList[8*Np+idx] = n;  }
+                    else               {   neighborList[8*Np+idx]=neighbor + 9*Np;      interpolationList[8*Np+idx]=NAN;  }
+                    if (neighbor<0 ) {
+                        nn = idx+Nx-1;
+                        if (i-1<0)            nn += Nx;
+                        if (!(j+1<Ny))        nn -= Nx*Ny;
+                        scalarList[8*Np+idx] = nn;  }
                     else scalarList[8*Np+idx] = n-1+strideY;
                     
                     
                     
                     neighbor=Map(i+1,j-1,k);
                     if (neighbor<0)    {   neighborList[9*Np+idx]=idx + 9*Np;           interpolationList[9*Np+idx]=idx + 10*Np; }
-                    else               {   neighborList[9*Np+idx]=neighbor + 10*Np;     interpolationList[9*Np+idx]=1; }
-                    if (neighbor<0 ) { scalarList[9*Np+idx] = n;  }
+                    else               {   neighborList[9*Np+idx]=neighbor + 10*Np;     interpolationList[9*Np+idx]=NAN; }
+                    if (neighbor<0 ) {  nn = idx-Nx+1;
+                        if (!(i+1<Nx))        nn -= Nx;
+                        if (j-1<0)            nn += Nx*Ny;
+                        scalarList[9*Np+idx] = nn;  }
                     else scalarList[9*Np+idx] = n+1-strideY;
                     
                     
@@ -1402,8 +1435,12 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
                     
                     neighbor=Map(i-1,j,k-1);
                     if (neighbor<0)    {   neighborList[10*Np+idx]=idx + 12*Np;         interpolationList[10*Np+idx]=idx + 11*Np; }
-                    else               {   neighborList[10*Np+idx]=neighbor + 11*Np;    interpolationList[10*Np+idx]=1; }
-                    if (neighbor<0) { scalarList[10*Np+idx] = n;  }
+                    else               {   neighborList[10*Np+idx]=neighbor + 11*Np;    interpolationList[10*Np+idx]=NAN; }
+                    if (neighbor<0) {
+                        nn = idx-Nx*Ny-1;
+                        if (i-1<0)            nn += Nx;
+                        if (k-1<0)            nn += Nx*Ny*Nz;
+                        scalarList[10*Np+idx] = nn;  }
                     else scalarList[10*Np+idx] = n-1-strideZ;
                     
                     
@@ -1411,24 +1448,35 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
                     
                     neighbor=Map(i+1,j,k+1);
                     if (neighbor<0)    {   neighborList[11*Np+idx]=idx + 11*Np;         interpolationList[11*Np+idx]=idx + 12*Np; }
-                    else               {   neighborList[11*Np+idx]=neighbor + 12*Np;    interpolationList[11*Np+idx]=1; }
-                    if (neighbor<0 ) { scalarList[11*Np+idx] = n;  }
+                    else               {   neighborList[11*Np+idx]=neighbor + 12*Np;    interpolationList[11*Np+idx]=NAN; }
+                    if (neighbor<0 ) {
+                        nn = idx+Nx*Ny+1;
+                        if (!(i+1<Nx))        nn -= Nx;
+                        if (!(k+1<Nz))    nn -= Nx*Ny*Nz;
+                        scalarList[11*Np+idx] = nn;  }
                     else scalarList[11*Np+idx] = n+1+strideZ;
                     
                     
                     
                     neighbor=Map(i-1,j,k+1);
                     if (neighbor<0)    {   neighborList[12*Np+idx]=idx + 14*Np;         interpolationList[12*Np+idx]=idx + 13*Np; }
-                    else               {   neighborList[12*Np+idx]=neighbor + 13*Np;    interpolationList[12*Np+idx]=1; }
-                    if (neighbor<0 ) { scalarList[12*Np+idx] = n;  }
+                    else               {   neighborList[12*Np+idx]=neighbor + 13*Np;    interpolationList[12*Np+idx]=NAN; }
+                    if (neighbor<0 ) {  nn = idx+Nx*Ny-1;
+                        if (i-1<0)            nn += Nx;
+                        if (!(k+1<Nz))        nn -= Nx*Ny*Nz;
+                        scalarList[12*Np+idx] = nn;  }
                     else scalarList[12*Np+idx] = n-1+strideZ;
                     
                     
                     
                     neighbor=Map(i+1,j,k-1);
                     if (neighbor<0)    {   neighborList[13*Np+idx]=idx + 13*Np;         interpolationList[13*Np+idx]=idx + 14*Np; }
-                    else               {   neighborList[13*Np+idx]=neighbor + 14*Np;    interpolationList[13*Np+idx]=1; }
-                    if (neighbor<0 ) { scalarList[13*Np+idx] = n;  }
+                    else               {   neighborList[13*Np+idx]=neighbor + 14*Np;    interpolationList[13*Np+idx]=NAN; }
+                    if (neighbor<0 ) {
+                        nn = idx-Nx*Ny+1;
+                        if (!(i+1<Nx))        nn -= Nx;
+                        if (k-1<0)            nn += Nx*Ny*Nz;
+                        scalarList[13*Np+idx] = nn;  }
                     else scalarList[13*Np+idx] = n+1-strideZ;
                     
                     
@@ -1438,32 +1486,47 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
                     
                     neighbor=Map(i,j-1,k-1);
                     if (neighbor<0)    {   neighborList[14*Np+idx]=idx + 16*Np;         interpolationList[14*Np+idx]=idx + 15*Np; }
-                    else               {   neighborList[14*Np+idx]=neighbor + 15*Np;    interpolationList[14*Np+idx]=1; }
-                    if (neighbor<0 ) { scalarList[14*Np+idx] = n;  }
+                    else               {   neighborList[14*Np+idx]=neighbor + 15*Np;    interpolationList[14*Np+idx]=NAN; }
+                    if (neighbor<0 ) {  nn = idx-Nx*Ny-Nx;
+                        if (j-1<0)        nn += Nx*Ny;
+                        if (k-1<0)        nn += Nx*Ny*Nz;
+                        scalarList[14*Np+idx] = nn;  }
                     else scalarList[14*Np+idx] = n-strideY-strideZ;
                     
                     
                     
                     neighbor=Map(i,j+1,k+1);
                     if (neighbor<0)    {   neighborList[15*Np+idx]=idx + 15*Np;         interpolationList[15*Np+idx]=idx + 16*Np; }
-                    else               {   neighborList[15*Np+idx]=neighbor + 16*Np;    interpolationList[15*Np+idx]=1; }
-                    if (neighbor<0) { scalarList[15*Np+idx] = n;  }
+                    else               {   neighborList[15*Np+idx]=neighbor + 16*Np;    interpolationList[15*Np+idx]=NAN; }
+                    if (neighbor<0) {
+                        nn = idx+Nx*Ny+Nx;
+                        if (!(j+1<Ny))    nn -= Nx*Ny;
+                        if (!(k+1<Nz))    nn -= Nx*Ny*Nz;
+                        scalarList[15*Np+idx] = nn;  }
                     else scalarList[15*Np+idx] = n+strideY+strideZ;
                     
                     
                     
                     neighbor=Map(i,j-1,k+1);
                     if (neighbor<0)    {   neighborList[16*Np+idx]=idx + 18*Np;         interpolationList[16*Np+idx]=idx + 17*Np; }
-                    else               {   neighborList[16*Np+idx]=neighbor + 17*Np;    interpolationList[16*Np+idx]=1; }
-                    if (neighbor<0 ) { scalarList[16*Np+idx] = n;  }
+                    else               {   neighborList[16*Np+idx]=neighbor + 17*Np;    interpolationList[16*Np+idx]=NAN; }
+                    if (neighbor<0 ) {
+                        nn = idx+Nx*Ny-Nx;
+                        if (j-1<0)        nn += Nx*Ny;
+                        if (!(k+1<Nz))    nn -= Nx*Ny*Nz;
+                      scalarList[16*Np+idx] = nn;  }
                     else scalarList[16*Np+idx] = n-strideY+strideZ;
                     
                     
                     
                     neighbor=Map(i,j+1,k-1);
                     if (neighbor<0)    {   neighborList[17*Np+idx]=idx + 17*Np;         interpolationList[17*Np+idx]=idx + 18*Np;  }
-                    else               {   neighborList[17*Np+idx]=neighbor + 18*Np;    interpolationList[17*Np+idx]=1;  }
-                    if (neighbor<0 ) { scalarList[17*Np+idx] = n;  }
+                    else               {   neighborList[17*Np+idx]=neighbor + 18*Np;    interpolationList[17*Np+idx]=NAN;  }
+                    if (neighbor<0 ) {
+                        nn = idx-Nx*Ny+Nx;
+                        if (!(j+1<Ny))    nn -= Nx*Ny;
+                        if (k-1<0)        nn += Nx*Ny*Nz;
+                        scalarList[17*Np+idx] = nn;  }
                     else scalarList[17*Np+idx] = n+strideY-strideZ;
                 }
             }
@@ -2426,7 +2489,7 @@ int ScaLBL_Communicator::MemoryOptimizedInactiveLayout(IntArray &InactiveMap, ch
         }
     }
     
-    int FluidNeighborCount;
+    int FluidNeighborCount = 0;
     // ********* Exterior **********
     // Step 1/2: Index the outer walls of the grid only
     idx=0;    next_inactive=0;
@@ -2437,10 +2500,10 @@ int ScaLBL_Communicator::MemoryOptimizedInactiveLayout(IntArray &InactiveMap, ch
                 InactiveMap(i,j,k) = -1;
                 // Local index
                 n = k*Nx*Ny+j*Nx+i;
-                 if (VFmask[n] > 0.5) {
+                 if (VFmask[n] >= 0.5) {
 //                if (VFmask[n] > 0.5 && VFmask[n] < 1.0) {
                     FluidNeighborCount = 0;
-                    FluidNeighborCount = Fneighbor(id, n, Nx, Nx*Ny); // The reachability condition
+                    FluidNeighborCount = Fneighbor(VFmask, n, Nx, Nx*Ny); // The reachability condition
                     if (FluidNeighborCount > 0){
                         // Counts for the six faces
                         if (i==1)       InactiveMap(n)=idx++;
@@ -2451,7 +2514,7 @@ int ScaLBL_Communicator::MemoryOptimizedInactiveLayout(IntArray &InactiveMap, ch
                         else if (k==Nz-2)  InactiveMap(n)=idx++;
                         id[n] = 3;
                     }
-                     FluidNeighborCount = 0;
+//                     FluidNeighborCount = 0;
                 }
             }
         }
@@ -2468,10 +2531,10 @@ int ScaLBL_Communicator::MemoryOptimizedInactiveLayout(IntArray &InactiveMap, ch
             for (i=2; i<Nx-2; i++){
                 // Local index (regular layout)
                 n = k*Nx*Ny + j*Nx + i;
-                 if (VFmask[n] > 0.5) {
+                 if (VFmask[n] >= 0.5) {
 //                if (VFmask[n] > 0.5 && VFmask[n] < 1.0) {
                     FluidNeighborCount = 0;
-                    FluidNeighborCount = Fneighbor(id, n, Nx, Nx*Ny);
+                    FluidNeighborCount = Fneighbor(VFmask, n, Nx, Nx*Ny);
                     if (FluidNeighborCount > 0){
                         InactiveMap(n) = idx++;
                         id[n] = 3;
@@ -2486,107 +2549,10 @@ int ScaLBL_Communicator::MemoryOptimizedInactiveLayout(IntArray &InactiveMap, ch
     
     Ni = (last_inactive_interior/16 + 1)*16;
 
-    
-    
-    
-    
-    
-    
-    
+
     return(Ni);
 }
 
-
-
-//int ScaLBL_Communicator::CreateInactiveMap(IntArray &InactiveMap, double * VFmask, int Ni, int strideY, int strideZ, int* scalarList) {
-//
-//    int i,j,k,nn,n,idx;
-//    
-//    for (k=1;k<Nz-1;k++){
-//        for (j=1;j<Ny-1;j++){
-//            for (i=1;i<Nx-1;i++){
-//                n=k*Nx*Ny+j*Nx+i;
-//                idx=InactiveMap(i,j,k);
-//                if (idx > Ni) printf("ScaLBL_Communicator::MemoryOptimizedInactiveLayout: InactiveMap(%i,%i,%i) = %i > %i \n",i,j,k,InactiveMap(i,j,k),Ni);
-//                else if (!(idx<0)){
-//                    int neighbor;
-//                    nn = n-1;
-//                    if (VFmask[nn]==1) { scalarList[idx] = n;  }
-//                    else scalarList[idx] = n-1;
-//                    
-//                    nn = n+1;
-//                    if (VFmask[nn]==1 ) { scalarList[Ni+idx] = n;  }
-//                    else scalarList[Ni+idx] = n+1;
-//                    
-//                    nn = n-strideY;
-//                    if (VFmask[nn]==1) { scalarList[2*Ni+idx] = n;  }
-//                    else scalarList[2*Ni+idx] = n-strideY;
-//                    
-//                    nn = n+strideY;
-//                    if (VFmask[nn]==1 ) { scalarList[3*Ni+idx] = n;  }
-//                    else scalarList[3*Ni+idx] = n+strideY;
-//                    
-//                    nn = n-strideZ;
-//                    if (VFmask[nn]==1) { scalarList[4*Ni+idx] = n;  }
-//                    else scalarList[4*Ni+idx] = n-strideZ;
-//                    
-//                    nn = n+strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[5*Ni+idx] = n;  }
-//                    else scalarList[5*Ni+idx] = n+strideZ;
-//                    
-//                    nn = n-1-strideY;
-//                    if (VFmask[nn]==1 ) { scalarList[6*Ni+idx] = n;  }
-//                    else scalarList[6*Ni+idx] = n-1-strideY;
-//                    
-//                    nn = n+1+strideY;
-//                    if (VFmask[nn]==1 ) { scalarList[7*Ni+idx] = n;  }
-//                    else scalarList[7*Ni+idx] = n+1+strideY;
-//                    
-//                    nn = n-1+strideY;
-//                    if (VFmask[nn]==1 ) { scalarList[8*Ni+idx] = n;  }
-//                    else scalarList[8*Ni+idx] = n-1+strideY;
-//                    
-//                    nn = n+1-strideY;
-//                    if (VFmask[nn]==1 ) { scalarList[9*Ni+idx] = n;  }
-//                    else scalarList[9*Ni+idx] = n+1-strideY;
-//                    
-//                    nn = n-1-strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[10*Ni+idx] = n;  }
-//                    else scalarList[10*Ni+idx] = n-1-strideZ;
-//                    
-//                    nn = n+1+strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[11*Ni+idx] = n;  }
-//                    else scalarList[11*Ni+idx] = n+1+strideZ;
-//                    
-//                    nn = n-1+strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[12*Ni+idx] = n;  }
-//                    else scalarList[12*Ni+idx] = n-1+strideZ;
-//                    
-//                    nn = n+1-strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[13*Ni+idx] = n;  }
-//                    else scalarList[13*Ni+idx] = n+1-strideZ;
-//                    
-//                    nn = n-strideY-strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[14*Ni+idx] = n;  }
-//                    else scalarList[14*Ni+idx] = n-strideY-strideZ;
-//                    
-//                    nn = n+strideY+strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[15*Ni+idx] = n;  }
-//                    else scalarList[15*Ni+idx] = n+strideY+strideZ;
-//                    
-//                    nn = n-strideY+strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[16*Ni+idx] = n;  }
-//                    else scalarList[16*Ni+idx] = n-strideY+strideZ;
-//                    
-//                    nn = n+strideY-strideZ;
-//                    if (VFmask[nn]==1 ) { scalarList[17*Ni+idx] = n;  }
-//                    else scalarList[17*Ni+idx] = n+strideY-strideZ;
-//
-//                }
-//            }
-//        }
-//    }
-//}
 
 
 int ScaLBL_Communicator::CreateActiveMap(IntArray &SBMap, char * id, int Nsb, int strideY, int strideZ, int* scalarList) {
@@ -2599,7 +2565,7 @@ int ScaLBL_Communicator::CreateActiveMap(IntArray &SBMap, char * id, int Nsb, in
                 n=k*Nx*Ny+j*Nx+i;
                 idx=SBMap(i,j,k);
                 if (idx > Nsb) printf("ScaLBL_Communicator::MemoryOptimizedActiveLayout: ActiveMap(%i,%i,%i) = %i > %i \n",i,j,k,SBMap(i,j,k),Nsb);
-                else if (!(idx<0)){
+                if (!(idx<0)){
                    // int neighbor;
                     nn = n-1;
                     if (id[nn]==3) { scalarList[idx] = n;  }
@@ -2792,8 +2758,7 @@ int ScaLBL_Communicator::CreateInactiveMap(IntArray &InactiveMap, char * id, int
                 n=k*Nx*Ny+j*Nx+i;
                 idx=InactiveMap(i,j,k);
                 if (idx > Ni) printf("ScaLBL_Communicator::MemoryOptimizedInactiveLayout: InactiveMap(%i,%i,%i) = %i > %i \n",i,j,k,InactiveMap(i,j,k),Ni);
-                else if (!(idx<0)){
-                   // int neighbor;
+                if (!(idx<0)){
                     
                     nn = n-1;
                     if (id[nn]==4) { scalarList[idx] = n;  }
@@ -2946,6 +2911,7 @@ void ScaLBL_Communicator::TriRecvD3Q7AA(double *Aq, double *Bq, double *Cq){
 }
 
 
+
 void ScaLBL_Communicator::SendHalo(double *data){
     //...................................................................................
     if (Lock==true){
@@ -3070,10 +3036,9 @@ void ScaLBL_Communicator::SendHaloMany(double *data1,double *data2,double *data3
     //...................................................................................
     ScaLBL_Scalar_Pack_Many(dvcSendList_x, sendCount_x,sendbuf_x, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Pack_Many(dvcSendList_y, sendCount_y,sendbuf_y, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-  
+    ScaLBL_Scalar_Pack_Many(dvcSendList_z, sendCount_z,sendbuf_z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Pack_Many(dvcSendList_X, sendCount_X,sendbuf_X, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Pack_Many(dvcSendList_Y, sendCount_Y,sendbuf_Y, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-    ScaLBL_Scalar_Pack_Many(dvcSendList_z, sendCount_z,sendbuf_z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Pack_Many(dvcSendList_Z, sendCount_Z,sendbuf_Z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Pack_Many(dvcSendList_xy, sendCount_xy,sendbuf_xy, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Pack_Many(dvcSendList_xY, sendCount_xY,sendbuf_xY, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
@@ -3088,8 +3053,6 @@ void ScaLBL_Communicator::SendHaloMany(double *data1,double *data2,double *data3
     ScaLBL_Scalar_Pack_Many(dvcSendList_Yz, sendCount_Yz,sendbuf_Yz, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Pack_Many(dvcSendList_YZ, sendCount_YZ,sendbuf_YZ, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     //...................................................................................
-    
-   
     // Send / Recv all the phase indcator field values
     //...................................................................................
     
@@ -3130,20 +3093,6 @@ void ScaLBL_Communicator::SendHaloMany(double *data1,double *data2,double *data3
     MPI_Isend(sendbuf_yZ,10*sendCount_yZ,MPI_DOUBLE,rank_yZ,sendtag,MPI_COMM_SCALBL,&req1[17]);
     MPI_Irecv(recvbuf_Yz,10*recvCount_Yz,MPI_DOUBLE,rank_Yz,recvtag,MPI_COMM_SCALBL,&req2[17]);
     //...................................................................................
-    
-//    if (BoundaryCondition > 0 && kproc == 0){
-//
-//
-//    }
-//    else if (BoundaryCondition > 0 && kproc == nprocz-1){
-//
-//
-//    }
-//    else {
-        
-//    }
-    
-   
 }
 void ScaLBL_Communicator::RecvHaloMany(double *data1,double *data2,double *data3,double *data4,double *data5,double *data6,double *data7,double *data8,double *data9,double *data10){
     
@@ -3155,15 +3104,11 @@ void ScaLBL_Communicator::RecvHaloMany(double *data1,double *data2,double *data3
     //...................................................................................
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_x, recvCount_x,recvbuf_x, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_y, recvCount_y,recvbuf_y, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-
+    ScaLBL_Scalar_Unpack_Many(dvcRecvList_z, recvCount_z,recvbuf_z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_X, recvCount_X,recvbuf_X, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_Y, recvCount_Y,recvbuf_Y, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-    
-    ScaLBL_Scalar_Unpack_Many(dvcRecvList_z, recvCount_z,recvbuf_z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_Z, recvCount_Z,recvbuf_Z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-    
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_xy, recvCount_xy,recvbuf_xy, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-    
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_xY, recvCount_xY,recvbuf_xY, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_Xy, recvCount_Xy,recvbuf_Xy, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_XY, recvCount_XY,recvbuf_XY, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
@@ -3175,21 +3120,13 @@ void ScaLBL_Communicator::RecvHaloMany(double *data1,double *data2,double *data3
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_yZ, recvCount_yZ,recvbuf_yZ, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_Yz, recvCount_Yz,recvbuf_Yz, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
     ScaLBL_Scalar_Unpack_Many(dvcRecvList_YZ, recvCount_YZ,recvbuf_YZ, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-    
-    if (BoundaryCondition > 0 && kproc == 0){
-        ScaLBL_Scalar_Unpack_Many(dvcRecvList_Z, recvCount_Z,recvbuf_Z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-    }
-    else if (BoundaryCondition > 0 && kproc == nprocz-1){
-        ScaLBL_Scalar_Unpack_Many(dvcRecvList_z, recvCount_z,recvbuf_z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-    }
-    else {
-        ScaLBL_Scalar_Unpack_Many(dvcRecvList_Z, recvCount_Z,recvbuf_Z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-        ScaLBL_Scalar_Unpack_Many(dvcRecvList_z, recvCount_z,recvbuf_z, data1,data2,data3,data4,data5,data6,data7,data8,data9,data10, N);
-    }
     //...................................................................................
     Lock=false; // unlock the communicator after communications complete
     //...................................................................................
 }
+
+
+
 
 
 void ScaLBL_Communicator::RegularLayout(IntArray map, const double *data, DoubleArray &regdata){

@@ -532,8 +532,6 @@ void TwoPhase::nwsComputeQuantities(nwsMyMesh & m_nws, nwMyMesh & m_nw, DoubleAr
         double y_rank_max;
         double z_rank_max;
         
-       
-        
         x_rank_min = 0.5 + 1.0*Dm->iproc()*(Nx-2);
         y_rank_min = 0.5 + 1.0*Dm->jproc()*(Nx-2) + double(offset_distance);
         z_rank_min = 0.5 + 1.0*Dm->kproc()*(Nx-2);

@@ -1021,6 +1021,12 @@ void TwoPhase::SavePhaseIntoOldPhase(DoubleArray & NewField, DoubleArray & Field
 
 void TwoPhase::ComputeVolumeFraction(DoubleArray & Field, DoubleArray & Field_x, DoubleArray& Field_y, DoubleArray& Field_z, DoubleArray& VolumeFraction, bool UpdateNormalToSolid, int rmin, int rmax, int geometry)
 {
+    
+    /* Adjusting VF corners correctly: Needs to be correctly implemented for for nprocs > 8 */
+    Field(0) = Field(Nx-1) = Field((Ny-1)*Nx) = Field((Ny-1)*Nx + Nx-1) = 1;
+    Field((Nz-1)*Nx*Ny) = Field((Nz-1)*Nx*Ny+Nx-1) = Field((Nz-1)*Nx*Ny+(Ny-1)*Nx) = Field((Nz-1)*Nx*Ny+(Ny-1)*Nx + Nx-1) = 0;
+    
+    
     Dm->CommunicateMeshHalo(Field);
     pmmc_MeshGradient(Field,Field_x,Field_y,Field_z,Nx,Ny,Nz);
     Dm->CommunicateMeshHalo(Field_x);
@@ -1250,8 +1256,7 @@ void TwoPhase::ComputeVolumeFraction(DoubleArray & Field, DoubleArray & Field_x,
         n_nw_pts=n_ns_pts=n_ws_pts=n_nws_pts=n_local_sol_pts=n_local_nws_pts=0;
         n_nw_tris=n_ns_tris=n_ws_tris=n_nws_seg=n_local_sol_tris=0;
 
-        pmmc_ConstructLocalCube(Field,  zero,  zero,  zero,  zero, solid_isovalue, fluid_isovalue,
-                                nw_pts, nw_tris, Values, ns_pts, ns_tris, ws_pts, ws_tris,
+        pmmc_ConstructLocalCube(Field,  zero,  zero,  zero,  zero, solid_isovalue, fluid_isovalue,nw_pts, nw_tris, Values, ns_pts, ns_tris, ws_pts, ws_tris,
                                 local_nws_pts, nws_pts, nws_seg, local_sol_pts, local_sol_tris,
                                 n_local_sol_tris, n_local_sol_pts, n_nw_pts, n_nw_tris,
                                 n_ws_pts, n_ws_tris, n_ns_tris, n_ns_pts, n_local_nws_pts, n_nws_pts, n_nws_seg, i, j, k, Nx, Ny, Nz);
@@ -1348,9 +1353,9 @@ void TwoPhase::ComputeVolumeFraction(DoubleArray & Field, DoubleArray & Field_x,
 
 
 
-for (int k=1; (size_t)k<Nz-1; k++) {
-    for (int j=1; (size_t)j<Ny-1; j++) {
-        for (int i=1; (size_t)i<Nx-1; i++) {
+for (int k=1; k<Nz-1; k++) {
+    for (int j=1; j<Ny-1; j++) {
+        for (int i=1; i<Nx-1; i++) {
             n = i + j*Nx + k*Nx*Ny;
             if (Field(n) < 0.0 && VolumeFraction(n) == 0 ){
                 VolumeFraction(n) = 1.0;
@@ -2468,8 +2473,8 @@ void TwoPhase::PrintAll(int timestep)
         fflush(TIMELOG_global);
         
         
-        if (timestep > 1800) {
-            printf("resulting contact angle=%f\n",efawns_global);
+//        if (timestep > 1800) {
+            printf("timestep=%d resulting contact angle=%f\n",timestep,efawns_global);
             string filename("/Users/cpf/Desktop/build_LBPM_UNC_042522/Testing/Results.txt");
             fstream file;
 
@@ -2480,7 +2485,7 @@ void TwoPhase::PrintAll(int timestep)
             if (file.is_open() && offset_distance == 28) {
                 file << efawns_global << endl;
             }
-        }
+//        }
     }
     if ( TIMELOG_local ){
 

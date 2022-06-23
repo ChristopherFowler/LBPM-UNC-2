@@ -138,7 +138,7 @@ extern "C" void ScaLBL_Color_InitDistanceFull(char *ID, double *Phi, double* Dis
 
 extern "C" void ExtrapolateDensities(int *Map, double * VFmask, double * DenA2, double * DenB2, double *DenA, double* DenB, double * Phi, int start, int finish, int Ni, int strideY, int strideZ);
 
-extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi, double * GradPhiX, double * GradPhiY, double * GradPhiZ, double * CField, double * GradSDsX, double * GradSDsY, double * GradSDsZ, int strideY, int strideZ, int start, int finish, int Np, int WBCFlag);
+extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi, double * GradPhiX, double * GradPhiY, double * GradPhiZ, double * CField, double * GradSDsX, double * GradSDsY, double * GradSDsZ, int strideY, int strideZ, int start, int finish, int Np, int WBCFlag, int Nx, int Ny, int Nz);
 
 extern "C" void AnalyticalSphereTranslation(int *dvcMap,double *Phi,int ip,int jp,int kp,int Nx, int Ny, int Nz,double cx,double cy,double cz,double radius,double thickness,int start,int finish,int Np);
 

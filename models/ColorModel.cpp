@@ -250,7 +250,6 @@ void ScaLBL_ColorModel::Create() {
     for (int i=0; i<Nx*Ny*Nz; i++) Dm->id[i] = Mask->id[i];
     Mask->CommInit();
     Np=Mask->PoreCount();
-  
     //...........................................................................
     ScaLBL_Comm  = std::shared_ptr<ScaLBL_Communicator>(new ScaLBL_Communicator(Mask));
     ScaLBL_Comm_Regular  = std::shared_ptr<ScaLBL_Communicator>(new ScaLBL_Communicator(blank));
@@ -264,7 +263,7 @@ void ScaLBL_ColorModel::Create() {
     auto interpolationList= new int[Nq*Npad];
     auto scalarList= new int[Nq*Npad];
     
-    //for (int i= 0; i < N; i++) (i) = Mask->id[i];
+    for (int i= 0; i < N; i++) Averages->ID(i) = Mask->id[i];
     
     Np = ScaLBL_Comm->MemoryOptimizedLayoutAA_LIBB(Map,neighborList,interpolationList,scalarList,Mask->id,Np,Nx,Nx*Ny);
     MPI_Barrier(comm);
@@ -276,7 +275,7 @@ void ScaLBL_ColorModel::Create() {
     int signSize = N*sizeof(double);
    // int qsize = 18*N*sizeof(double);
     //...........................................................................
-       ScaLBL_AllocateDeviceMemory((void **) &NeighborList, neighborSize);
+    ScaLBL_AllocateDeviceMemory((void **) &NeighborList, neighborSize);
     ScaLBL_AllocateDeviceMemory((void **) &InterpolationList, neighborSize);
 
     ScaLBL_AllocateDeviceMemory((void **) &dvcMap, sizeof(int)*Np);
@@ -330,20 +329,16 @@ void ScaLBL_ColorModel::Create() {
     fflush(stdout);
     
     ScaLBL_Comm_Regular->SendHalo(VFmask);
-ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
     ScaLBL_Comm_Regular->RecvHalo(VFmask);
     ScaLBL_DeviceBarrier();    MPI_Barrier(comm);
-	
+    
     ScaLBL_Comm_Regular->SendHalo(NormalToSolid_X);
-ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
     ScaLBL_Comm_Regular->RecvHalo(NormalToSolid_X);
 
     ScaLBL_Comm_Regular->SendHalo(NormalToSolid_Y);
-ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
     ScaLBL_Comm_Regular->RecvHalo(NormalToSolid_Y);
 
     ScaLBL_Comm_Regular->SendHalo(NormalToSolid_Z);
-ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
     ScaLBL_Comm_Regular->RecvHalo(NormalToSolid_Z);
 
    double *tmpfq; tmpfq = new double[19*Np];
@@ -353,11 +348,18 @@ ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
         ScaLBL_CopyToDevice(fq2, tmpfq, 19*sizeof(double)*Np);
         ScaLBL_CopyToDevice(savedfq, tmpfq, 19*sizeof(double)*Np);
 
-delete[] tmpfq; 
-    
-    fflush(stdout);
-    
-    activeMap = new int[Np];
+delete[] tmpfq;
+
+// ScaLBL_Comm->SendD3Q19AA(fq);
+//        ScaLBL_Comm->RecvD3Q19AA(fq);
+
+//     ScaLBL_Comm->SendD3Q19AA(fq2);
+//        ScaLBL_Comm->RecvD3Q19AA(fq2);
+
+//     ScaLBL_Comm->SendD3Q19AA(savedfq);
+//        ScaLBL_Comm->RecvD3Q19AA(savedfq);
+
+    activeMap = new int[Np]; for (int a = 0; a < Np; a++) activeMap[a] = 0; printf("Np=%d\n",Np);
     for (int k=1; k<Nz-1; k++){
         for (int j=1; j<Ny-1; j++){
             for (int i=1; i<Nx-1; i++){
@@ -384,15 +386,16 @@ delete[] tmpfq;
     }
     ScaLBL_CopyToDevice(dvcMap, activeMap, sizeof(int)*Np);
     ScaLBL_DeviceBarrier();
-    
+
     TemporaryMap.resize(Nx,Ny,Nz); TemporaryMap.fill(-2);
-    
+
     InactiveTemporaryMap.resize(Nx,Ny,Nz); InactiveTemporaryMap.fill(-2);
     Ni = 0;
-
+    // INACTIVE MAP
     Ni = ScaLBL_Comm->MemoryOptimizedInactiveLayout(InactiveTemporaryMap, Mask->id, vfmask, Ni);
     ScaLBL_AllocateDeviceMemory((void **) &dvcInactiveMap, sizeof(int)*Ni);
 
+    // Communicate Mask->id...
     DoubleArray TempDomain; TempDomain.resize(Nx,Ny,Nz);
     TempDomain.fill(2);
     for (int k=1; k<Nz-1; k++)
@@ -403,8 +406,9 @@ delete[] tmpfq;
     }
     Dm->CommunicateMeshHalo(TempDomain);
     for (int n = 0; n < Nx*Ny*Nz; n++) Mask->id[n] = (char)TempDomain(n);
-    
-    inactiveMap=new int[Ni];
+
+    // Check InactiveMap
+    inactiveMap=new int[Ni]; for (int a = 0; a < Ni; a++) inactiveMap[a] = 0; printf("Ni=%d\n",Ni);
     for (int k=1; k<Nz-1; k++){
         for (int j=1; j<Ny-1; j++){
             for (int i=1; i<Nx-1; i++){
@@ -413,7 +417,7 @@ delete[] tmpfq;
             }
         }
     }
-
+    // check that TmpMap is valid
     for (int idx=0; idx<ScaLBL_Comm->LastInactiveExterior(); idx++){
         int n = inactiveMap[idx];
         if (n > Nx*Ny*Nz){
@@ -430,15 +434,16 @@ delete[] tmpfq;
     }
 
     ScaLBL_CopyToDevice(dvcInactiveMap, inactiveMap, sizeof(int)*Ni);
-    ScaLBL_DeviceBarrier(); MPI_Barrier(comm);
-    
+    ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+
 
     TemporaryMap.fill(-2);
     Nsb = 0;
-
+    // CSB MAP
     Nsb = ScaLBL_Comm->MemoryOptimizedSBLayout(TemporaryMap, Mask->id, vfmask, Nsb);
     ScaLBL_AllocateDeviceMemory((void **) &dvcSBMap, sizeof(int)*Nsb);
-    
+
+
     TempDomain.fill(2);
     for (int k=1; k<Nz-1; k++)
     for (int j=1; j<Ny-1; j++)
@@ -446,12 +451,17 @@ delete[] tmpfq;
         size_t n = k*Nx*Ny+j*Nx+i;
         TempDomain(n) = (double)(Mask->id[n]);
     }
-    
     Dm->CommunicateMeshHalo(TempDomain);
-    
     for (int n = 0; n < Nx*Ny*Nz; n++) Mask->id[n] = (char)TempDomain(n);
 
-    sbMap = new int[Nsb];
+
+
+
+
+
+
+
+    sbMap = new int[Nsb]; for (int a = 0; a < Nsb; a++) sbMap[a] = 0; printf("Nsb=%d\n",Nsb);
     for (int k=1; k<Nz-1; k++){
         for (int j=1; j<Ny-1; j++){
             for (int i=1; i<Nx-1; i++){
@@ -461,7 +471,7 @@ delete[] tmpfq;
             }
         }
     }
-
+    // check that TmpMap is valid
     for (int idx=0; idx<ScaLBL_Comm->LastSBExterior(); idx++){
         int n = sbMap[idx];
         if (n > Nx*Ny*Nz){
@@ -479,8 +489,16 @@ delete[] tmpfq;
     ScaLBL_CopyToDevice(dvcSBMap, sbMap, sizeof(int)*Nsb);
     ScaLBL_DeviceBarrier();
     ScaLBL_DeviceBarrier(); MPI_Barrier(comm);
+
+    // copy the neighbor list
     ScaLBL_CopyToDevice(NeighborList, neighborList, neighborSize);
     ScaLBL_CopyToDevice(InterpolationList, interpolationList, neighborSize);
+
+
+
+
+
+
 
     size_t read_file;
     auto libbqA= new double[Nq*Np];
@@ -501,16 +519,19 @@ delete[] tmpfq;
     read_file = fread(libbqD,8,Nq*Np,DFILE);
     if (read_file != size_t(Nq*Np)) printf("Error reading DFILE \n");
     fclose(DFILE);
-    
-    
+
+
     ScaLBL_DeviceBarrier(); MPI_Barrier(comm);
     ScaLBL_CopyToDevice(LIBBqA, libbqA, libbSize);
     ScaLBL_CopyToDevice(LIBBqBC, libbqBC, libbSize);
     ScaLBL_CopyToDevice(LIBBqD, libbqD, libbSize);
-    
+    delete[] libbqBC;
+    delete[] libbqD;
+    delete[] libbqA;
+
     ScaLBL_DeviceBarrier(); MPI_Barrier(comm);
 
-    //for (int i = 0; i < N; i++) Averages->ID(i) = Mask->id[i];
+    for (int i = 0; i < N; i++) Averages->ID(i) = Mask->id[i];
 
     delete[] gradphix;
     delete[] gradphiy;
@@ -564,23 +585,7 @@ void ScaLBL_ColorModel::Initialize() {
             if (VALUE == 2) { PhaseLabel[n] = -1; DenALabel[n] = 0; DenBLabel[n] = 1; }
         }
         }
-//    {
-//        int n; int VALUE; double DVALUE;
-//        printf("FluidPhaseID:\n");
-//        for (int k=18;k<19;k++){
-//            for (int i=1;i<Nx-1;i++){
-//                for (int j=1;j<Ny-1;j++){
-//                    n=k*(Nx)*(Ny)+j*(Nx)+i;
-//                    // VALUE = fluidphaseID[n];
-//                    DVALUE = PhaseLabel[n];
-//                    // printf("%d ",VALUE);
-//                    printf("%.0f ",DVALUE);
-//                }
-//                printf("\n");
-//            }
-//            printf("\n\n");
-//        }
-//    }
+
 //
 //
 //                if ( i > 3 && i <= 10 ) {
@@ -607,22 +612,22 @@ void ScaLBL_ColorModel::Initialize() {
         ScaLBL_CopyToDevice(DenA2, DenALabel, N*sizeof(double));
         ScaLBL_CopyToDevice(DenB2, DenBLabel, N*sizeof(double));    
     
-	delete[] PhaseLabel;
+        delete[] PhaseLabel;
         delete[] DenALabel;
         delete[] DenBLabel;
 
         ScaLBL_Comm_Regular->SendHalo(Phi);
         ScaLBL_Comm_Regular->RecvHalo(Phi);
+        ScaLBL_Comm_Regular->SendHalo(Phi2);
+        ScaLBL_Comm_Regular->RecvHalo(Phi2);
 
         ScaLBL_Comm_Regular->SendHalo(DenA);
         ScaLBL_Comm_Regular->RecvHalo(DenA);
-
         ScaLBL_Comm_Regular->SendHalo(DenB);
         ScaLBL_Comm_Regular->RecvHalo(DenB);
 
-	ScaLBL_Comm_Regular->SendHalo(DenA2);
+        ScaLBL_Comm_Regular->SendHalo(DenA2);
         ScaLBL_Comm_Regular->RecvHalo(DenA2);
-
         ScaLBL_Comm_Regular->SendHalo(DenB2);
         ScaLBL_Comm_Regular->RecvHalo(DenB2);
         ScaLBL_DeviceBarrier(); MPI_Barrier(comm);
@@ -829,18 +834,19 @@ void ScaLBL_ColorModel::Run(string filename){
     
     ScaLBL_Comm_Regular->SendHalo(VFmask);
     ScaLBL_Comm_Regular->RecvHalo(VFmask);
-
     MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
     ScaLBL_Comm_Regular->SendHalo(Phi);
     ScaLBL_Comm_Regular->RecvHalo(Phi);
-
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
     ScaLBL_Comm_Regular->SendHalo(DenA);
     ScaLBL_Comm_Regular->RecvHalo(DenA);
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
     ScaLBL_Comm_Regular->SendHalo(DenB);
     ScaLBL_Comm_Regular->RecvHalo(DenB);
-
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
     ScaLBL_Comm_Regular->SendHalo(DenA2);
     ScaLBL_Comm_Regular->RecvHalo(DenA2);
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
     ScaLBL_Comm_Regular->SendHalo(DenB2);
     ScaLBL_Comm_Regular->RecvHalo(DenB2);
 
@@ -853,7 +859,7 @@ void ScaLBL_ColorModel::Run(string filename){
 //    printf("N=%d Np=%d Ni=%d Nsb=%d\n",N,Np,Ni,Nsb);
 
 #ifdef WBC
-    ScaLBL_CopyToDevice(MaskDomain, Mask->id, sizeof(char)*N);
+    ScaLBL_CopyToDevice(MaskDomain,Mask->id, sizeof(char)*N);
 
     save_scalar(Phi ,Phi2 ,N);
     InitExtrapolatePhaseFieldInactive(dvcInactiveMap, MaskDomain, Phi , Phi2 , ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(), Nx, Nx*Ny,Ni);
@@ -894,71 +900,141 @@ void ScaLBL_ColorModel::Run(string filename){
 
     if (Averages->sphere_diameter == 0) Averages->sphere_diameter = double(Nz-2)/3.;
     
-    
-//    int VALUE = 0;
-//    double DVALUE = 0;
-//    printf("VFmask:\n");
-//    for (int i=5;i<6;i++){
-//        for (int j=1;j<Nx-1;j++){
-//            for (int k=1;k<Nz-1;k++){
-//                int n=k*(Nx)*(Ny)+j*(Nx)+i;
-//                DVALUE = Averages->VFmask(n);
-//                printf("%.2f ",DVALUE);
-//            }
-//            printf("\n");
-//        }
-//        printf("\n\n");
-//    }
-//
-   
-
-//    while(timestep < timestepMax) {
+     
+//    while(timestep < 3000) {
 //
 //        timestep++;
 //        analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);
-//
-////        analysis.run6(0, *Averages, Np, Phi);
-//
-////        analysis.run7(0, *Averages, Np, Phi,Velx,Vely,Velz,DenA,DenB);
-//        analysis.finish();
-//
-//
+//       analysis.finish();
 //    }
-//    timestep+=10000;
-  
+//
+//    timestep += 1000000;
+    
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
+    ScaLBL_Comm_Regular->SendHalo(GradPhiX);
+    ScaLBL_Comm_Regular->RecvHalo(GradPhiX);
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
+    ScaLBL_Comm_Regular->SendHalo(GradPhiY);
+    ScaLBL_Comm_Regular->RecvHalo(GradPhiY);
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
+    ScaLBL_Comm_Regular->SendHalo(GradPhiZ);
+    ScaLBL_Comm_Regular->RecvHalo(GradPhiZ);
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
+    ScaLBL_Comm_Regular->SendHalo(CField);
+    ScaLBL_Comm_Regular->RecvHalo(CField);
+    MPI_Barrier(comm);  ScaLBL_DeviceBarrier();
+    
 
     while(timestep < timestepMax) {
-        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA2,DenB2,GradPhiX,GradPhiY,GradPhiZ,CField,Velx2,Vely2,Velz2);
         ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA2,DenB2,GradPhiX,GradPhiY,GradPhiZ,CField,Velx2,Vely2,Velz2);
         ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA2,DenB2,GradPhiX,GradPhiY,GradPhiZ,CField,Velx2,Vely2,Velz2);
-
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        
         save_scalar(DenA2,DenA,N);
         save_scalar(DenB2,DenB,N);
         Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA2 , DenB2, DenA , DenB, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
         Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA2, DenB2, DenA, DenB, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
         Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA2 , DenB2, DenA , DenB, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstSBInterior(), ScaLBL_Comm->LastSBInterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
         Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA2, DenB2, DenA, DenB, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastSBExterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
         save_scalar(DenA,DenA2,N);
         save_scalar(DenB,DenB2,N);
+        
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA2,DenB2,GradPhiX,GradPhiY,GradPhiZ,CField,Velx2,Vely2,Velz2);
+        ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA2,DenB2,GradPhiX,GradPhiY,GradPhiZ,CField,Velx2,Vely2,Velz2);
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
 
-        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(),Np, WBCFlag);
-        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),Np, WBCFlag);
-        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(),Ni, WBCFlag);
-        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(),Ni, WBCFlag);
+        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),Np, WBCFlag,Nx,Ny,Nz);
+        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(),Np, WBCFlag,Nx,Ny,Nz);
+        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(),Ni, WBCFlag,Nx,Ny,Nz);
+        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(),Ni, WBCFlag,Nx,Ny,Nz);
+        
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA2,DenB2,GradPhiX,GradPhiY,GradPhiZ,CField,Velx2,Vely2,Velz2);
+        ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA2,DenB2,GradPhiX,GradPhiY,GradPhiZ,CField,Velx2,Vely2,Velz2);
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
 
 
+        ScaLBL_Comm->SendD3Q19AA(fq);
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        ScaLBL_Comm->RecvD3Q19AA(fq);
+        save_state(fq,savedfq,ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),19,Np);
+        save_state(fq,savedfq,0, ScaLBL_Comm->LastExterior(),19,Np);
+        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
+                                dvcMap, fq, fq2, savedfq, Aq, Bq, DenA2, DenB2, DenA, DenB, Phi, Velx , Vely, Velz, Velx2 , Vely2, Velz2 , Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
 
 
-//        ScaLBL_Comm->SendD3Q19AA(fq);
-//        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
-//        ScaLBL_Comm->RecvD3Q19AA(fq);
-//        save_state(fq,savedfq,ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),19,Np);
-//        save_state(fq,savedfq,0, ScaLBL_Comm->LastExterior(),19,Np);
-//        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
-//                                dvcMap, fq, fq2, savedfq, Aq, Bq, DenA2, DenB2, DenA, DenB, Phi, Velx , Vely, Velz, Velx2 , Vely2, Velz2 , Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
-//
-//
+        if (BoundaryCondition == 3){
+            ScaLBL_Comm->D3Q19_Pressure_BC_z(NeighborList, fq, din, timestep);
+            ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq, dout, timestep);
+        }
+        if (BoundaryCondition == 4){
+            din = ScaLBL_Comm->D3Q19_Flux_BC_z(NeighborList, fq, flux, timestep);
+            ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq, dout, timestep);
+        }
+
+        ScaLBL_DeviceBarrier();
+        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
+                                dvcMap, fq, fq2, savedfq, Aq, Bq, DenA2, DenB2, DenA, DenB, Phi, Velx, Vely, Velz, Velx2, Vely2, Velz2, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
+
+        if (BoundaryCondition > 0) {
+            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA, DenB, inletA, inletB);
+            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA, DenB, outletA, outletB);
+           }
+        if (BoundaryCondition > 0) {
+            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA2, DenB2, inletA, inletB);
+            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA2, DenB2, outletA, outletB);
+           }
+
+
+        timestep++;
+                
+
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
+        ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+ 
+        
+        save_scalar(DenA,DenA2,N);
+        save_scalar(DenB,DenB2,N);
+        Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA , DenB, DenA2 , DenB2, Phi, Velx, Vely, Velz, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
+        Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA, DenB, DenA2, DenB2, Phi, Velx, Vely, Velz, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA , DenB, DenA2 , DenB2, Phi, Velx, Vely, Velz, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstSBInterior(), ScaLBL_Comm->LastSBInterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
+        Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA, DenB, DenA2, DenB2, Phi, Velx, Vely, Velz, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastSBExterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
+        save_scalar(DenA2,DenA,N);
+        save_scalar(DenB2,DenB,N);
+        
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
+        ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+
+        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),Np, WBCFlag,Nx,Ny,Nz);
+        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(),Np, WBCFlag,Nx,Ny,Nz);
+        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(),Ni, WBCFlag,Nx,Ny,Nz);
+        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(),Ni, WBCFlag,Nx,Ny,Nz);
+        
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
+        ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        
+
+        ScaLBL_Comm->SendD3Q19AA(fq2);
+        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
+        ScaLBL_Comm->RecvD3Q19AA(fq2);
+        save_state(fq2,savedfq,ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),19,Np);
+        save_state(fq2,savedfq,0, ScaLBL_Comm->LastExterior(),19,Np);
+        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
+                                dvcMap, fq2, fq, savedfq, Aq, Bq, DenA, DenB, DenA2, DenB2, Phi, Velx2 , Vely2, Velz2, Velx , Vely, Velz , Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
+
+
 //        if (BoundaryCondition == 3){
 //            ScaLBL_Comm->D3Q19_Pressure_BC_z(NeighborList, fq, din, timestep);
 //            ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq, dout, timestep);
@@ -967,78 +1043,352 @@ void ScaLBL_ColorModel::Run(string filename){
 //            din = ScaLBL_Comm->D3Q19_Flux_BC_z(NeighborList, fq, flux, timestep);
 //            ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq, dout, timestep);
 //        }
-//
-//        ScaLBL_DeviceBarrier();
-//        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
-//                                dvcMap, fq, fq2, savedfq, Aq, Bq, DenA2, DenB2, DenA, DenB, Phi, Velx, Vely, Velz, Velx2, Vely2, Velz2, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
-//
-//        if (BoundaryCondition > 0) {
-//            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA, DenB, inletA, inletB);
-//            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA, DenB, outletA, outletB);
-//           }
+
+        ScaLBL_DeviceBarrier();
+        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
+                                dvcMap, fq2, fq, savedfq, Aq, Bq, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, Velx, Vely, Velz, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
+
 //        if (BoundaryCondition > 0) {
 //            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA2, DenB2, inletA, inletB);
 //            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA2, DenB2, outletA, outletB);
 //           }
-//
-//
-        timestep++;
-//
-//        ScaLBL_Comm_Regular->SendHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
-//        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
-//        ScaLBL_Comm_Regular->RecvHaloMany(Phi,DenA,DenB,GradPhiX,GradPhiY,GradPhiZ,CField,Velx,Vely,Velz);
-//
-//        save_scalar(DenA,DenA2,N);
-//        save_scalar(DenB,DenB2,N);
-//        Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA , DenB, DenA2 , DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-//        Inactive_Color_LIBB(InactiveScalarList, dvcInactiveMap, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(), Ni, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-//        Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA , DenB, DenA2 , DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, ScaLBL_Comm->FirstSBInterior(), ScaLBL_Comm->LastSBInterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-//        Inactive_Color_LIBB(SBScalarList, dvcSBMap, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, beta,  Nx, Nx*Ny, 0, ScaLBL_Comm->LastSBExterior(), Nsb, N, GradPhiX, GradPhiY, GradPhiZ, CField);
-//        save_scalar(DenA2,DenA,N);
-//        save_scalar(DenB2,DenB,N);
-//
-//        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),Np, WBCFlag);
-//        ComputeGradPhi(input_angle, dvcMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(),Np, WBCFlag);
-//        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, ScaLBL_Comm->FirstInactiveInterior(), ScaLBL_Comm->LastInactiveInterior(),Ni, WBCFlag);
-//        ComputeGradPhi(input_angle, dvcInactiveMap, Phi, GradPhiX, GradPhiY, GradPhiZ, CField, NormalToSolid_X, NormalToSolid_Y, NormalToSolid_Z, Nx, Nx*Ny, 0, ScaLBL_Comm->LastInactiveExterior(),Ni, WBCFlag);
-//
-//
-//
-//
-//        ScaLBL_Comm->SendD3Q19AA(fq2);
-//        ScaLBL_DeviceBarrier();  MPI_Barrier(comm);
-//        ScaLBL_Comm->RecvD3Q19AA(fq2);
-//        save_state(fq2,savedfq,ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(),19,Np);
-//        save_state(fq2,savedfq,0, ScaLBL_Comm->LastExterior(),19,Np);
-//        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
-//                                dvcMap, fq2, fq, savedfq, Aq, Bq, DenA , DenB , DenA2 , DenB2 , Phi, Velx2 , Vely2, Velz2, Velx, Vely, Velz, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, ScaLBL_Comm->FirstInterior(), ScaLBL_Comm->LastInterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
-//        ScaLBL_DeviceBarrier();
-//
-//        if (BoundaryCondition == 3){
-//               ScaLBL_Comm->D3Q19_Pressure_BC_z(NeighborList, fq2, din, timestep);
-//               ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq2, dout, timestep);
-//           }
-//       if (BoundaryCondition == 4){
-//           din = ScaLBL_Comm->D3Q19_Flux_BC_z(NeighborList, fq2, flux, timestep);
-//           ScaLBL_Comm->D3Q19_Pressure_BC_Z(NeighborList, fq2, dout, timestep);
-//       }
-//
-//        ScaLBL_D3Q19_Color_LIBB(ActiveScalarList, InterpolationList, NeighborList,
-//                                dvcMap, fq2, fq, savedfq, Aq, Bq, DenA, DenB, DenA2, DenB2, Phi, Velx2, Vely2, Velz2, Velx, Vely, Velz, Pressure, rhoA, rhoB, tauA, tauB, alpha, beta, Fx, Fy, Fz, Nx, Nx*Ny, 0, ScaLBL_Comm->LastExterior(), Np, N, LIBBqA, LIBBqBC, LIBBqD, GradPhiX, GradPhiY, GradPhiZ, CField);
-//
-//        if (BoundaryCondition > 0){
+//        if (BoundaryCondition > 0) {
 //            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA, DenB, inletA, inletB);
 //            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA, DenB, outletA, outletB);
-//        }
-//        if (BoundaryCondition > 0){
-//            ScaLBL_Comm->Color_BC_z(dvcMap, Phi, DenA2, DenB2, inletA, inletB);
-//            ScaLBL_Comm->Color_BC_Z(dvcMap, Phi, DenA2, DenB2, outletA, outletB);
-//        }
+//           }
+
 
         timestep++;
-        analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA2, DenB2,Np,Fx,Fy,Fz);
+        
+        
+            if (timestep == 2892) {
+                
+                if (rank == 0) {
+                
+                    int n; int VALUE; double DVALUE;
+                    printf("CField:\n");
+                    for (int k=3;k<4;k++){
+                        for (int i=1;i<Nx-1;i++){
+                            for (int j=1;j<Ny-1;j++){
+                                n=k*(Nx)*(Ny)+j*(Nx)+i;
+                                // VALUE = fluidphaseID[n];
+                                DVALUE = CField[n];
+                                // printf("%d ",VALUE);
+                                printf("%.2f ",DVALUE);
+                            }
+                            printf("\n");
+                        }
+                        printf("\n\n");
+                    }
+                
+                }
+                
+                if (nprocs > 1) {
+                    char LocalRankString[8];
+                    char LocalRankFilename[40];
+                
+                    // ID
+                    {
+                        sprintf(LocalRankFilename,"ID_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Mask->id,1,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // ID2
+                    {
+                        sprintf(LocalRankFilename,"ID2_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Mask->id,1,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Phi
+                    {
+                        sprintf(LocalRankFilename,"Phi_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Phi,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // DenA
+                    {
+                        sprintf(LocalRankFilename,"DenA_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(DenA,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // DenB
+                    {
+                        sprintf(LocalRankFilename,"DenB_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(DenB,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // DenA2
+                    {
+                        sprintf(LocalRankFilename,"DenA2_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(DenA2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // DenB2
+                    {
+                        sprintf(LocalRankFilename,"DenB2_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(DenB2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // GradPhiX
+                    {
+                        sprintf(LocalRankFilename,"GradPhiX_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(GradPhiX,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // GradPhiY
+                    {
+                        sprintf(LocalRankFilename,"GradPhiY_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(GradPhiY,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // GradPhiZ
+                    {
+                        sprintf(LocalRankFilename,"GradPhiZ_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(GradPhiZ,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Velx
+                    {
+                        sprintf(LocalRankFilename,"Velx_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Velx,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Vely
+                    {
+                        sprintf(LocalRankFilename,"Vely_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Vely,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Velz
+                    {
+                        sprintf(LocalRankFilename,"Velz_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Velz,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Velx2
+                    {
+                        sprintf(LocalRankFilename,"Velx2_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Velx2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Vely2
+                    {
+                        sprintf(LocalRankFilename,"Vely2_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Vely2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Velz2
+                    {
+                        sprintf(LocalRankFilename,"Velz2_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Velz2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // VFmask
+                    {
+                        sprintf(LocalRankFilename,"VFmask_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(VFmask,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // NormalToSolid_X
+                    {
+                        sprintf(LocalRankFilename,"NormalToSolid_X_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(NormalToSolid_X,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // NormalToSolid_Y
+                    {
+                        sprintf(LocalRankFilename,"NormalToSolid_Y_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(NormalToSolid_Y,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // NormalToSolid_Z
+                    {
+                        sprintf(LocalRankFilename,"NormalToSolid_Z_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(NormalToSolid_Z,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    {
+                        sprintf(LocalRankFilename,"CField_p.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(CField,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                
+                } else {
+                    char LocalRankString[8];
+                    char LocalRankFilename[40];
+                
+                    // ID
+                    {
+                        sprintf(LocalRankFilename,"ID_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Mask->id,1,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // ID2
+                    {
+                        sprintf(LocalRankFilename,"ID2_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Mask->id,1,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Phi
+                    {
+                        sprintf(LocalRankFilename,"Phi_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Phi,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // DenA
+                    {
+                        sprintf(LocalRankFilename,"DenA_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(DenA,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // DenB
+                    {
+                        sprintf(LocalRankFilename,"DenB_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(DenB,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // DenA2
+                    {
+                        sprintf(LocalRankFilename,"DenA2_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(DenA2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // DenB2
+                    {
+                        sprintf(LocalRankFilename,"DenB2_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(DenB2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // GradPhiX
+                    {
+                        sprintf(LocalRankFilename,"GradPhiX_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(GradPhiX,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // GradPhiY
+                    {
+                        sprintf(LocalRankFilename,"GradPhiY_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(GradPhiY,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // GradPhiZ
+                    {
+                        sprintf(LocalRankFilename,"GradPhiZ_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(GradPhiZ,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Velx
+                    {
+                        sprintf(LocalRankFilename,"Velx_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Velx,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Vely
+                    {
+                        sprintf(LocalRankFilename,"Vely_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Vely,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Velz
+                    {
+                        sprintf(LocalRankFilename,"Velz_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Velz,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Velx2
+                    {
+                        sprintf(LocalRankFilename,"Velx2_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Velx2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Vely2
+                    {
+                        sprintf(LocalRankFilename,"Vely2_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Vely2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // Velz2
+                    {
+                        sprintf(LocalRankFilename,"Velz2_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(Velz2,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // VFmask
+                    {
+                        sprintf(LocalRankFilename,"VFmask_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(VFmask,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // NormalToSolid_X
+                    {
+                        sprintf(LocalRankFilename,"NormalToSolid_X_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(NormalToSolid_X,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // NormalToSolid_Y
+                    {
+                        sprintf(LocalRankFilename,"NormalToSolid_Y_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(NormalToSolid_Y,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    // NormalToSolid_Z
+                    {
+                        sprintf(LocalRankFilename,"NormalToSolid_Z_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(NormalToSolid_Z,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                    {
+                        sprintf(LocalRankFilename,"CField_s.%05i",rank);
+                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+                        fwrite(CField,8,N,MYFILE);
+                        fclose(MYFILE);
+                    }
+                }
+            }
+        
+        analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA, DenB,Np,Fx,Fy,Fz);
         analysis.finish();
-
     }
 
     ScaLBL_DeviceBarrier();

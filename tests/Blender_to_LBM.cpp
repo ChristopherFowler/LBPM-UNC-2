@@ -11,6 +11,7 @@
 #include <time.h>
 #include <exception>      // std::exception
 #include <stdexcept>
+#include <string>
 
 #include "common/Domain.h"
 #include "common/Array.h"
@@ -36,7 +37,7 @@ inline double calculate_porosity(char * id,
         for (int j=1; j<Ny-1; j++){
             for (int i=1; i<Nx-1; i++){
                 size_t n = k*Nx*Ny+j*Nx+i;
-                if (id[n] == 2)  count++;
+                if (id[n] == 2 || id[n] == 1)  count++;
             }
         }
     }
@@ -55,7 +56,7 @@ inline double calculate_porosity(char * id,
             for (int i=1; i<Nx-1; i++){
                 for (int p=0;p<8;p++){
                     int n = i+cube[p][0] + (j+cube[p][1])*Nx + (k+cube[p][2])*Nx*Ny;
-                    if (id[n] == 2)  {  dcount += 0.125; }
+                    if (id[n] == 2 || id[n] == 1)  {  dcount += 0.125; }
                 }
             }
         }
@@ -131,6 +132,144 @@ inline void UnpackID_Double(int *list,
         n = list[idx];
         ID[n] = recvbuf[idx];
     }
+}
+
+inline void PrintDoubleField(std::string str, double * FIELD, Domain &Dm, int rank, int Nx, int Ny, int Nz) {
+    
+    if (rank == 0) {
+        std::cout << str << std::endl;
+        double DVALUE = 0;
+        printf("rank=%d\n",rank);
+        for (int j=5;j<6;j++){
+            for (int k=0;k<Nz;k++){
+                for (int i=0;i<Nx;i++){
+                    int n=k*Nx*Ny+j*Nx+i;
+                    DVALUE = FIELD[n];
+                    printf("%.7f ",DVALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
+//    MPI_Barrier(Dm.Comm);
+    if (rank == 1) {
+        double DVALUE = 0;
+        printf("rank=%d\n",rank);
+        for (int j=5;j<6;j++){
+            for (int k=0;k<Nz;k++){
+                for (int i=0;i<Nx;i++){
+                    int n=k*Nx*Ny+j*Nx+i;
+                    DVALUE = FIELD[n];
+                    printf("%.7f ",DVALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
+//    MPI_Barrier(Dm.Comm);
+    if (rank == 4) {
+        double VALUE = 0;
+        printf("rank=%d\n",rank);
+        for (int j=5;j<6;j++){
+            for (int k=0;k<Nz;k++){
+                for (int i=0;i<Nx;i++){
+                    int n=k*Nx*Ny+j*Nx+i;
+                    VALUE = FIELD[n];
+                    printf("%.7f ",VALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
+//    MPI_Barrier(Dm.Comm);
+    if (rank == 5) {
+        double VALUE = 0;
+        printf("rank=%d\n",rank);
+        for (int j=5;j<6;j++){
+            for (int k=0;k<Nz;k++){
+                for (int i=0;i<Nx;i++){
+                    int n=k*Nx*Ny+j*Nx+i;
+                    VALUE = FIELD[n];
+                    printf("%.7f ",VALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
+//    MPI_Barrier(Dm.Comm);
+}
+
+inline void PrintIntegerField(std::string str, char * FIELD, Domain &Dm, int rank, int Nx, int Ny, int Nz)
+    {
+    if (rank == 0) {
+        std::cout << str << std::endl;
+        int VALUE = 0;
+        printf("rank=%d\n",rank);
+        for (int j=5;j<6;j++){
+            for (int k=0;k<Nz;k++){
+                for (int i=0;i<Nx;i++){
+                    int n=k*Nx*Ny+j*Nx+i;
+                    VALUE = FIELD[n];
+                    printf("%d ",VALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
+//    MPI_Barrier(Dm.Comm);
+    if (rank == 1) {
+        int VALUE = 0;
+        printf("rank=%d\n",rank);
+        for (int j=5;j<6;j++){
+            for (int k=0;k<Nz;k++){
+                for (int i=0;i<Nx;i++){
+                    int n=k*Nx*Ny+j*Nx+i;
+                    VALUE = FIELD[n];
+                    printf("%d ",VALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
+//    MPI_Barrier(Dm.Comm);
+    if (rank == 4) {
+        int VALUE = 0;
+        printf("rank=%d\n",rank);
+        for (int j=5;j<6;j++){
+            for (int k=0;k<Nz;k++){
+                for (int i=0;i<Nx;i++){
+                    int n=k*Nx*Ny+j*Nx+i;
+                    VALUE = FIELD[n];
+                    printf("%d ",VALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
+//    MPI_Barrier(Dm.Comm);
+    if (rank == 5) {
+        int VALUE = 0;
+        printf("rank=%d\n",rank);
+        for (int j=5;j<6;j++){
+            for (int k=0;k<Nz;k++){
+                for (int i=0;i<Nx;i++){
+                    int n=k*Nx*Ny+j*Nx+i;
+                    VALUE = FIELD[n];
+                    printf("%d ",VALUE);
+                }
+                printf("\n");
+            }
+            printf("\n\n");
+        }
+    }
+//    MPI_Barrier(Dm.Comm);
 }
 
 inline void PopulateHalo_Double(double *id,
@@ -494,6 +633,7 @@ int main(int argc, char **argv)
         nprocx = nproc[0];
         nprocy = nproc[1];
         nprocz = nproc[2];
+
         global_Nx = size_global[0];
         global_Ny = size_global[1];
         global_Nz = size_global[2];
@@ -544,6 +684,10 @@ int main(int argc, char **argv)
             if (ReadSeg != SIZE) printf("Error reading id data, size \n");
             fclose(SEGDAT);
             
+            
+
+            PrintIntegerField("SegData", SegData, *Dm, rank, global_Nx, global_Ny, global_Nz);
+            
             //FluidPhase
             printf("Read data from %s \n",READFILE_FluidPhaseID.c_str());
             FILE *FLUIDPHASESEGDAT = fopen(READFILE_FluidPhaseID.c_str(),"rb");
@@ -552,6 +696,8 @@ int main(int argc, char **argv)
             ReadFluidPhaseSeg=fread(FluidPhaseSegData,1,SIZE,FLUIDPHASESEGDAT);
             if (ReadFluidPhaseSeg != SIZE) printf("Error reading fluid phase id data, size \n");
             fclose(FLUIDPHASESEGDAT);
+            
+            PrintIntegerField("FluidPhaseSegData", FluidPhaseSegData, *Dm, rank, global_Nx, global_Ny, global_Nz);
             
 //            printf("SegData read:\n");
 //            for (int i=5;i<6;i++){
@@ -566,6 +712,7 @@ int main(int argc, char **argv)
 //                printf("\n\n");
 //            }
             
+            
             //SignDist
             printf("Read data from %s \n",READFILE_SD.c_str());
             FILE *RayTraceDistance = fopen(READFILE_SD.c_str(),"rb");
@@ -574,6 +721,8 @@ int main(int argc, char **argv)
             ReadSD=fread(SignDist,8,SIZE,RayTraceDistance);
             if (ReadSD != SIZE) printf("Error reading sd data, size \n");
             fclose(RayTraceDistance);
+            
+            PrintDoubleField("SignDist", SignDist, *Dm, rank, global_Nx, global_Ny, global_Nz);
             
 //            printf("SignDist read:\n");
 //            for (int i=5;i<6;i++){
@@ -596,6 +745,8 @@ int main(int argc, char **argv)
             ReadSDMC=fread(SignDistMC,8,SIZE,RayTraceDistanceMC);
             if (ReadSDMC != SIZE) printf("Error reading sd data, size \n");
             fclose(RayTraceDistanceMC);
+            
+            PrintDoubleField("SignDistMC", SignDistMC, *Dm, rank, global_Nx, global_Ny, global_Nz);
 
             //LibbA
             printf("Read data from %s \n",READFILE_LIBBA.c_str());
@@ -778,40 +929,23 @@ int main(int argc, char **argv)
             MPI_Recv(libbd,18*N,MPI_DOUBLE,0,15,comm,MPI_STATUS_IGNORE);
         }
         
-//        printf("line=%d\n",__LINE__);
-
-        auto boolfield = new bool[N];  for (n=0; n<N; n++) boolfield[n]=true; fillBoolfield(boolfield, nx+2, ny+2, nz+2);
-        
-//        printf("line=%d\n",__LINE__);
-    
+        auto boolfield = new bool[N];  for (n=0; n<N; n++) boolfield[n]=true; fillBoolfield(boolfield, nx+2, ny+2, nz+2);  for (int n = 0; n < N; n++) if (boolfield[n] == true) id[n] = 0;
         std::array<size_t,3> subdivide = { 1, 1, 1 };
-
         if ( analysis_db->keyExists( "subdivide" ) ) {
             auto tmp = analysis_db->getVector<size_t>( "subdivide" );
             subdivide = { tmp[0], tmp[1], tmp[2] };
         }
-
-        
         Averages = std::shared_ptr<TwoPhase> ( new TwoPhase(Dm,subdivide) );
-        
-        
-
-        for (int n = 0; n < N; n++) if (boolfield[n] == true) id[n] = 0;
-        
-       
-//        printf("line=%d\n",__LINE__);
-        
         PopulateHalo_Char(id, *Dm, nx+2, ny+2, nz+2, RANK);
         PopulateHalo_Double(sdmc, *Dm, nx+2, ny+2, nz+2, RANK);
         PopulateHalo_Double(sd, *Dm, nx+2, ny+2, nz+2, RANK);
         
-       
-        
-//        printf("line=%d\n",__LINE__);
-        
+        PrintIntegerField("id", id, *Dm, rank, nx+2, ny+2, nz+2);
+
         for (size_t n=0; n<N; n++) Averages->SDs(n) = sdmc[n];
         
         Averages->ComputeVolumeFraction(Averages->SDs, Averages->SDs_x, Averages->SDs_y, Averages->SDs_z, Averages->VFmask, true, rmin, rmax, geometry);
+        
         
         Dm->CommunicateMeshHalo(Averages->VFmask);
         Dm->CommunicateMeshHalo(Averages->SDs);
@@ -825,33 +959,19 @@ int main(int argc, char **argv)
              if (Averages->VFmask(i) > 0.5){
                  id[i] = 0;
              } else{
-                 id[i] = 2;
+//                 if (id[i]id[i] = 2;
              }
         }
-        
+        PrintIntegerField("id", id, *Dm, rank, nx+2, ny+2, nz+2);
         id[0] = id[(nx+2)-1] = id[((ny+2)-1)*(nx+2)] = id[((ny+2)-1)*(nx+2) + (nx+2)-1] = 0;
         id[((nz+2)-1)*(nx+2)*(ny+2)] = id[((nz+2)-1)*(nx+2)*(ny+2)+(nx+2)-1] = id[((nz+2)-1)*(nx+2)*(ny+2)+((ny+2)-1)*(nx+2)] = id[((nz+2)-1)*(nx+2)*(ny+2)+((ny+2)-1)*(nx+2) + (nx+2)-1] = 0;
 //        printf("line=%d\n",__LINE__);
 
         for (int n = 0; n < N; n++) { Averages->SDs(n) = sd[n]; }
 
-//        printf("line=%d\n",__LINE__);
-            /* Check the porosity */
-            double porosity = calculate_porosity(id, nx+2, ny+2, nz+2, *Dm, RANK);
-//        if (rank == 0) printf("actual porosity=%.12f\n",porosity);
-//        printf("id:\n");
-//        for (int i=5;i<6;i++){
-//            for (int j=1;j<nx+1;j++){
-//                for (int k=1;k<nz+1;k++){
-//                    int n=k*(nx+2)*(ny+2)+j*(nx+2)+i;
-//                    VALUE = id[n];
-//                    printf("%d ",VALUE);
-//                }
-//                printf("\n");
-//            }
-//            printf("\n\n");
-//        }
 //
+            double porosity = calculate_porosity(id, nx+2, ny+2, nz+2, *Dm, RANK);
+
 
 //        int q = 0;
 //        for (int i = 0; i < N; i++) {
@@ -986,14 +1106,43 @@ int main(int argc, char **argv)
         FILE *ID = fopen(LocalRankFilename,"wb");
         fwrite(id,1,(nx+2)*(ny+2)*(nz+2),ID);
         fclose(ID);
-
+        
+        // ID
+        if (nprocs > 1)
+        {
+            sprintf(LocalRankFilename,"ID_p.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(id,1,N,MYFILE);
+            fclose(MYFILE);
+        }
+        else {
+            sprintf(LocalRankFilename,"ID_s.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(id,1,N,MYFILE);
+            fclose(MYFILE);
+        }
+        
+        
         sprintf(LocalRankFilename,"SignDist.%05i",RANK);
         FILE *SD = fopen(LocalRankFilename,"wb");
         fwrite(sd,8,(nx+2)*(ny+2)*(nz+2),SD);
         fclose(SD);
         
+        // SignDist
+        if (nprocs > 1)
+        {
+            sprintf(LocalRankFilename,"SignDist_p.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(sd,8,N,MYFILE);
+            fclose(MYFILE);
+        }
+        else {
+            sprintf(LocalRankFilename,"SignDist_s.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(sd,8,N,MYFILE);
+            fclose(MYFILE);
+        }
         
-        printf("line=%d\n",__LINE__);
 //        printf("sd:\n");
 //        for (int i=5;i<6;i++){
 //            for (int j=1;j<nx+1;j++){
@@ -1006,6 +1155,11 @@ int main(int argc, char **argv)
 //            }
 //            printf("\n\n");
 //        }
+        
+        
+        
+        
+        
 
         sprintf(LocalRankString,"%05d",RANK);
 
@@ -1034,7 +1188,23 @@ int main(int argc, char **argv)
         if (VFCFILE==NULL) ERROR("Error opening file: VFmask.xxxxx");
         fwrite(TemporaryField,8,(nx+2)*(ny+2)*(nz+2),VFCFILE);
         fclose(VFCFILE);
-
+        
+        // VFmask
+        if (nprocs > 1)
+        {
+            sprintf(LocalRankFilename,"VFmask_p.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(TemporaryField,8,N,MYFILE);
+            fclose(MYFILE);
+        }
+        else {
+            sprintf(LocalRankFilename,"VFmask_s.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(TemporaryField,8,N,MYFILE);
+            fclose(MYFILE);
+        }
+        
+       
         for (int n = 0; n < N; n++) TemporaryField[n] = Averages->GradPhiX(n);
         sprintf(LocalRankFilename,"%s%s","ns_x.",LocalRankString);
         FILE *NSX = fopen(LocalRankFilename,"wb");
@@ -1042,6 +1212,21 @@ int main(int argc, char **argv)
         fwrite(TemporaryField,8,(nx+2)*(ny+2)*(nz+2),NSX);
         fclose(NSX);
 
+        // asdf
+        // NormalToSolid_X
+        if (nprocs > 1)
+        {
+            sprintf(LocalRankFilename,"NormalToSolid_X_p.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(TemporaryField,8,N,MYFILE);
+            fclose(MYFILE);
+        }
+        else {
+            sprintf(LocalRankFilename,"NormalToSolid_X_s.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(TemporaryField,8,N,MYFILE);
+            fclose(MYFILE);
+        }
         for (int n = 0; n < N; n++) TemporaryField[n] = Averages->GradPhiY(n);
         sprintf(LocalRankFilename,"%s%s","ns_y.",LocalRankString);
         FILE *NSY = fopen(LocalRankFilename,"wb");
@@ -1049,13 +1234,41 @@ int main(int argc, char **argv)
         fwrite(TemporaryField,8,(nx+2)*(ny+2)*(nz+2),NSY);
         fclose(NSY);
 
+        // NormalToSolid_Y
+        if (nprocs > 1)
+        {
+            sprintf(LocalRankFilename,"NormalToSolid_Y_p.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(TemporaryField,8,N,MYFILE);
+            fclose(MYFILE);
+        }
+        else {
+            sprintf(LocalRankFilename,"NormalToSolid_Y_s.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(TemporaryField,8,N,MYFILE);
+            fclose(MYFILE);
+        }
         for (int n = 0; n < N; n++) TemporaryField[n] = Averages->GradPhiZ(n);
         sprintf(LocalRankFilename,"%s%s","ns_z.",LocalRankString);
         FILE *NSZ = fopen(LocalRankFilename,"wb");
         if (NSZ==NULL) ERROR("Error opening file: NSZ.xxxxx");
         fwrite(TemporaryField,8,(nx+2)*(ny+2)*(nz+2),NSZ);
         fclose(NSZ);
-
+        // NormalToSolid_Z
+        if (nprocs > 1)
+        {
+            sprintf(LocalRankFilename,"NormalToSolid_Z_p.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(TemporaryField,8,N,MYFILE);
+            fclose(MYFILE);
+        }
+        else {
+            sprintf(LocalRankFilename,"NormalToSolid_Z_s.%05i",rank);
+            FILE *MYFILE = fopen(LocalRankFilename,"wb");
+            fwrite(TemporaryField,8,N,MYFILE);
+            fclose(MYFILE);
+        }
+        
         delete[] TemporaryField;
 
         MPI_Barrier(comm);

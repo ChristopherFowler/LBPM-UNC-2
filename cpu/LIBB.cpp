@@ -564,89 +564,89 @@ extern "C" void InitExtrapolatePhaseFieldActive(int *Map, double * VFmask, doubl
         
         // IF Parallel plates, don't use the diagonal extrapolated values
         
-//        nn = ijk-strideY-1;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk+strideY+1;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk+strideY-1;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk-strideY+1;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk-strideZ-1;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk+strideZ+1;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk+strideZ-1;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk-strideZ+1;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk-strideZ-strideY;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk+strideZ+strideY;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk+strideZ-strideY;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
-//        //........................................................................
-//        nn = ijk-strideZ+strideY;
-//        if (VFmask[nn] < 0.5) {
-//            m1 += 0.02777777777777778*phi[nn];
-//            sum_weight += 0.02777777777777778;
-//
-//        }
+        nn = ijk-strideY-1;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk+strideY+1;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk+strideY-1;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk-strideY+1;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk-strideZ-1;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk+strideZ+1;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk+strideZ-1;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk-strideZ+1;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk-strideZ-strideY;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk+strideZ+strideY;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk+strideZ-strideY;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
+        //........................................................................
+        nn = ijk-strideZ+strideY;
+        if (VFmask[nn] < 0.5) {
+            m1 += 0.02777777777777778*phi[nn];
+            sum_weight += 0.02777777777777778;
+            
+        }
         
         
         if (sum_weight == 0.0) { sum_weight = 1.0; m1 = 0.0; }
@@ -1946,11 +1946,11 @@ extern "C" void InitDensityFields(int *Map, double * phi, double * DenA, double 
 extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi,
                                double * GradPhiX, double * GradPhiY, double * GradPhiZ, double * CField,
                                double * GradSDsX, double * GradSDsY, double * GradSDsZ,
-                               int strideY, int strideZ, int start, int finish, int Np, int WBCFlag) {
+                               int strideY, int strideZ, int start, int finish, int Np, int WBCFlag,int Nx, int Ny, int Nz) {
     
     double npluscoefA,npluscoefB,nminuscoefA,nminuscoefB;
     double tempnx, tempny, tempnz;
-    int ijk,nn,n;
+    int ijk,i,j,k,nn,n;
     double nplus_x,nplus_y,nplus_z;
     double nminus_x,nminus_y,nminus_z;
     double denom;
@@ -1960,141 +1960,185 @@ extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi,
     double snx, sny, snz;
     double prescribed_angle_radians;
     double theta_prime;
-
-    double temp_nx, temp_ny, temp_nz;
-
-    double TORADIANS = 3.14159265359/180.0;
-    double TODEGREES = 180.0/3.14159265359;
-    double m1,m2,m4,m6,m8,m9,m10,m11,m12,m13,m14,m15,m16,m17,m18,m3,m5,m7;
-    double nx,ny,nz,C;
-    int count = 0;
-    int flag = 0;
-
-    for (n=start; n<finish; n++) {
-        flag = 0;
-        ijk = Map[n];
-        nn=ijk+1; m1=Phi[nn]; 
-        nn=ijk-1; m2=Phi[nn]; 
-        nn=ijk+strideY; m3=Phi[nn]; 
-        nn=ijk-strideY; m4=Phi[nn]; 
-        nn=ijk+strideZ; m5=Phi[nn]; 
-        nn=ijk-strideZ; m6=Phi[nn]; 
-        nn=ijk+1+strideY; m7=Phi[nn]; 
-        nn=ijk-1-strideY; m8=Phi[nn]; 
-        nn=ijk+1-strideY; m9=Phi[nn]; 
-        nn=ijk-1+strideY; m10=Phi[nn]; 
-        nn=ijk+1+strideZ; m11=Phi[nn]; 
-        nn=ijk-1-strideZ; m12=Phi[nn]; 
-        nn=ijk+1-strideZ; m13=Phi[nn]; 
-        nn=ijk-1+strideZ; m14=Phi[nn]; 
-        nn=ijk+strideY+strideZ; m15=Phi[nn];
-        nn=ijk-strideY-strideZ; m16=Phi[nn]; 
-        nn=ijk+strideY-strideZ; m17=Phi[nn]; 
-        nn=ijk-strideY+strideZ; m18=Phi[nn]; 
     
-        nx = 0.16666666666666666*m1 - 0.08333333333333333*m10 + 0.08333333333333333*m11 -
-        0.08333333333333333*m12 + 0.08333333333333333*m13 - 0.08333333333333333*m14 -
-        0.16666666666666666*m2 + 0.08333333333333333*m7 - 0.08333333333333333*m8 +
-        0.08333333333333333*m9;
-        ny = 0.08333333333333333*m10 + 0.08333333333333333*m15 - 0.08333333333333333*m16 +
-        0.08333333333333333*m17 - 0.08333333333333333*m18 + 0.16666666666666666*m3 -
-        0.16666666666666666*m4 + 0.08333333333333333*m7 - 0.08333333333333333*m8 -
-        0.08333333333333333*m9;
-        nz = 0.08333333333333333*m11 - 0.08333333333333333*m12 - 0.08333333333333333*m13 +
-        0.08333333333333333*m14 + 0.08333333333333333*m15 - 0.08333333333333333*m16 -
-        0.08333333333333333*m17 + 0.08333333333333333*m18 + 0.16666666666666666*m5 -
-        0.16666666666666666*m6;
+    double TORADIANS = 3.14159265359/180.0;
+    double f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18;
+    double nx,ny,nz,C;
+    for (n=start; n<finish; n++) {
+        ijk = Map[n];
+        
+        k = ijk/(Nx*Ny);
+        j = (ijk-Nx*Ny*k)/Nx;
+        i = ijk-Nx*Ny*k-Nx*j;
+        
+        nn = ijk-1;                            // neighbor index (get convention)
+        if (i-1<0)        nn += Nx;            // periodic BC along the x-boundary
+        f1 = Phi[nn];                        // get neighbor for Phi - 1
+        //........................................................................
+        nn = ijk+1;                            // neighbor index (get convention)
+        if (!(i+1<Nx))    nn -= Nx;            // periodic BC along the x-boundary
+        f2 = Phi[nn];                        // get neighbor for Phi - 2
+        //........................................................................
+        nn = ijk-Nx;                            // neighbor index (get convention)
+        if (j-1<0)        nn += Nx*Ny;        // Perioidic BC along the y-boundary
+        f3 = Phi[nn];                    // get neighbor for Phi - 3
+        //........................................................................
+        nn = ijk+Nx;                            // neighbor index (get convention)
+        if (!(j+1<Ny))    nn -= Nx*Ny;        // Perioidic BC along the y-boundary
+        f4 = Phi[nn];                    // get neighbor for Phi - 4
+        //........................................................................
+        nn = ijk-Nx*Ny;                        // neighbor index (get convention)
+        if (k-1<0)        nn += Nx*Ny*Nz;        // Perioidic BC along the z-boundary
+        f5 = Phi[nn];                    // get neighbor for Phi - 5
+        //........................................................................
+        nn = ijk+Nx*Ny;                        // neighbor index (get convention)
+        if (!(k+1<Nz))    nn -= Nx*Ny*Nz;        // Perioidic BC along the z-boundary
+        f6 = Phi[nn];                    // get neighbor for Phi - 6
+        //........................................................................
+        nn = ijk-Nx-1;                        // neighbor index (get convention)
+        if (i-1<0)            nn += Nx;        // periodic BC along the x-boundary
+        if (j-1<0)            nn += Nx*Ny;    // Perioidic BC along the y-boundary
+        f7 = Phi[nn];                    // get neighbor for Phi - 7
+        //........................................................................
+        nn = ijk+Nx+1;                        // neighbor index (get convention)
+        if (!(i+1<Nx))        nn -= Nx;        // periodic BC along the x-boundary
+        if (!(j+1<Ny))        nn -= Nx*Ny;    // Perioidic BC along the y-boundary
+        f8 = Phi[nn];                    // get neighbor for Phi - 8
+        //........................................................................
+        nn = ijk+Nx-1;                        // neighbor index (get convention)
+        if (i-1<0)            nn += Nx;        // periodic BC along the x-boundary
+        if (!(j+1<Ny))        nn -= Nx*Ny;    // Perioidic BC along the y-boundary
+        f9 = Phi[nn];                    // get neighbor for Phi - 9
+        //........................................................................
+        nn = ijk-Nx+1;                        // neighbor index (get convention)
+        if (!(i+1<Nx))        nn -= Nx;        // periodic BC along the x-boundary
+        if (j-1<0)            nn += Nx*Ny;    // Perioidic BC along the y-boundary
+        f10 = Phi[nn];                    // get neighbor for Phi - 10
+        //........................................................................
+        nn = ijk-Nx*Ny-1;                        // neighbor index (get convention)
+        if (i-1<0)            nn += Nx;        // periodic BC along the x-boundary
+        if (k-1<0)            nn += Nx*Ny*Nz;    // Perioidic BC along the z-boundary
+        f11 = Phi[nn];                    // get neighbor for Phi - 11
+        //........................................................................
+        nn = ijk+Nx*Ny+1;                        // neighbor index (get convention)
+        if (!(i+1<Nx))        nn -= Nx;        // periodic BC along the x-boundary
+        if (!(k+1<Nz))    nn -= Nx*Ny*Nz;        // Perioidic BC along the z-boundary
+        f12 = Phi[nn];                    // get neighbor for Phi - 12
+        //........................................................................
+        nn = ijk+Nx*Ny-1;                        // neighbor index (get convention)
+        if (i-1<0)            nn += Nx;        // periodic BC along the x-boundary
+        if (!(k+1<Nz))        nn -= Nx*Ny*Nz;    // Perioidic BC along the z-boundary
+        f13 = Phi[nn];                    // get neighbor for Phi - 13
+        //........................................................................
+        nn = ijk-Nx*Ny+1;                        // neighbor index (get convention)
+        if (!(i+1<Nx))        nn -= Nx;        // periodic BC along the x-boundary
+        if (k-1<0)            nn += Nx*Ny*Nz;    // Perioidic BC along the z-boundary
+        f14 = Phi[nn];                    // get neighbor for Phi - 14
+        //........................................................................
+        nn = ijk-Nx*Ny-Nx;                    // neighbor index (get convention)
+        if (j-1<0)        nn += Nx*Ny;        // Perioidic BC along the y-boundary
+        if (k-1<0)        nn += Nx*Ny*Nz;        // Perioidic BC along the z-boundary
+        f15 = Phi[nn];                    // get neighbor for Phi - 15
+        //........................................................................
+        nn = ijk+Nx*Ny+Nx;                    // neighbor index (get convention)
+        if (!(j+1<Ny))    nn -= Nx*Ny;        // Perioidic BC along the y-boundary
+        if (!(k+1<Nz))    nn -= Nx*Ny*Nz;        // Perioidic BC along the z-boundary
+        f16 = Phi[nn];                    // get neighbor for Phi - 16
+        //........................................................................
+        nn = ijk+Nx*Ny-Nx;                    // neighbor index (get convention)
+        if (j-1<0)        nn += Nx*Ny;        // Perioidic BC along the y-boundary
+        if (!(k+1<Nz))    nn -= Nx*Ny*Nz;        // Perioidic BC along the z-boundary
+        f17 = Phi[nn];                    // get neighbor for Phi - 17
+        //........................................................................
+        nn = ijk-Nx*Ny+Nx;                    // neighbor index (get convention)
+        if (!(j+1<Ny))    nn -= Nx*Ny;        // Perioidic BC along the y-boundary
+        if (k-1<0)        nn += Nx*Ny*Nz;        // Perioidic BC along the z-boundary
+        f18 = Phi[nn];                    // get neighbor for Phi - 18
+        //............Compute the Color Gradient...................................
+        nx = -(f1-f2+0.5*(f7-f8+f9-f10+f11-f12+f13-f14));
+        ny = -(f3-f4+0.5*(f7-f8-f9+f10+f15-f16+f17-f18));
+        nz = -(f5-f6+0.5*(f11-f12-f13+f14+f15-f16-f17+f18));
+    
+        C = sqrt(nx*nx + ny*ny + nz*nz);
+        if (C==0) C=1;
+        nx /= C;
+        ny /= C;
+        nz /= C;
 
-       C = sqrt(nx*nx + ny*ny + nz*nz);
-       if (C==0) {C=1; flag=1;}
-       nx /= C;
-       ny /= C;
-       nz /= C;
-
-       temp_nx = nx; temp_ny=ny; temp_nz=nz;
      
 //#ifdef WBC
         snx = GradSDsX[ijk];
         sny = GradSDsY[ijk];
         snz = GradSDsZ[ijk];
-
+        snx = sny = snz = 0;
         SolC = sqrt(snx*snx + sny*sny + snz*snz);
+        if (SolC==0.0) { SolC=1.0;  }
+        snx /= SolC;
+        sny /= SolC;
+        snz /= SolC;
 
-        if (WBCFlag == 0 || SolC != 0){
+        prescribed_angle_radians = input_angle*TORADIANS;
+        theta_prime = acos(snx*nx + sny*ny + snz*nz);
+        denom = sin(theta_prime);
+        npluscoefA = cos(prescribed_angle_radians) - sin(prescribed_angle_radians)*cos(theta_prime)/denom;
+        npluscoefB = sin(prescribed_angle_radians)/denom;
 
-            if (SolC==0) {
-                SolC=1; flag=1;
-            } 
-            snx /= SolC;
-            sny /= SolC;
-            snz /= SolC;
+        nplus_x = npluscoefA * snx + npluscoefB * nx;
+        nplus_y = npluscoefA * sny + npluscoefB * ny;
+        nplus_z = npluscoefA * snz + npluscoefB * nz;
 
-            prescribed_angle_radians = input_angle*TORADIANS;
-            theta_prime = acos(snx*nx + sny*ny + snz*nz);
-            double theta_prime_deg = theta_prime*TODEGREES;
-            
-            denom = sin(theta_prime);
-            npluscoefA = cos(prescribed_angle_radians) - sin(prescribed_angle_radians)*cos(theta_prime)/denom;
-            npluscoefB = sin(prescribed_angle_radians)/denom;
+        nminuscoefA = cos(-prescribed_angle_radians) - sin(-prescribed_angle_radians)*cos(theta_prime)/denom;
+        nminuscoefB = sin(-prescribed_angle_radians)/denom;
 
-            nplus_x = npluscoefA * snx + npluscoefB * nx;
-            nplus_y = npluscoefA * sny + npluscoefB * ny;
-            nplus_z = npluscoefA * snz + npluscoefB * nz;
+        nminus_x = nminuscoefA * snx + nminuscoefB * nx;
+        nminus_y = nminuscoefA * sny + nminuscoefB * ny;
+        nminus_z = nminuscoefA * snz + nminuscoefB * nz;
 
-            nminuscoefA = cos(-prescribed_angle_radians) - sin(-prescribed_angle_radians)*cos(theta_prime)/denom;
-            nminuscoefB = sin(-prescribed_angle_radians)/denom;
+        Euclidean_distance_plus  = sqrt( (nx - nplus_x) *(nx - nplus_x)
+                                        + (ny - nplus_y) *(ny - nplus_y)
+                                        + (nz - nplus_z) *(nz - nplus_z)  );
 
-            nminus_x = nminuscoefA * snx + nminuscoefB * nx;
-            nminus_y = nminuscoefA * sny + nminuscoefB * ny;
-            nminus_z = nminuscoefA * snz + nminuscoefB * nz;
-
-
-            Euclidean_distance_plus  = sqrt( (nx - nplus_x) *(nx - nplus_x)
-                                            + (ny - nplus_y) *(ny - nplus_y)
-                                            + (nz - nplus_z) *(nz - nplus_z)  );
-
-            Euclidean_distance_minus = sqrt( (nx - nminus_x)*(nx - nminus_x)
-                                            + (ny - nminus_y)*(ny - nminus_y)
-                                            + (nz - nminus_z)*(nz - nminus_z) );
+        Euclidean_distance_minus = sqrt( (nx - nminus_x)*(nx - nminus_x)
+                                        + (ny - nminus_y)*(ny - nminus_y)
+                                        + (nz - nminus_z)*(nz - nminus_z) );
 
 
 
-            if (Euclidean_distance_minus > Euclidean_distance_plus) {
-                tempnx = nplus_x;
-                tempny = nplus_y;
-                tempnz = nplus_z;
-            }
-            if (Euclidean_distance_minus < Euclidean_distance_plus) {
-                tempnx = nminus_x;
-                tempny = nminus_y;
-                tempnz = nminus_z;
-            }
-            if (Euclidean_distance_plus == Euclidean_distance_minus) {
-                tempnx = snx;
-                tempny = sny;
-                tempnz = snz;
-            }
-
+        if (Euclidean_distance_minus > Euclidean_distance_plus) {
+            tempnx = nplus_x;
+            tempny = nplus_y;
+            tempnz = nplus_z;
             nx = tempnx;
             ny = tempny;
             nz = tempnz;
-          
+
+            C = sqrt(nx*nx + ny*ny + nz*nz);
+            if (C==0) C=1;
+            nx /= C;
+            ny /= C;
+            nz /= C;
+        }
+        if (Euclidean_distance_minus < Euclidean_distance_plus) {
+            tempnx = nminus_x;
+            tempny = nminus_y;
+            tempnz = nminus_z;
+            nx = tempnx;
+            ny = tempny;
+            nz = tempnz;
+
+            C = sqrt(nx*nx + ny*ny + nz*nz);
+            if (C==0) C=1;
+            nx /= C;
+            ny /= C;
+            nz /= C;
+        }
+        if (Euclidean_distance_plus == Euclidean_distance_minus) {
+            
+        }
+
+      
 //#endif
-            if (WBCFlag==0){
-                C = sqrt(nx*nx + ny*ny + nz*nz);
-                if (C==0) {C=1; flag=1;}
-
-                nx /= C;
-                ny /= C;
-                nz /= C;
-            } else {
-                nx *= C;
-                ny *= C;
-                nz *= C;
-            }
-
-        } 
-
+        
         GradPhiX[ijk] = nx;
         GradPhiY[ijk] = ny;
         GradPhiZ[ijk] = nz;

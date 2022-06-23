@@ -742,8 +742,12 @@ void lbpm_partial_saturation_pp(int argc, char **argv,int rank, int nprocs, MPI_
     if (InitialWetting == 1) Saturation=1.0-Saturation;
     int BoundaryCondition=1;
     
-    Nx += 2;
-    Nx = Ny = Nz;
+//    Nx+=2;
+//    Ny+=2;
+//    Nz+=2;
+    printf("Nx=%d Ny=%d Nz=%d\n",Nx,Ny,Nz);
+//    Nx += 2;
+//    Nx = Ny = Nz;
     int N = Nx*Ny*Nz;
     
     /* Initialize domain class communication */
