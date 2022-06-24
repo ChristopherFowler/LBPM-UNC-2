@@ -1309,7 +1309,7 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
     Np = (last_interior/16 + 1)*16;
     //printf("    Np=%i \n",Np);
     
-    int nn;
+    
     // Now use Map to determine the neighbors for each lattice direction
     for (k=1;k<Nz-1;k++){
         for (j=1;j<Ny-1;j++){
@@ -2549,10 +2549,419 @@ int ScaLBL_Communicator::MemoryOptimizedInactiveLayout(IntArray &InactiveMap, ch
     
     Ni = (last_inactive_interior/16 + 1)*16;
 
-
+    
+//    int *TempBuffer;
+//    TempBuffer = new int [5*RecvCount];
+//
+//    //.......................................................................
+//    // Re-index the send lists
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_x,sendCount_x*sizeof(int));
+//    for (i=0; i<sendCount_x; i++){
+//        n = TempBuffer[i];
+//        //if (rank==0) printf("s: n=%d ",n);
+//        idx=InactiveMap(n);
+//        //if (rank == 0) printf("s: mapped n=%d\n",idx);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_x,TempBuffer,sendCount_x*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_y,sendCount_y*sizeof(int));
+//    for (i=0; i<sendCount_y; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_y,TempBuffer,sendCount_y*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_z,sendCount_z*sizeof(int));
+//    for (i=0; i<sendCount_z; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_z,TempBuffer,sendCount_z*sizeof(int));
+//
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_X,sendCount_X*sizeof(int));
+//    for (i=0; i<sendCount_X; i++){
+//        n = TempBuffer[i];
+//       // printf("r: n=%d ",n);
+//        idx=InactiveMap(n);
+//        //printf("r: mapped n=%d\n",idx);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_X,TempBuffer,sendCount_X*sizeof(int));
+//
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_Y,sendCount_Y*sizeof(int));
+//    for (i=0; i<sendCount_Y; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_Y,TempBuffer,sendCount_Y*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_Z,sendCount_Z*sizeof(int));
+//    for (i=0; i<sendCount_Z; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_Z,TempBuffer,sendCount_Z*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_xy,sendCount_xy*sizeof(int));
+//    for (i=0; i<sendCount_xy; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_xy,TempBuffer,sendCount_xy*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_xY,sendCount_xY*sizeof(int));
+//    for (i=0; i<sendCount_xY; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_xY,TempBuffer,sendCount_xY*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_Xy,sendCount_Xy*sizeof(int));
+//    for (i=0; i<sendCount_Xy; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_Xy,TempBuffer,sendCount_Xy*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_XY,sendCount_XY*sizeof(int));
+//    for (i=0; i<sendCount_XY; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_XY,TempBuffer,sendCount_XY*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_xz,sendCount_xz*sizeof(int));
+//    for (i=0; i<sendCount_xz; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_xz,TempBuffer,sendCount_xz*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_xZ,sendCount_xZ*sizeof(int));
+//    for (i=0; i<sendCount_xZ; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_xZ,TempBuffer,sendCount_xZ*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_Xz,sendCount_Xz*sizeof(int));
+//    for (i=0; i<sendCount_Xz; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_Xz,TempBuffer,sendCount_Xz*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_XZ,sendCount_XZ*sizeof(int));
+//    for (i=0; i<sendCount_XZ; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_XZ,TempBuffer,sendCount_XZ*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_yz,sendCount_yz*sizeof(int));
+//    for (i=0; i<sendCount_yz; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_yz,TempBuffer,sendCount_yz*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_Yz,sendCount_Yz*sizeof(int));
+//    for (i=0; i<sendCount_Yz; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_Yz,TempBuffer,sendCount_Yz*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_yZ,sendCount_yZ*sizeof(int));
+//    for (i=0; i<sendCount_yZ; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_yZ,TempBuffer,sendCount_yZ*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcSendList_YZ,sendCount_YZ*sizeof(int));
+//    for (i=0; i<sendCount_YZ; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcSendList_YZ,TempBuffer,sendCount_YZ*sizeof(int));
+    //.......................................................................
+//    // Re-index the recieve lists for the D3Q19 distributions
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_x,5*recvCount_x*sizeof(int));
+//    for (i=0; i<5*recvCount_x; i++){
+//        n = TempBuffer[i];
+//        //if (rank==0) printf("r: n=%d ",n);
+//        idx=InactiveMap(n);
+//        //if (rank == 0) printf("r: mapped n=%d\n",idx);
+//        TempBuffer[i]=idx;
+//
+//
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_x,TempBuffer,5*recvCount_x*sizeof(int));
+//
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_y,5*recvCount_y*sizeof(int));
+//    for (i=0; i<5*recvCount_y; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//
+//    ScaLBL_CopyToDevice(dvcRecvDist_y,TempBuffer,5*recvCount_y*sizeof(int));
+//
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_z,5*recvCount_z*sizeof(int));
+//    for (i=0; i<5*recvCount_z; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_z,TempBuffer,5*recvCount_z*sizeof(int));
+//
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_X,5*recvCount_X*sizeof(int));
+//    for (i=0; i<5*recvCount_X; i++){
+//        n = TempBuffer[i];
+//        //if (rank==0) printf("r: n=%d ",n);
+//        idx=InactiveMap(n);
+//        //if (rank == 0) printf("r: mapped n=%d\n",idx);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_X,TempBuffer,5*recvCount_X*sizeof(int));
+//
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_Y,5*recvCount_Y*sizeof(int));
+//    for (i=0; i<5*recvCount_Y; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_Y,TempBuffer,5*recvCount_Y*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_Z,5*recvCount_Z*sizeof(int));
+//    for (i=0; i<5*recvCount_Z; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_Z,TempBuffer,5*recvCount_Z*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_xy,recvCount_xy*sizeof(int));
+//    for (i=0; i<recvCount_xy; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_xy,TempBuffer,recvCount_xy*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_xY,recvCount_xY*sizeof(int));
+//    for (i=0; i<recvCount_xY; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_xY,TempBuffer,recvCount_xY*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_Xy,recvCount_Xy*sizeof(int));
+//    for (i=0; i<recvCount_Xy; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_Xy,TempBuffer,recvCount_Xy*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_XY,recvCount_XY*sizeof(int));
+//    for (i=0; i<recvCount_XY; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_XY,TempBuffer,recvCount_XY*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_xz,recvCount_xz*sizeof(int));
+//    for (i=0; i<recvCount_xz; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_xz,TempBuffer,recvCount_xz*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_xZ,recvCount_xZ*sizeof(int));
+//    for (i=0; i<recvCount_xZ; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_xZ,TempBuffer,recvCount_xZ*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_Xz,recvCount_Xz*sizeof(int));
+//    for (i=0; i<recvCount_Xz; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_Xz,TempBuffer,recvCount_Xz*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_XZ,recvCount_XZ*sizeof(int));
+//    for (i=0; i<recvCount_XZ; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_XZ,TempBuffer,recvCount_XZ*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_yz,recvCount_yz*sizeof(int));
+//    for (i=0; i<recvCount_yz; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_yz,TempBuffer,recvCount_yz*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_Yz,recvCount_Yz*sizeof(int));
+//    for (i=0; i<recvCount_Yz; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_Yz,TempBuffer,recvCount_Yz*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_yZ,recvCount_yZ*sizeof(int));
+//    for (i=0; i<recvCount_yZ; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_yZ,TempBuffer,recvCount_yZ*sizeof(int));
+//
+//    ScaLBL_CopyToHost(TempBuffer,dvcRecvDist_YZ,recvCount_YZ*sizeof(int));
+//    for (i=0; i<recvCount_YZ; i++){
+//        n = TempBuffer[i];
+//        idx=InactiveMap(n);
+//        TempBuffer[i]=idx;
+//    }
+//    ScaLBL_CopyToDevice(dvcRecvDist_YZ,TempBuffer,recvCount_YZ*sizeof(int));
+//    //.......................................................................
+//
+    
+    // Reset the value of N to match the dense structure
+  //  N = Ni;
+    
+    // Clean up
+  //  delete [] TempBuffer;
     return(Ni);
 }
 
+
+
+//int ScaLBL_Communicator::CreateInactiveMap(IntArray &InactiveMap, double * VFmask, int Ni, int strideY, int strideZ, int* scalarList) {
+//
+//    int i,j,k,nn,n,idx;
+//    
+//    for (k=1;k<Nz-1;k++){
+//        for (j=1;j<Ny-1;j++){
+//            for (i=1;i<Nx-1;i++){
+//                n=k*Nx*Ny+j*Nx+i;
+//                idx=InactiveMap(i,j,k);
+//                if (idx > Ni) printf("ScaLBL_Communicator::MemoryOptimizedInactiveLayout: InactiveMap(%i,%i,%i) = %i > %i \n",i,j,k,InactiveMap(i,j,k),Ni);
+//                else if (!(idx<0)){
+//                    int neighbor;
+//                    nn = n-1;
+//                    if (VFmask[nn]==1) { scalarList[idx] = n;  }
+//                    else scalarList[idx] = n-1;
+//                    
+//                    nn = n+1;
+//                    if (VFmask[nn]==1 ) { scalarList[Ni+idx] = n;  }
+//                    else scalarList[Ni+idx] = n+1;
+//                    
+//                    nn = n-strideY;
+//                    if (VFmask[nn]==1) { scalarList[2*Ni+idx] = n;  }
+//                    else scalarList[2*Ni+idx] = n-strideY;
+//                    
+//                    nn = n+strideY;
+//                    if (VFmask[nn]==1 ) { scalarList[3*Ni+idx] = n;  }
+//                    else scalarList[3*Ni+idx] = n+strideY;
+//                    
+//                    nn = n-strideZ;
+//                    if (VFmask[nn]==1) { scalarList[4*Ni+idx] = n;  }
+//                    else scalarList[4*Ni+idx] = n-strideZ;
+//                    
+//                    nn = n+strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[5*Ni+idx] = n;  }
+//                    else scalarList[5*Ni+idx] = n+strideZ;
+//                    
+//                    nn = n-1-strideY;
+//                    if (VFmask[nn]==1 ) { scalarList[6*Ni+idx] = n;  }
+//                    else scalarList[6*Ni+idx] = n-1-strideY;
+//                    
+//                    nn = n+1+strideY;
+//                    if (VFmask[nn]==1 ) { scalarList[7*Ni+idx] = n;  }
+//                    else scalarList[7*Ni+idx] = n+1+strideY;
+//                    
+//                    nn = n-1+strideY;
+//                    if (VFmask[nn]==1 ) { scalarList[8*Ni+idx] = n;  }
+//                    else scalarList[8*Ni+idx] = n-1+strideY;
+//                    
+//                    nn = n+1-strideY;
+//                    if (VFmask[nn]==1 ) { scalarList[9*Ni+idx] = n;  }
+//                    else scalarList[9*Ni+idx] = n+1-strideY;
+//                    
+//                    nn = n-1-strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[10*Ni+idx] = n;  }
+//                    else scalarList[10*Ni+idx] = n-1-strideZ;
+//                    
+//                    nn = n+1+strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[11*Ni+idx] = n;  }
+//                    else scalarList[11*Ni+idx] = n+1+strideZ;
+//                    
+//                    nn = n-1+strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[12*Ni+idx] = n;  }
+//                    else scalarList[12*Ni+idx] = n-1+strideZ;
+//                    
+//                    nn = n+1-strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[13*Ni+idx] = n;  }
+//                    else scalarList[13*Ni+idx] = n+1-strideZ;
+//                    
+//                    nn = n-strideY-strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[14*Ni+idx] = n;  }
+//                    else scalarList[14*Ni+idx] = n-strideY-strideZ;
+//                    
+//                    nn = n+strideY+strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[15*Ni+idx] = n;  }
+//                    else scalarList[15*Ni+idx] = n+strideY+strideZ;
+//                    
+//                    nn = n-strideY+strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[16*Ni+idx] = n;  }
+//                    else scalarList[16*Ni+idx] = n-strideY+strideZ;
+//                    
+//                    nn = n+strideY-strideZ;
+//                    if (VFmask[nn]==1 ) { scalarList[17*Ni+idx] = n;  }
+//                    else scalarList[17*Ni+idx] = n+strideY-strideZ;
+//
+//                }
+//            }
+//        }
+//    }
+//}
 
 
 int ScaLBL_Communicator::CreateActiveMap(IntArray &SBMap, char * id, int Nsb, int strideY, int strideZ, int* scalarList) {
@@ -2759,6 +3168,7 @@ int ScaLBL_Communicator::CreateInactiveMap(IntArray &InactiveMap, char * id, int
                 idx=InactiveMap(i,j,k);
                 if (idx > Ni) printf("ScaLBL_Communicator::MemoryOptimizedInactiveLayout: InactiveMap(%i,%i,%i) = %i > %i \n",i,j,k,InactiveMap(i,j,k),Ni);
                 if (!(idx<0)){
+                   // int neighbor;
                     
                     nn = n-1;
                     if (id[nn]==4) { scalarList[idx] = n;  }

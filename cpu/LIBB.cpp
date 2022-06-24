@@ -2065,86 +2065,79 @@ extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi,
         ny /= C;
         nz /= C;
 
-     
-//#ifdef WBC
-        snx = GradSDsX[ijk];
-        sny = GradSDsY[ijk];
-        snz = GradSDsZ[ijk];
-        snx = sny = snz = 0;
-        SolC = sqrt(snx*snx + sny*sny + snz*snz);
-        if (SolC==0.0) { SolC=1.0;  }
-        snx /= SolC;
-        sny /= SolC;
-        snz /= SolC;
-
-        prescribed_angle_radians = input_angle*TORADIANS;
-        theta_prime = acos(snx*nx + sny*ny + snz*nz);
-        denom = sin(theta_prime);
-        npluscoefA = cos(prescribed_angle_radians) - sin(prescribed_angle_radians)*cos(theta_prime)/denom;
-        npluscoefB = sin(prescribed_angle_radians)/denom;
-
-        nplus_x = npluscoefA * snx + npluscoefB * nx;
-        nplus_y = npluscoefA * sny + npluscoefB * ny;
-        nplus_z = npluscoefA * snz + npluscoefB * nz;
-
-        nminuscoefA = cos(-prescribed_angle_radians) - sin(-prescribed_angle_radians)*cos(theta_prime)/denom;
-        nminuscoefB = sin(-prescribed_angle_radians)/denom;
-
-        nminus_x = nminuscoefA * snx + nminuscoefB * nx;
-        nminus_y = nminuscoefA * sny + nminuscoefB * ny;
-        nminus_z = nminuscoefA * snz + nminuscoefB * nz;
-
-        Euclidean_distance_plus  = sqrt( (nx - nplus_x) *(nx - nplus_x)
-                                        + (ny - nplus_y) *(ny - nplus_y)
-                                        + (nz - nplus_z) *(nz - nplus_z)  );
-
-        Euclidean_distance_minus = sqrt( (nx - nminus_x)*(nx - nminus_x)
-                                        + (ny - nminus_y)*(ny - nminus_y)
-                                        + (nz - nminus_z)*(nz - nminus_z) );
-
-
-
-        if (Euclidean_distance_minus > Euclidean_distance_plus) {
-            tempnx = nplus_x;
-            tempny = nplus_y;
-            tempnz = nplus_z;
-            nx = tempnx;
-            ny = tempny;
-            nz = tempnz;
-
-            C = sqrt(nx*nx + ny*ny + nz*nz);
-            if (C==0) C=1;
-            nx /= C;
-            ny /= C;
-            nz /= C;
-        }
-        if (Euclidean_distance_minus < Euclidean_distance_plus) {
-            tempnx = nminus_x;
-            tempny = nminus_y;
-            tempnz = nminus_z;
-            nx = tempnx;
-            ny = tempny;
-            nz = tempnz;
-
-            C = sqrt(nx*nx + ny*ny + nz*nz);
-            if (C==0) C=1;
-            nx /= C;
-            ny /= C;
-            nz /= C;
-        }
-        if (Euclidean_distance_plus == Euclidean_distance_minus) {
-            
-        }
-
-      
-//#endif
         
-        GradPhiX[ijk] = nx;
-        GradPhiY[ijk] = ny;
-        GradPhiZ[ijk] = nz;
-        CField[ijk] = C;
+   #ifdef WBC
+           snx = GradSDsX[ijk];
+           sny = GradSDsY[ijk];
+           snz = GradSDsZ[ijk];
 
-    }
+           SolC = sqrt(snx*snx + sny*sny + snz*snz);
+           if (SolC==0.0) { SolC=1.0;  }
+           snx /= SolC;
+           sny /= SolC;
+           snz /= SolC;
+
+           prescribed_angle_radians = input_angle*TORADIANS;
+           theta_prime = acos(snx*nx + sny*ny + snz*nz);
+           denom = sin(theta_prime);
+           npluscoefA = cos(prescribed_angle_radians) - sin(prescribed_angle_radians)*cos(theta_prime)/denom;
+           npluscoefB = sin(prescribed_angle_radians)/denom;
+
+           nplus_x = npluscoefA * snx + npluscoefB * nx;
+           nplus_y = npluscoefA * sny + npluscoefB * ny;
+           nplus_z = npluscoefA * snz + npluscoefB * nz;
+
+           nminuscoefA = cos(-prescribed_angle_radians) - sin(-prescribed_angle_radians)*cos(theta_prime)/denom;
+           nminuscoefB = sin(-prescribed_angle_radians)/denom;
+
+           nminus_x = nminuscoefA * snx + nminuscoefB * nx;
+           nminus_y = nminuscoefA * sny + nminuscoefB * ny;
+           nminus_z = nminuscoefA * snz + nminuscoefB * nz;
+
+           Euclidean_distance_plus  = sqrt( (nx - nplus_x) *(nx - nplus_x)
+                                           + (ny - nplus_y) *(ny - nplus_y)
+                                           + (nz - nplus_z) *(nz - nplus_z)  );
+
+           Euclidean_distance_minus = sqrt( (nx - nminus_x)*(nx - nminus_x)
+                                           + (ny - nminus_y)*(ny - nminus_y)
+                                           + (nz - nminus_z)*(nz - nminus_z) );
+
+
+
+           if (Euclidean_distance_minus > Euclidean_distance_plus) {
+               tempnx = nplus_x;
+               tempny = nplus_y;
+               tempnz = nplus_z;
+           }
+           if (Euclidean_distance_minus < Euclidean_distance_plus) {
+               tempnx = nminus_x;
+               tempny = nminus_y;
+               tempnz = nminus_z;
+           }
+           if (Euclidean_distance_plus == Euclidean_distance_minus) {
+               tempnx = snx;
+               tempny = sny;
+               tempnz = snz;
+           }
+
+           nx = tempnx;
+           ny = tempny;
+           nz = tempnz;
+           
+           C = sqrt(nx*nx + ny*ny + nz*nz);
+           if (C==0) C=1;
+           nx /= C;
+           ny /= C;
+           nz /= C;
+   #endif
+
+           
+           GradPhiX[ijk] = nx;
+           GradPhiY[ijk] = ny;
+           GradPhiZ[ijk] = nz;
+           CField[ijk] = C;
+
+       }
 }
 
 
