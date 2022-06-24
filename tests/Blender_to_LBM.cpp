@@ -686,7 +686,7 @@ int main(int argc, char **argv)
             
             
 
-            PrintIntegerField("SegData", SegData, *Dm, rank, global_Nx, global_Ny, global_Nz);
+       //     PrintIntegerField("SegData", SegData, *Dm, rank, global_Nx, global_Ny, global_Nz);
             
             //FluidPhase
             printf("Read data from %s \n",READFILE_FluidPhaseID.c_str());
@@ -697,7 +697,7 @@ int main(int argc, char **argv)
             if (ReadFluidPhaseSeg != SIZE) printf("Error reading fluid phase id data, size \n");
             fclose(FLUIDPHASESEGDAT);
             
-            PrintIntegerField("FluidPhaseSegData", FluidPhaseSegData, *Dm, rank, global_Nx, global_Ny, global_Nz);
+        //    PrintIntegerField("FluidPhaseSegData", FluidPhaseSegData, *Dm, rank, global_Nx, global_Ny, global_Nz);
             
 //            printf("SegData read:\n");
 //            for (int i=5;i<6;i++){
@@ -722,7 +722,7 @@ int main(int argc, char **argv)
             if (ReadSD != SIZE) printf("Error reading sd data, size \n");
             fclose(RayTraceDistance);
             
-            PrintDoubleField("SignDist", SignDist, *Dm, rank, global_Nx, global_Ny, global_Nz);
+      //      PrintDoubleField("SignDist", SignDist, *Dm, rank, global_Nx, global_Ny, global_Nz);
             
 //            printf("SignDist read:\n");
 //            for (int i=5;i<6;i++){
@@ -746,7 +746,7 @@ int main(int argc, char **argv)
             if (ReadSDMC != SIZE) printf("Error reading sd data, size \n");
             fclose(RayTraceDistanceMC);
             
-            PrintDoubleField("SignDistMC", SignDistMC, *Dm, rank, global_Nx, global_Ny, global_Nz);
+        //    PrintDoubleField("SignDistMC", SignDistMC, *Dm, rank, global_Nx, global_Ny, global_Nz);
 
             //LibbA
             printf("Read data from %s \n",READFILE_LIBBA.c_str());
@@ -940,7 +940,7 @@ int main(int argc, char **argv)
         PopulateHalo_Double(sdmc, *Dm, nx+2, ny+2, nz+2, RANK);
         PopulateHalo_Double(sd, *Dm, nx+2, ny+2, nz+2, RANK);
         
-        PrintIntegerField("id", id, *Dm, rank, nx+2, ny+2, nz+2);
+       // PrintIntegerField("id", id, *Dm, rank, nx+2, ny+2, nz+2);
 
         for (size_t n=0; n<N; n++) Averages->SDs(n) = sdmc[n];
         
@@ -962,7 +962,7 @@ int main(int argc, char **argv)
 //                 if (id[i]id[i] = 2;
              }
         }
-        PrintIntegerField("id", id, *Dm, rank, nx+2, ny+2, nz+2);
+     //   PrintIntegerField("id", id, *Dm, rank, nx+2, ny+2, nz+2);
         id[0] = id[(nx+2)-1] = id[((ny+2)-1)*(nx+2)] = id[((ny+2)-1)*(nx+2) + (nx+2)-1] = 0;
         id[((nz+2)-1)*(nx+2)*(ny+2)] = id[((nz+2)-1)*(nx+2)*(ny+2)+(nx+2)-1] = id[((nz+2)-1)*(nx+2)*(ny+2)+((ny+2)-1)*(nx+2)] = id[((nz+2)-1)*(nx+2)*(ny+2)+((ny+2)-1)*(nx+2) + (nx+2)-1] = 0;
 //        printf("line=%d\n",__LINE__);

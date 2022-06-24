@@ -1309,7 +1309,7 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
     Np = (last_interior/16 + 1)*16;
     //printf("    Np=%i \n",Np);
     
-    
+    int nn;
     // Now use Map to determine the neighbors for each lattice direction
     for (k=1;k<Nz-1;k++){
         for (j=1;j<Ny-1;j++){
@@ -1423,7 +1423,8 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
                     neighbor=Map(i+1,j-1,k);
                     if (neighbor<0)    {   neighborList[9*Np+idx]=idx + 9*Np;           interpolationList[9*Np+idx]=idx + 10*Np; }
                     else               {   neighborList[9*Np+idx]=neighbor + 10*Np;     interpolationList[9*Np+idx]=NAN; }
-                    if (neighbor<0 ) {  nn = idx-Nx+1;
+                    if (neighbor<0 ) {
+                        nn = idx-Nx+1;
                         if (!(i+1<Nx))        nn -= Nx;
                         if (j-1<0)            nn += Nx*Ny;
                         scalarList[9*Np+idx] = nn;  }
@@ -1461,7 +1462,8 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
                     neighbor=Map(i-1,j,k+1);
                     if (neighbor<0)    {   neighborList[12*Np+idx]=idx + 14*Np;         interpolationList[12*Np+idx]=idx + 13*Np; }
                     else               {   neighborList[12*Np+idx]=neighbor + 13*Np;    interpolationList[12*Np+idx]=NAN; }
-                    if (neighbor<0 ) {  nn = idx+Nx*Ny-1;
+                    if (neighbor<0 ) {
+                        nn = idx+Nx*Ny-1;
                         if (i-1<0)            nn += Nx;
                         if (!(k+1<Nz))        nn -= Nx*Ny*Nz;
                         scalarList[12*Np+idx] = nn;  }
@@ -1487,7 +1489,8 @@ int ScaLBL_Communicator::MemoryOptimizedLayoutAA_LIBB(IntArray &Map, int *neighb
                     neighbor=Map(i,j-1,k-1);
                     if (neighbor<0)    {   neighborList[14*Np+idx]=idx + 16*Np;         interpolationList[14*Np+idx]=idx + 15*Np; }
                     else               {   neighborList[14*Np+idx]=neighbor + 15*Np;    interpolationList[14*Np+idx]=NAN; }
-                    if (neighbor<0 ) {  nn = idx-Nx*Ny-Nx;
+                    if (neighbor<0 ) {
+                        nn = idx-Nx*Ny-Nx;
                         if (j-1<0)        nn += Nx*Ny;
                         if (k-1<0)        nn += Nx*Ny*Nz;
                         scalarList[14*Np+idx] = nn;  }
@@ -2500,7 +2503,7 @@ int ScaLBL_Communicator::MemoryOptimizedInactiveLayout(IntArray &InactiveMap, ch
                 InactiveMap(i,j,k) = -1;
                 // Local index
                 n = k*Nx*Ny+j*Nx+i;
-                 if (VFmask[n] >= 0.5) {
+                 if (VFmask[n] > 0.5) {
 //                if (VFmask[n] > 0.5 && VFmask[n] < 1.0) {
                     FluidNeighborCount = 0;
                     FluidNeighborCount = Fneighbor(VFmask, n, Nx, Nx*Ny); // The reachability condition
@@ -2531,7 +2534,7 @@ int ScaLBL_Communicator::MemoryOptimizedInactiveLayout(IntArray &InactiveMap, ch
             for (i=2; i<Nx-2; i++){
                 // Local index (regular layout)
                 n = k*Nx*Ny + j*Nx + i;
-                 if (VFmask[n] >= 0.5) {
+                 if (VFmask[n] > 0.5) {
 //                if (VFmask[n] > 0.5 && VFmask[n] < 1.0) {
                     FluidNeighborCount = 0;
                     FluidNeighborCount = Fneighbor(VFmask, n, Nx, Nx*Ny);

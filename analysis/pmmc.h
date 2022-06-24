@@ -436,51 +436,65 @@ inline bool Interface( DoubleArray &A, const double v, int i, int j, int k) {
     // returns true if grid cell i, j, k contains a section of the interface
     bool Y = 0;
     
-    if ((A(i,j,k)-v)*(A(i+1,j,k)-v) < 0 ){
+    double a1,a2;
+    if ((A(i,j,k)-v)*(A(i+1,j,k)-v) <= 0 ){
         Y=1;
     }
     // 2
-    if ((A(i+1,j,k)-v)*(A(i+1,j+1,k)-v) < 0){
+    if ((A(i+1,j,k)-v)*(A(i+1,j+1,k)-v) <= 0){
         Y=1;
     }
     //3
-    if ((A(i+1,j+1,k)-v)*(A(i,j+1,k)-v) < 0){
+    if ((A(i+1,j+1,k)-v)*(A(i,j+1,k)-v) <= 0){
         Y=1;
     }
     //4
-    if ((A(i,j+1,k)-v)*(A(i,j,k)-v) < 0 ){
+    if ((A(i,j+1,k)-v)*(A(i,j,k)-v) <= 0 ){
         Y=1;
+        
+      //  if (A(i,j,k) == 0 && A(i,j+1,k) == 0) { Y = 0;
+            
+         //  if (k==4) printf("(%d,%d,%d)",i,j,k); }
     }
     //5
-    if ((A(i,j,k)-v)*(A(i,j,k+1)-v) < 0 ){
+    if ((A(i,j,k)-v)*(A(i,j,k+1)-v) <= 0 ){
         Y=1;
+        
+            
+        
+//        if (i ==8 && j==8) {
+//            a1 = A(i,j,k);
+//            a2 = A(i,j,k+1);
+//        int kp1 = k+1;
+//            printf("k=%d k+1=%d A(i,j,k)=%.2f   A(i,j,k+1)=%.2f\n",k,kp1,a1,a2);
+//        }
     }
     //6
-    if ((A(i+1,j,k)-v)*(A(i+1,j,k+1)-v) < 0 ){
+    if ((A(i+1,j,k)-v)*(A(i+1,j,k+1)-v) <= 0 ){
         Y=1;
     }
     //7
-    if ((A(i+1,j+1,k)-v)*(A(i+1,j+1,k+1)-v) < 0 ){
+    if ((A(i+1,j+1,k)-v)*(A(i+1,j+1,k+1)-v) <= 0 ){
         Y=1;
     }
     //8
-    if ((A(i,j+1,k)-v)*(A(i,j+1,k+1)-v) < 0 ){
+    if ((A(i,j+1,k)-v)*(A(i,j+1,k+1)-v) <= 0 ){
         Y=1;
     }
     //9
-    if ((A(i,j,k+1)-v)*(A(i+1,j,k+1)-v) < 0 ){
+    if ((A(i,j,k+1)-v)*(A(i+1,j,k+1)-v) <= 0 ){
         Y=1;
     }
     //10
-    if ((A(i+1,j,k+1)-v)*(A(i+1,j+1,k+1)-v) < 0 ){
+    if ((A(i+1,j,k+1)-v)*(A(i+1,j+1,k+1)-v) <= 0 ){
         Y=1;
     }
     //11
-    if ((A(i+1,j+1,k+1)-v)*(A(i,j+1,k+1)-v) < 0 ){
+    if ((A(i+1,j+1,k+1)-v)*(A(i,j+1,k+1)-v) <= 0 ){
         Y=1;
     }
     //12
-    if ((A(i,j+1,k+1)-v)*(A(i,j,k+1)-v) < 0 ){
+    if ((A(i,j+1,k+1)-v)*(A(i,j,k+1)-v) <= 0 ){
         Y=1;
     }
     return Y;
@@ -489,6 +503,39 @@ inline bool Interface( DoubleArray &A, const double v, int i, int j, int k) {
 
 inline bool Fluid_Interface( DoubleArray &A,  DoubleArray &S, const double v, int i, int j, int k) {
     // returns true if grid cell i, j, k contains a section of the interface
+    
+    double a1,a2,b1,b2;
+    
+//    if (i==4 && j==3 && k==4) {
+//        a1 = A(i,j,k);
+//        a2 = A(i,j+1,k);
+//        b1 = S(i,j,k);
+//        b2 = S(i,j+1,k);
+////        int kp1 = j+1;
+//    printf("Fluid Interface i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//    }
+    
+//    if (i==4 && j==3 && k==8) {
+//        a1 = A(i,j,k);
+//        a2 = A(i,j+1,k);
+//        b1 = S(i,j,k);
+//        b2 = S(i,j+1,k);
+////        int kp1 = j+1;
+//    printf("Fluid Interface i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//    }
+    
+    
+    
+//    if (i==4 && j==3 && k==8) {
+//        a1 = A(i,j,k);
+//        a2 = A(i,j+1,k);
+//        b1 = S(i,j,k);
+//        b2 = S(i,j+1,k);
+////        int kp1 = j+1;
+//    printf("i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//    }
+    
+    
     bool Y = 0;
     
     if ((A(i,j,k)-v)*(A(i+1,j,k)-v) < 0 && S(i,j,k) > 0 && S(i+1,j,k) > 0){
@@ -505,6 +552,24 @@ inline bool Fluid_Interface( DoubleArray &A,  DoubleArray &S, const double v, in
     //4
     if ((A(i,j+1,k)-v)*(A(i,j,k)-v) < 0 && S(i,j,k) > 0 && S(i,j+1,k) > 0){
         Y=1;
+        
+      
+//        if (k==3) {
+//            a1 = A(i,j,k);
+//            a2 = A(i,j+1,k);
+//        b1 = S(i,j,k);
+//        b2 = S(i,j+1,k);
+////        int kp1 = j+1;
+//            printf("i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//        }
+        
+//        if (k==8) {
+//            a1 = A(i,j,k);
+//            a2 = A(i,j+1,k);
+//        int kp1 = j+1;
+//            printf("j=%d j+1=%d A(i,j,k)=%.2f   A(i,j+1,k)=%.2f\n",j,kp1,a1,a2);
+//        }
+        
     }
     //5
     if ((A(i,j,k)-v)*(A(i,j,k+1)-v) < 0 && S(i,j,k) > 0 && S(i,j,k+1) > 0){
@@ -667,6 +732,8 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
         P = VertexInterp(C0,C1,CubeValues[0],CubeValues[1]); // CubeValues related to SignDist
         VertexList[0] = P;
         
+        
+        
         /* Interpolate the values between C0 and the point P */
         Q = C0;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z)); // Distance between P and Q
@@ -692,6 +759,29 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
         Q = C3;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[3] = CubeValues_B[3] + temp*(CubeValues_B[0]-CubeValues_B[3]);
+        
+//        if (CubeValues[0] == 0 && CubeValues[3] == 0) { // Sign distance values are both 0
+//            if (CubeValues_B[0] * CubeValues_B[3] < 0) {
+            
+//                        if (i==4 && j == 3 && k==4) {
+//                        double px = P.x;
+//                        double py = P.y;
+//                        double pz = P.z;
+//                        double interp = ValueList[3];
+//                        printf("  8: (%d,%d,%d) P=(%.1f,%.1f,%.1f) temp=%.3f interp=%.3f  \n",i,j,k,px,py,pz,temp,interp);
+//                        }
+//
+//                        if (i==4 && j == 4 && k==4) {
+//                        double px = P.x;
+//                        double py = P.y;
+//                        double pz = P.z;
+//                        double interp = ValueList[3];
+//                        printf("  8: (%d,%d,%d) P=(%.1f,%.1f,%.1f) temp=%.3f interp=%.3f  \n",i,j,k,px,py,pz,temp,interp);
+//                        }
+                    
+//                    }
+//                }
+        
     }
     if (edgeTable[CubeIndex] & 16){
         P = VertexInterp(C4,C5,CubeValues[4],CubeValues[5]);
@@ -722,11 +812,55 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
         ValueList[7] = CubeValues_B[7] + temp*(CubeValues_B[4]-CubeValues_B[7]);
     }
     if (edgeTable[CubeIndex] & 256){
+        
         P = VertexInterp(C0,C4,CubeValues[0],CubeValues[4]);
-        VertexList[8] =    P;
+        VertexList[8] = P;
         Q = C0;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[8] = CubeValues_B[0] + temp*(CubeValues_B[4]-CubeValues_B[0]);
+        
+//        if (CubeValues_B[0] == -1 && CubeValues_B[4] == 0) {
+//          //  temp = fabs(CubeValues[0]);
+//            ValueList[8] = temp;
+//            P.z = temp;
+//            VertexList[8] = P;
+//        }
+//
+//        if (CubeValues[0] < 0 && CubeValues[0] == -CubeValues[4]) {
+//            temp = fabs(CubeValues[0]);
+//            ValueList[8] = 1.0 - temp;
+//            P.z = 1.0 - temp;
+//            VertexList[8] = P;
+//        }
+        
+//        if (CubeValues[0] == -1 && CubeValues[4] == 0) {
+//            temp = fabs(CubeValues[0]);
+//            ValueList[8] = 1;
+//            P.z = 1;
+//            VertexList[8] = P;
+//
+//        }
+//
+//        if (CubeValues[0] == 1 && CubeValues[4] == 0) {
+//            temp = fabs(CubeValues[0]);
+//            ValueList[8] = 0;
+//            P.z = 0;
+//            VertexList[8] = P;
+//
+//        }
+        
+        
+        
+        
+//        if (i==8 && j == 8) {
+//        double px = P.x;
+//        double py = P.y;
+//        double pz = P.z;
+//        double interp = ValueList[8];
+//        double CBV0 = CubeValues_B[0];
+//        double CBV4 = CubeValues_B[4];
+//        printf("  256: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CBV0=%.2f CBV4=%.2f  \n",k,pz,temp,interp,CBV0,CBV4);
+//        }
     }
     if (edgeTable[CubeIndex] & 512){
         P = VertexInterp(C1,C5,CubeValues[1],CubeValues[5]);
@@ -734,6 +868,54 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
         Q = C1;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[9] = CubeValues_B[1] + temp*(CubeValues_B[5]-CubeValues_B[1]);
+        
+//        if (CubeValues_B[1] == -1 && CubeValues_B[5] == 0) {
+//           // temp = fabs(CubeValues[1]);
+//            ValueList[9] = temp;
+//            P.z = temp;
+//            VertexList[9] = P;
+//        }
+        
+//        if (CubeValues[1] > 0 && CubeValues[1] == -CubeValues[5]) {
+//            temp = fabs(CubeValues[1]);
+//            ValueList[9] = temp;
+//            P.z = temp;
+//            VertexList[9] = P;
+//
+//        }
+//
+//        if (CubeValues[1] < 0 && CubeValues[1] == -CubeValues[5]) {
+//            temp = fabs(CubeValues[1]);
+//            ValueList[9] = 1.0 - temp;
+//            P.z = 1.0 - temp;
+//            VertexList[9] = P;
+//        }
+        
+//        if (CubeValues[1] == -1 && CubeValues[5] == 0) {
+//            temp = fabs(CubeValues[1]);
+//            ValueList[9] = 1;
+//            P.z = 1;
+//            VertexList[9] = P;
+//
+//        }
+//
+//        if (CubeValues[1] == 1 && CubeValues[5] == 0) {
+//            temp = fabs(CubeValues[1]);
+//            ValueList[9] = 0;
+//            P.z = 0;
+//            VertexList[9] = P;
+//
+//        }
+
+//        if (i==5 && j == 5) {
+//        double px = P.x;
+//        double py = P.y;
+//        double pz = P.z;
+//        double interp = ValueList[9];
+//        double CV1 = CubeValues[1];
+//        double CV5 = CubeValues[5];
+////        printf("  512: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV1=%.2f CB5=%.2f  \n",k,pz,temp,interp,CV1,CV5);
+//        }
     }
     if (edgeTable[CubeIndex] & 1024){
         P = VertexInterp(C2,C6,CubeValues[2],CubeValues[6]);
@@ -741,13 +923,109 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
         Q = C2;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[10] = CubeValues_B[2] + temp*(CubeValues_B[6]-CubeValues_B[2]);
+        
+//        if (CubeValues_B[2] == -1 && CubeValues_B[6] == 0) {
+//           // temp = fabs(CubeValues[2]);
+//            ValueList[10] = temp;
+//            P.z = temp;
+//            VertexList[10] = P;
+//        }
+//        if (CubeValues[2]  > 0 && CubeValues[2] == -CubeValues[6]) {
+//            temp = fabs(CubeValues[2]);
+//            ValueList[10] = temp;
+//            P.z = temp;
+//            VertexList[10] = P;
+//
+//        }
+//        if (CubeValues[2]  < 0 && CubeValues[2] == -CubeValues[6]) {
+//            temp = fabs(CubeValues[2]);
+//            ValueList[10] = 1.0 - temp;
+//            P.z = 1.0 - temp;
+//            VertexList[10] = P;
+//
+//        }
+//
+//        if (CubeValues[2] == -1 && CubeValues[6] == 0) {
+//            temp = fabs(CubeValues[2]);
+//            ValueList[10] = 1;
+//            P.z = 1;
+//            VertexList[10] = P;
+//
+//        }
+//
+//        if (CubeValues[2] == 1 && CubeValues[6] == 0) {
+//            temp = fabs(CubeValues[2]);
+//            ValueList[10] = 0;
+//            P.z = 0;
+//            VertexList[10] = P;
+//
+//        }
+//
+//        if (i==5 && j == 5) {
+//        double px = P.x;
+//        double py = P.y;
+//        double pz = P.z;
+//        double interp = ValueList[10];
+//            double CV2 = CubeValues[2];
+//            double CV6 = CubeValues[6];
+////            printf(" 1024: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV2=%.2f CV6=%.2f  \n",k,pz,temp,interp,CV2,CV6);
+//        }
     }
     if (edgeTable[CubeIndex] & 2048){
         P = VertexInterp(C3,C7,CubeValues[3],CubeValues[7]);
+       // P.z += 0.5;
         VertexList[11] = P;
         Q = C3;
         temp = sqrt((P.x-Q.x)*(P.x-Q.x)+(P.y-Q.y)*(P.y-Q.y)+(P.z-Q.z)*(P.z-Q.z));
         ValueList[11] = CubeValues_B[3] + temp*(CubeValues_B[7]-CubeValues_B[3]);
+        
+//        if (CubeValues_B[3] == -1 && CubeValues_B[7] == 0) {
+//        //    temp = fabs(CubeValues[3]);
+//            ValueList[11] = temp;
+//            P.z = temp;
+//            VertexList[11] = P;
+//        }
+//        if (CubeValues[3] > 0 && CubeValues[3] == -CubeValues[7]) {
+//            temp = fabs(CubeValues[3]);
+//            ValueList[11] = temp;
+//            P.z = temp;
+//            VertexList[11] = P;
+//
+//        }
+//
+//        if (CubeValues[3] < 0 && CubeValues[3] == -CubeValues[7]) {
+//            temp = fabs(CubeValues[3]);
+//            ValueList[11] = 1.0 - temp;
+//            P.z = 1.0 - temp;
+//            VertexList[11] = P;
+//
+//        }
+        
+//        if (CubeValues[3] == -1 && CubeValues[7] == 0) {
+//            temp = fabs(CubeValues[3]);
+//            ValueList[11] = 1;
+//            P.z = 1;
+//            VertexList[11] = P;
+//
+//        }
+//
+//        if (CubeValues[3] == 1 && CubeValues[7] == 0) {
+//            temp = fabs(CubeValues[3]);
+//            ValueList[11] = 0;
+//            P.z = 0;
+//            VertexList[11] = P;
+//
+//        }
+        
+//        if (i==5 && j == 5) {
+//        double px = P.x;
+//        double py = P.y;
+//        double pz = P.z;
+//        double interp = ValueList[11];
+//            double CV3 = CubeValues[3];
+//            double CV7 = CubeValues[7];
+////            printf(" 2048: Coordz=%d P=(%.2f) temp=%.3f interp=%.3f CV3=%.2f CV7=%.2f  \n",k,pz,temp,interp,CV3,CV7);
+//        }
     }
     
     
@@ -793,204 +1071,6 @@ inline void SolidMarchingCubes(DoubleArray &A, const double &v, DoubleArray &B, 
 
 
 
-inline void SolidMarchingCubes_VolumeMesh(DoubleArray &A, const double &v, DoubleArray &B, const double &isovalue,
-                                          int i,int j,int k, int m, int n, int o, DTMutableList<Point>
-                                          &cellvertices, int &lengthvertices, IntArray &Triangles, int &nTris,
-                                          DoubleArray &values)
-{
-    
-    NULL_USE( isovalue );
-    NULL_USE( m );
-    NULL_USE( n );
-    NULL_USE( o );
-    
-    // THIS SUBROUTINE COMPUTES THE VERTICES FOR THE SOLID PHASE IN
-    // A PARTICULAR GRID CELL, THEN ARRANGES THEM INTO TRIANGLES
-    // ALSO ORGANIZES THE LIST OF VALUES TO CORRESPOND WITH VERTEX LIST
-    
-    NULL_USE( v );
-    
-    //int N = 0;
-    Point P,Q;
-    Point PlaceHolder;
-    //int pos = lengthvertices;
-    
-    Point C0,C1,C2,C3,C4,C5,C6,C7;
-    
-    int TriangleCount = 0;
-    int NewVertexCount = 0;
-    int NewCornerVertexCount = 0;
-    int CubeIndex;
-    
-    
-    
-    int idx2 = 0;
-    
-    Point VertexList[12];
-    Point NewVertexList[12];
-    
-    
-    int LocalRemap[12];
-    
-    Point CornerVertexList[12];
-    Point NewCornerVertexList[12];
-    double CornerValueList[12];
-    double NewCornerValueList[12];
-    
-    // int m; int n; int o;
-    //int p; int q;
-    
-    // Values from array 'A' at the cube corners
-    double CubeValues[8];
-    CubeValues[0] = A(i,j,k);
-    CubeValues[1] = A(i+1,j,k);
-    CubeValues[2] = A(i+1,j+1,k);
-    CubeValues[3] = A(i,j+1,k);
-    CubeValues[4] = A(i,j,k+1);
-    CubeValues[5] = A(i+1,j,k+1);
-    CubeValues[6] = A(i+1,j+1,k+1);
-    CubeValues[7] = A(i,j+1,k+1);
-    
-    // Values from array 'B' at the cube corners
-    double CubeValues_B[8];
-    CubeValues_B[0] = B(i,j,k);
-    CubeValues_B[1] = B(i+1,j,k);
-    CubeValues_B[2] = B(i+1,j+1,k);
-    CubeValues_B[3] = B(i,j+1,k);
-    CubeValues_B[4] = B(i,j,k+1);
-    CubeValues_B[5] = B(i+1,j,k+1);
-    CubeValues_B[6] = B(i+1,j+1,k+1);
-    CubeValues_B[7] = B(i,j+1,k+1);
-    
-    // Points corresponding to cube corners
-    C0.x = 0.0; C0.y = 0.0; C0.z = 0.0;
-    C1.x = 1.0; C1.y = 0.0; C1.z = 0.0;
-    C2.x = 1.0; C2.y = 1.0; C2.z = 0.0;
-    C3.x = 0.0; C3.y = 1.0; C3.z = 0.0;
-    C4.x = 0.0; C4.y = 0.0; C4.z = 1.0;
-    C5.x = 1.0; C5.y = 0.0; C5.z = 1.0;
-    C6.x = 1.0; C6.y = 1.0; C6.z = 1.0;
-    C7.x = 0.0; C7.y = 1.0; C7.z = 1.0;
-    //Determine the index into the edge table which
-    //tells us which vertices are inside of the surface
-    CubeIndex = 0;
-    
-    
-    
-    /* Needed for volume fraction calculation: CubeValues is the SignDist function */
-    if (CubeValues[0] < 0.0f) {CubeIndex |= 1;   }
-    if (CubeValues[1] < 0.0f) {CubeIndex |= 2;   }
-    if (CubeValues[2] > 0.0f) {CubeIndex |= 4;   }
-    if (CubeValues[3] < 0.0f) {CubeIndex |= 8;   }
-    if (CubeValues[4] < 0.0f) {CubeIndex |= 16;  }
-    if (CubeValues[5] > 0.0f) {CubeIndex |= 32;  }
-    if (CubeValues[6] > 0.0f) {CubeIndex |= 64;  }
-    if (CubeValues[7] > 0.0f) {CubeIndex |= 128; }
-    
-    
-    
-    //Find the vertices where the surface intersects the cube
-    if (edgeTable[CubeIndex] & 1){
-        CornerVertexList[0] = C0;
-        CornerValueList[0] = 1;
-    }
-    if (edgeTable[CubeIndex] & 2){
-        CornerVertexList[1] = C1;
-        CornerValueList[1] = 1;
-    }
-    if (edgeTable[CubeIndex] & 4){
-        CornerVertexList[2] = C2;
-        CornerValueList[2] = 1;
-    }
-    if (edgeTable[CubeIndex] & 8){
-        CornerVertexList[3] = C3;
-        CornerValueList[3] = 1;
-    }
-    if (edgeTable[CubeIndex] & 16){
-        CornerVertexList[4] = C4;
-        CornerValueList[4] = 1;
-    }
-    if (edgeTable[CubeIndex] & 32){
-        CornerVertexList[5] = C5;
-        CornerValueList[5] = 1;
-    }
-    if (edgeTable[CubeIndex] & 64){
-        CornerVertexList[6] = C6;
-        CornerValueList[6] = 1;
-    }
-    if (edgeTable[CubeIndex] & 128){
-        CornerVertexList[7] = C7 ;
-        CornerValueList[7] = 1;
-    }
-    if (edgeTable[CubeIndex] & 256){
-        CornerVertexList[8] = C0;
-        CornerValueList[8] = 1;
-    }
-    if (edgeTable[CubeIndex] & 512){
-        CornerVertexList[9] = C1;
-        CornerValueList[9] = 1;
-    }
-    if (edgeTable[CubeIndex] & 1024){
-        CornerVertexList[10] = C2;
-        CornerValueList[10] = 1;
-    }
-    if (edgeTable[CubeIndex] & 2048){
-        CornerVertexList[11] = C3;
-        CornerValueList[11] = 1;
-    }
-    
-    
-    
-    /* Edge data */
-    // Section 1
-    NewVertexCount=0;
-    
-    
-    /* Corner data */
-    NewCornerVertexCount=0;
-    for (int idx=0;idx<12;idx++) LocalRemap[idx] = -1;
-    
-    for (int idx=0; triTable[CubeIndex][idx]!=-1; idx++) // When triTable is positive
-    {
-        if(LocalRemap[triTable[CubeIndex][idx]] == -1)  // Remap if the index from the local remap tri-table is negative
-        {
-            NewCornerVertexList[NewCornerVertexCount] = CornerVertexList[triTable[CubeIndex][idx]];
-            NewCornerValueList[NewCornerVertexCount] = CornerValueList[triTable[CubeIndex][idx]];
-            LocalRemap[triTable[CubeIndex][idx]] = NewCornerVertexCount;
-            NewCornerVertexCount++;
-        }
-    }
-    ////    lengthvertices = NewVertexCount + NewCornerVertexCount;
-    
-    
-    for (int idx=0;idx< NewCornerVertexCount;idx++) {
-        P = NewCornerVertexList[idx];
-        P.x  += i;
-        P.y  += j;
-        P.z  += k;
-        idx2 = idx ; // + NewVertexCount;
-        cellvertices(idx2) = P;
-        values(idx2) = NewCornerValueList[idx];
-    }
-    lengthvertices = NewCornerVertexCount; // Output
-    
-    //    std::cout << lengthvertices << std::endl;
-    
-    for (int idx=0; triTable[CubeIndex][idx]!=-1; idx+=3) {
-        Triangles(0,TriangleCount) = LocalRemap[triTable[CubeIndex][idx+0]];
-        Triangles(1,TriangleCount) = LocalRemap[triTable[CubeIndex][idx+1]];
-        Triangles(2,TriangleCount) = LocalRemap[triTable[CubeIndex][idx+2]];
-        TriangleCount++;
-    }
-    //  std::cout << "Old TriangleCount=" << nTris << "New TriangleCount=" << TriangleCount << std::endl;
-    nTris = TriangleCount;
-    
-    
-    
-    
-    
-    //lengthvertices = NewVertexCount; // original value
-}
 
 //-------------------------------------------------------------------------------
 inline void SOL_SURF(DoubleArray &A, const double &v, DoubleArray &B, const double &isovalue,
@@ -1743,329 +1823,6 @@ inline void TRIM(DTMutableList<Point> &local_sol_pts, int &n_local_sol_pts, doub
     // printf("common_line_count = %d   all_to_ns_count = %d   all_to_ws_count = %d \n",common_line_count, all_to_ns_count, all_to_ws_count);
 }
 
-/* Shouldn't need to modify much for the volume calculation */
-inline void TRIM_VolumeMesh(DTMutableList<Point> &local_sol_pts,
-                            int &n_local_sol_pts, double isovalue,
-                            IntArray &local_sol_tris, int &n_local_sol_tris,
-                            DTMutableList<Point> &ns_pts, int &n_ns_pts, IntArray &ns_tris,
-                            int &n_ns_tris, DTMutableList<Point> &ws_pts, int &n_ws_pts,
-                            IntArray &ws_tris, int &n_ws_tris, DoubleArray &values,
-                            DTMutableList<Point> &local_nws_pts, int &n_local_nws_pts)
-{
-    // Trim the local solid surface
-    int map_ws;
-    
-    int q,p;
-    
-    
-    Point A; Point B; Point C;
-    Point D; Point E;
-    Point P;
-    
-    
-    
-    
-    bool all_to_ns = 1;
-    // Check to see if all triangles in the cell are in ns_surface
-    for (q=0; q < n_local_sol_pts; q++){ if ( values(q) < isovalue && all_to_ns == 1){ all_to_ns = 0; } }
-    
-    
-    
-    
-    
-    
-    
-    bool all_to_ws = 1;
-    // Check to see if all triangles in the cell are in ws surface
-    for (q=0; q < n_local_sol_pts; q++){ if ( values(q) > isovalue && all_to_ws == 1){ all_to_ws = 0; } }
-    
-    // if (all_to_ws == 1){
-    /* Get the map_ws value from the number of ws points */
-    
-    /* We know the n_ws_points at this point for the surface: Need to add points */
-    map_ws = n_ws_pts;
-    /* Since we know we are in the ws phase, move the local solid points into the ws array*/
-    for ( p=0; p<n_local_sol_pts; p++){ ws_pts(n_ws_pts++) = local_sol_pts(p); }
-    
-    /*
-     Generates the ws_tris   (depends on map_ws)
-     Generates the n_ws_tris (depends on map_ws)
-     */
-    /* Populate the ws triangles by copying the local solid triangle, mapped: Don't need to understand the map */
-    for ( p=0; p<n_local_sol_tris; p++){
-        ws_tris(0,n_ws_tris) = local_sol_tris(0,p) + map_ws;
-        ws_tris(1,n_ws_tris) = local_sol_tris(1,p) + map_ws;
-        ws_tris(2,n_ws_tris) = local_sol_tris(2,p) + map_ws;
-        n_ws_tris++;
-    }
-    // }
-    
-    
-    
-    //    else if (all_to_ns == 1){
-    //        map_ns = n_ns_pts;
-    ////        map_ns = 0;
-    //        for ( p=0; p<n_local_sol_pts; p++){
-    //            ns_pts(n_ns_pts++) = local_sol_pts(p);
-    //        }
-    //        for ( p=0; p<n_local_sol_tris; p++){
-    //            ns_tris(0,n_ns_tris) = local_sol_tris(0,p) + map_ns;
-    //            ns_tris(1,n_ns_tris) = local_sol_tris(1,p) + map_ns;
-    //            ns_tris(2,n_ns_tris) = local_sol_tris(2,p) + map_ns;
-    //            n_ns_tris++;
-    //        }
-    //    }
-    //    else {
-    //         //  common_line_count++;
-    //        // this section of surface contains a common line
-    //        map_ns = n_ns_tris;
-    //        map_ws = n_ws_tris;
-    //        // Go through all triangles
-    //        for ( p=0; p<n_local_sol_tris; p++){
-    //            a = local_sol_tris(0,p);
-    //            b = local_sol_tris(1,p);
-    //            c = local_sol_tris(2,p);
-    //            A = local_sol_pts(a);
-    //            B = local_sol_pts(b);
-    //            C = local_sol_pts(c);
-    //            if (values(a) > isovalue && values(b) > isovalue && values(c) > isovalue ){
-    //                // Triangle is in ns surface
-    //                // Add points
-    //                ns_pts(n_ns_pts++) = A;
-    //                ns_pts(n_ns_pts++) = B;
-    //                ns_pts(n_ns_pts++) = C;
-    //                // Add triangles
-    //                ns_tris(0,n_ns_tris) = n_ns_pts-3;
-    //                ns_tris(1,n_ns_tris) = n_ns_pts-2;
-    //                ns_tris(2,n_ns_tris) = n_ns_pts-1;
-    //                n_ns_tris++;
-    //            }
-    //            else if (values(a) < isovalue && values(b) < isovalue && values(c) < isovalue ){
-    //                // Triangle is in ws surface
-    //                // Add points
-    //                ws_pts(n_ws_pts++) = A;
-    //                ws_pts(n_ws_pts++) = B;
-    //                ws_pts(n_ws_pts++) = C;
-    //                // Add triangles
-    //                ws_tris(0,n_ws_tris) = n_ws_pts-3;
-    //                ws_tris(1,n_ws_tris) = n_ws_pts-2;
-    //                ws_tris(2,n_ws_tris) = n_ws_pts-1;
-    //                n_ws_tris++;
-    //            }
-    //            else {
-    //                // Triangle contains common line
-    //
-    //                ////////////////////////////////////////
-    //                ///////// FIND THE COMMON LINE /////////
-    //                ////////////////////////////////////////
-    //
-    //                if ( (values(a)-isovalue)*(values(b)-isovalue) < 0){
-    //                    // compute common line vertex
-    //                    P = A + (values(a) - isovalue)/(values(a)-values(b))*(B-A);
-    //                    P.x = A.x + (values(a) - isovalue)/(values(a)-values(b))*(B.x-A.x);
-    //                    P.y = A.y + (values(a) - isovalue)/(values(a)-values(b))*(B.y-A.y);
-    //                    P.z = A.z + (values(a) - isovalue)/(values(a)-values(b))*(B.z-A.z);
-    //
-    //                    local_nws_pts(n_local_nws_pts++) = P;
-    //                    if ( n_local_nws_pts == 0 ){
-    //                        local_nws_pts(n_local_nws_pts++) = P;
-    //                    }
-    //                    else if ( P != local_nws_pts(n_local_nws_pts-1) ){
-    //                        local_nws_pts(n_local_nws_pts++) = P;
-    //                    }
-    //                }
-    //                if ( (values(b)-isovalue)*(values(c)-isovalue) < 0){
-    //                    // compute common line vertex
-    //                    P = B + (values(b) - isovalue)/(values(b)-values(c))*(C-B);
-    //                    P.x = B.x + (values(b) - isovalue)/(values(b)-values(c))*(C.x-B.x);
-    //                    P.y = B.y + (values(b) - isovalue)/(values(b)-values(c))*(C.y-B.y);
-    //                    P.z = B.z + (values(b) - isovalue)/(values(b)-values(c))*(C.z-B.z);
-    //
-    //                    local_nws_pts(n_local_nws_pts++) = P;
-    //                    if ( n_local_nws_pts == 0 ){
-    //                        local_nws_pts(n_local_nws_pts++) = P;
-    //                    }
-    //                    else if ( P != local_nws_pts(n_local_nws_pts-1) ){
-    //                        local_nws_pts(n_local_nws_pts++) = P;
-    //                    }
-    //                }
-    //                if ( (values(a)-isovalue)*(values(c)-isovalue) < 0){
-    //                    // compute common line vertex
-    //                    P = A + (values(a) - isovalue)/(values(a)-values(c))*(C-A);
-    //                    P.x = A.x + (values(a) - isovalue)/(values(a)-values(c))*(C.x-A.x);
-    //                    P.y = A.y + (values(a) - isovalue)/(values(a)-values(c))*(C.y-A.y);
-    //                    P.z = A.z + (values(a) - isovalue)/(values(a)-values(c))*(C.z-A.z);
-    //                    local_nws_pts(n_local_nws_pts++) = P;
-    //                }
-    //                // Store common line points as D and E
-    //                D = local_nws_pts(n_local_nws_pts-2);
-    //                E = local_nws_pts(n_local_nws_pts-1);
-    //                // Construct the new triangles
-    //                if ( (values(a)-isovalue)*(values(b)-isovalue) < 0 &&
-    //                     (values(b)-isovalue)*(values(c)-isovalue) < 0){
-    //                    if (values(b) > isovalue){
-    //                        // Points
-    //                        ns_pts(n_ns_pts++) = B;
-    //                        ns_pts(n_ns_pts++) = D;
-    //                        ns_pts(n_ns_pts++) = E;
-    //                        // Triangles
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-3; // B
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-2; // D
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-1; // E
-    //                        n_ns_tris++;
-    //                        // Points
-    //                        ws_pts(n_ws_pts++) = A;
-    //                        ws_pts(n_ws_pts++) = C;
-    //                        ws_pts(n_ws_pts++) = D;
-    //                        ws_pts(n_ws_pts++) = E;
-    //                        // Triangles (A,C,D),(C,D,E)
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-4; // A
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-3; // C
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-2; // D
-    //                        n_ws_tris++;
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-3; // C
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-2; // D
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-1; // E
-    //                        n_ws_tris++;
-    //                    }
-    //                    else {
-    //                        // Points
-    //                        ws_pts(n_ws_pts++) = B;
-    //                        ws_pts(n_ws_pts++) = D;
-    //                        ws_pts(n_ws_pts++) = E;
-    //                        // Triangles
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-3; // B
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-2; // D
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-1; // E
-    //                        n_ws_tris++;
-    //                        // Points
-    //                        ns_pts(n_ns_pts++) = A;
-    //                        ns_pts(n_ns_pts++) = C;
-    //                        ns_pts(n_ns_pts++) = D;
-    //                        ns_pts(n_ns_pts++) = E;
-    //                        // Triangles (A,C,D),(C,D,E)
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-4; // A
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-3; // C
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-2; // D
-    //                        n_ns_tris++;
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-3; // C
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-1; // E
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-2; // D
-    //                        n_ns_tris++;
-    //                    }
-    //                }
-    //                else if ( (values(a)-isovalue)*(values(b)-isovalue) < 0 &&
-    //                          (values(a)-isovalue)*(values(c)-isovalue) < 0){
-    //                    if (values(a) > isovalue){
-    //                        // Points
-    //                        ns_pts(n_ns_pts++) = A;
-    //                        ns_pts(n_ns_pts++) = D;
-    //                        ns_pts(n_ns_pts++) = E;
-    //                        // Triangles
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-3; // A
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-2; // D
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-1; // E
-    //                        n_ns_tris++;
-    //                        // Points
-    //                        ws_pts(n_ws_pts++) = B;
-    //                        ws_pts(n_ws_pts++) = C;
-    //                        ws_pts(n_ws_pts++) = D;
-    //                        ws_pts(n_ws_pts++) = E;
-    //                        // Triangles (B,C,D),(C,D,E)
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-4; // B
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-2; // D
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-3; // C
-    //                        n_ws_tris++;
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-3; // C
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-2; // D
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-1; // E
-    //                        n_ws_tris++;
-    //                    }
-    //                    else {
-    //                        // Points
-    //                        ws_pts(n_ws_pts++) = A;
-    //                        ws_pts(n_ws_pts++) = D;
-    //                        ws_pts(n_ws_pts++) = E;
-    //                        // Triangles
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-3; // A
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-2; // D
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-1; // E
-    //                        n_ws_tris++;
-    //                        // Points
-    //                        ns_pts(n_ns_pts++) = B;
-    //                        ns_pts(n_ns_pts++) = C;
-    //                        ns_pts(n_ns_pts++) = D;
-    //                        ns_pts(n_ns_pts++) = E;
-    //                        // Triangles (B,C,D),(C,D,E)
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-4; // B
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-3; // C
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-2; // D
-    //                        n_ns_tris++;
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-3; // C
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-1; // E
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-2; // D
-    //                        n_ns_tris++;
-    //                    }
-    //                }
-    //                else {
-    //                    if (values(c) > isovalue){
-    //                        // Points
-    //                        ns_pts(n_ns_pts++) = C;
-    //                        ns_pts(n_ns_pts++) = D;
-    //                        ns_pts(n_ns_pts++) = E;
-    //                        // Triangles
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-3; // C
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-2; // D
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-1; // E
-    //                        n_ns_tris++;
-    //                        // Points
-    //                        ws_pts(n_ws_pts++) = A;
-    //                        ws_pts(n_ws_pts++) = B;
-    //                        ws_pts(n_ws_pts++) = D;
-    //                        ws_pts(n_ws_pts++) = E;
-    //                        // Triangles (A,B,D),(A,D,E)
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-4; // A
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-3; // B
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-2; // D
-    //                        n_ws_tris++;
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-4; // A
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-2; // D
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-1; // E
-    //                        n_ws_tris++;
-    //                    }
-    //                    else {
-    //                        // Points
-    //                        ws_pts(n_ws_pts++) = C;
-    //                        ws_pts(n_ws_pts++) = D;
-    //                        ws_pts(n_ws_pts++) = E;
-    //                        // Triangles
-    //                        ws_tris(0,n_ws_tris) = n_ws_pts-3; // C
-    //                        ws_tris(1,n_ws_tris) = n_ws_pts-2; // D
-    //                        ws_tris(2,n_ws_tris) = n_ws_pts-1; // E
-    //                        n_ws_tris++;
-    //                        // Points
-    //                        ns_pts(n_ns_pts++) = A;
-    //                        ns_pts(n_ns_pts++) = B;
-    //                        ns_pts(n_ns_pts++) = D;
-    //                        ns_pts(n_ns_pts++) = E;
-    //                        // Triangles (A,B,D),(A,D,E)
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-4; // A
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-3; // B
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-2; // D
-    //                        n_ns_tris++;
-    //                        ns_tris(0,n_ns_tris) = n_ns_pts-4; // A
-    //                        ns_tris(1,n_ns_tris) = n_ns_pts-2; // D
-    //                        ns_tris(2,n_ns_tris) = n_ns_pts-1; // E
-    //                        n_ns_tris++;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    } // Common curve stuff
-    
-}
-
-
 
 
 inline double geomavg_MarchingCubes( DoubleArray &A, double &v, int &i, int &j, int &k,
@@ -2498,7 +2255,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j;
             P.z = k;
             // Evaluate the function S at the new point
-            if (  solid(i,j,k)*(1-P.x+i) + solid(i+1,j,k)*(P.x-i) > 0 ){
+            if (  solid(i,j,k)*(1-P.x+i) + solid(i+1,j,k)*(P.x-i) >= 0 ){
                 // This point is in the fluid region
                 nw_pts(n_nw_pts++) =  P;
                 N++;
@@ -2515,7 +2272,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j + (A(i+1,j,k)-v)/(A(i+1,j,k)-A(i+1,j+1,k));
             P.z = k;
             // Evaluate the function S at the new point
-            if (  solid(i+1,j,k)*(1-P.y+j) + solid(i+1,j+1,k)*(P.y-j) > 0 ){
+            if (  solid(i+1,j,k)*(1-P.y+j) + solid(i+1,j+1,k)*(P.y-j) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){ // P is a new vertex (not counted twice)
                     nw_pts(n_nw_pts++) =  P;
@@ -2533,7 +2290,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j+1;
             P.z = k;
             // Evaluate the function S at the new point
-            if (  solid(i,j+1,k)*(1-P.x+i) + solid(i+1,j+1,k)*(P.x-i) > 0 ){
+            if (  solid(i,j+1,k)*(1-P.x+i) + solid(i+1,j+1,k)*(P.x-i) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){ // P is a new vertex (not counted twice)
                     nw_pts(n_nw_pts++) =  P;
@@ -2552,7 +2309,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j + (A(i,j,k)-v) / (A(i,j,k)-A(i,j+1,k));
             P.z = k;
             // Evaluate the function S at the new point
-            if (  solid(i,j,k)*(1-P.y+j) + solid(i,j+1,k)*(P.y-j) > 0 ){
+            if (  solid(i,j,k)*(1-P.y+j) + solid(i,j+1,k)*(P.y-j) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){ // P is a new vertex (not counted twice)
                     nw_pts(n_nw_pts++) =  P;
@@ -2571,7 +2328,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j;
             P.z = k + (A(i,j,k)-v) / (A(i,j,k)-A(i,j,k+1));
             // Evaluate the function S at the new point
-            if (  solid(i,j,k)*(1-P.z+k) + solid(i,j,k+1)*(P.z-k) > 0 ){
+            if (  solid(i,j,k)*(1-P.z+k) + solid(i,j,k+1)*(P.z-k) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){ // P is a new vertex (not counted twice)
                     nw_pts(n_nw_pts++) =  P;
@@ -2590,7 +2347,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j;
             P.z = k + (A(i+1,j,k)-v) / (A(i+1,j,k)-A(i+1,j,k+1));
             // Evaluate the function S at the new point
-            if (  solid(i+1,j,k)*(1-P.z+k) + solid(i+1,j,k+1)*(P.z-k) > 0 ){
+            if (  solid(i+1,j,k)*(1-P.z+k) + solid(i+1,j,k+1)*(P.z-k) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2610,7 +2367,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j+1;
             P.z = k + (A(i+1,j+1,k)-v) / (A(i+1,j+1,k)-A(i+1,j+1,k+1));
             // Evaluate the function S at the new point
-            if (  solid(i+1,j+1,k)*(1-P.z+k) + solid(i+1,j+1,k+1)*(P.z-k) > 0 ){
+            if (  solid(i+1,j+1,k)*(1-P.z+k) + solid(i+1,j+1,k+1)*(P.z-k) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2629,7 +2386,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j+1;
             P.z = k + (A(i,j+1,k)-v) / (A(i,j+1,k)-A(i,j+1,k+1));
             // Evaluate the function S at the new point
-            if (  solid(i,j+1,k)*(1-P.z+k) + solid(i,j+1,k+1)*(P.z-k) > 0 ){
+            if (  solid(i,j+1,k)*(1-P.z+k) + solid(i,j+1,k+1)*(P.z-k) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2649,7 +2406,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j;
             P.z = k+1;
             // Evaluate the function S at the new point
-            if (  solid(i,j,k+1)*(1-P.x+i) + solid(i+1,j,k+1)*(P.x-i) > 0 ){
+            if (  solid(i,j,k+1)*(1-P.x+i) + solid(i+1,j,k+1)*(P.x-i) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2668,7 +2425,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j + (A(i+1,j,k+1)-v) / (A(i+1,j,k+1)-A(i+1,j+1,k+1));
             P.z = k+1;
             // Evaluate the function S at the new point
-            if (  solid(i+1,j,k+1)*(1-P.y+j) + solid(i+1,j+1,k+1)*(P.y-j) > 0 ){
+            if (  solid(i+1,j,k+1)*(1-P.y+j) + solid(i+1,j+1,k+1)*(P.y-j) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2688,7 +2445,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j+1;
             P.z = k+1;
             // Evaluate the function S at the new point
-            if (  solid(i,j+1,k+1)*(1-P.x+i) + solid(i+1,j+1,k+1)*(P.x-i) > 0 ){
+            if (  solid(i,j+1,k+1)*(1-P.x+i) + solid(i+1,j+1,k+1)*(P.x-i) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -2708,7 +2465,7 @@ inline void MC( DoubleArray &A, double &v, DoubleArray &solid, int &i, int &j, i
             P.y = j + (A(i,j,k+1)-v) / (A(i,j,k+1)-A(i,j+1,k+1));
             P.z = k+1;
             // Evaluate the function S at the new point
-            if (  solid(i,j,k+1)*(1-P.y+j) + solid(i,j+1,k+1)*(P.y-j) > 0 ){
+            if (  solid(i,j,k+1)*(1-P.y+j) + solid(i,j+1,k+1)*(P.y-j) >= 0 ){
                 // This point is in the fluid region
                 if (vertexcheck(P, N, n_nw_pts, nw_pts) == 1){
                     nw_pts(n_nw_pts++) =  P;
@@ -5117,39 +4874,6 @@ inline void ComputeAreasPMMC(IntArray &cubeList, int start, int finish,
 }
 //--------------------------------------------------------------------------------------------------------
 
-inline void pmmc_ConstructLocalCube_VolumeMesh(DoubleArray &SignDist,
-                                               DoubleArray &Phase, double solid_isovalue, double fluid_isovalue,
-                                               DTMutableList<Point> &nw_pts, IntArray &nw_tris, DoubleArray &values,
-                                               DTMutableList<Point> &ns_pts, IntArray &ns_tris,
-                                               DTMutableList<Point> &ws_pts, IntArray &ws_tris,
-                                               DTMutableList<Point> &local_nws_pts, DTMutableList<Point> &nws_pts, IntArray &nws_seg,
-                                               DTMutableList<Point> &local_sol_pts, IntArray &local_sol_tris,
-                                               int &n_local_sol_tris, int &n_local_sol_pts, int &n_nw_pts, int &n_nw_tris,
-                                               int &n_ws_pts, int &n_ws_tris, int &n_ns_tris, int &n_ns_pts,
-                                               int &n_local_nws_pts, int &n_nws_pts, int &n_nws_seg,
-                                               int i, int j, int k, int Nx, int Ny, int Nz)
-{
-    int map;
-    Point A,B,C,P;
-    n_local_sol_tris = 0; n_local_sol_pts = 0; n_local_nws_pts = 0;
-    n_nw_pts=0,n_ns_pts=0,n_ws_pts=0,n_nws_pts=0, map=0; n_nw_tris=0, n_ns_tris=0, n_ws_tris=0, n_nws_seg=0;
-    
-    /* Solid phase interface in the grid cell */
-    if (Interface(SignDist,solid_isovalue,i,j,k) == 1){
-        
-        /* Construct local solid surface  */
-        SolidMarchingCubes_VolumeMesh(SignDist,0.0,Phase,0.0,i,j,k,Nx,Ny,Nz, local_sol_pts,
-                                      n_local_sol_pts, local_sol_tris,n_local_sol_tris,values);
-        
-        /* Trim - needed for mesh population */
-        TRIM_VolumeMesh(local_sol_pts, n_local_sol_pts, 0.0,local_sol_tris, n_local_sol_tris,ns_pts, n_ns_pts,
-                        ns_tris, n_ns_tris, ws_pts, n_ws_pts, ws_tris, n_ws_tris, values, local_nws_pts, n_local_nws_pts);
-        
-    }
-    /* Construct the nw surface */
-    else {}
-}
-
 
 inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
                                     DoubleArray &Phase, DoubleArray & Dx, DoubleArray & Dy, DoubleArray & Dz, double solid_isovalue, double fluid_isovalue,
@@ -5175,12 +4899,46 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
     n_nw_tris=0, n_ns_tris=0, n_ws_tris=0, n_nws_seg=0;
     
     // if there is a solid phase interface in the grid cell
-    if (Interface(SignDist,solid_isovalue,i,j,k) == 1) {
+   // printf(".");
+    
+    double a1,a2,b1,b2;
+//    if (i==4 && j==4 && k==4) { printf("Before anything\n");
+//        a1 = Phase(i,j,k);
+//        a2 = Phase(i,j+1,k);
+//        b1 = SignDist(i,j,k);
+//        b2 = SignDist(i,j+1,k);
+////        int kp1 = j+1;
+//    printf("Before anything...: i=%d j=%d k=%d Phase(i,j,k)=%.2f  SignDist(i,j,k)=%.2f  Phase(i,j+1,k)=%.2f  SignDist(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//    }
+   
+    if (Interface(SignDist,0.0,i,j,k) == 1) {
         
+//        double a1,a2,b1,b2;
+//        if (i==4 && j==4 && k==4) { printf("Interface passed\n"); }
+//            a1 = Phase(i,j,k);
+//            a2 = Phase(i,j+1,k);
+//            b1 = SignDist(i,j,k);
+//            b2 = SignDist(i,j+1,k);
+//    //        int kp1 = j+1;
+//        printf("Interface passed: i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//        }
+//
+//        if (i==4 && j==3 && k==8) {
+//            a1 = Phase(i,j,k);
+//            a2 = Phase(i,j+1,k);
+//            b1 = SignDist(i,j,k);
+//            b2 = SignDist(i,j+1,k);
+//    //        int kp1 = j+1;
+//        printf("Interface passed: i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//        }
+      //  printf("+");
+        //if (i==5 && j==5) printf("k=%d\n",k);
         /* CONSTRUCT THE LOCAL SOLID SURFACE */
         // find the local solid surface using the regular Marching Cubes algorithm
         SolidMarchingCubes(SignDist,0.0,Phase,fluid_isovalue,i,j,k,Nx,Ny,Nz, local_sol_pts,
                            n_local_sol_pts, local_sol_tris,n_local_sol_tris,values);
+        
+       
         
         
         /* TRIM THE SOLID SURFACE */
@@ -5262,12 +5020,36 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
         
         /* CONSTRUCT THE nw SURFACE */
         if ( n_local_nws_pts > 0){
+            
+            double a1,a2,b1,b2;
+//            if (i==4 && j==4 && k==4) { printf("n_local_nws_pts > 0 passed\n"); }
+//                a1 = Phase(i,j,k);
+//                a2 = Phase(i,j+1,k);
+//                b1 = SignDist(i,j,k);
+//                b2 = SignDist(i,j+1,k);
+//        //        int kp1 = j+1;
+//            printf("n_local_nws_pts passed: i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//            }
+            
+//            if (i==4 && j==3 && k==8) {
+//                a1 = Phase(i,j,k);
+//                a2 = Phase(i,j+1,k);
+//                b1 = SignDist(i,j,k);
+//                b2 = SignDist(i,j+1,k);
+//        //        int kp1 = j+1;
+//            printf("n_local_nws_pts passed: i=%d j=%d k=%d A(i,j,k)=%.2f  S(i,j,k)=%.2f  A(i,j+1,k)=%.2f  S(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
+//            }
+           
+            
             n_nw_tris =0;
 //            EDGEQuad(Phase, fluid_isovalue, SignDist,Dx,Dy,Dz, i,j,k, Nx, Ny, Nz, nw_pts, n_nw_pts, nw_tris, n_nw_tris, nws_pts, n_nws_pts);
             EDGE(Phase, fluid_isovalue, SignDist, i,j,k, Nx, Ny, Nz, nw_pts, n_nw_pts, nw_tris, n_nw_tris,nws_pts, n_nws_pts);
+//            if (i==4 && j==4 && k==4) { printf("EDGE after n_local_nws_pts > 0 passed\n"); }
         }
         else {
-             MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
+            
+            MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
+//            if (i==4 && j==4 && k==4) { printf("MC after n_local_nws_pts > 0 passed\n"); }
 //            MCQuad(Phase, Dx,Dy,Dz, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
         }
     }
@@ -5275,7 +5057,8 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
     /* CONSTRUCT THE nw SURFACE */
     else if (Fluid_Interface(Phase,SignDist,fluid_isovalue,i,j,k) == 1){
         // Linear
-        MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
+                MC(Phase, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
+//            if (i==4 && j==4 && k==4) { printf("MC after Fluid_Interface == 1 passed\n"); }
         // Quadratic
 //    MCQuad(Phase, Dx,Dy,Dz, fluid_isovalue, SignDist, i,j,k, nw_pts, n_nw_pts, nw_tris, n_nw_tris);
         // Cubic
@@ -5324,16 +5107,12 @@ inline void pmmc_MeshGradient(DoubleArray &f, DoubleArray &fx, DoubleArray &fy, 
                 nx = m1/6. - m10/12. + m11/12. - m12/12. + m13/12. - m14/12. - m2/6. + m7/12. - m8/12. + m9/12.;
                 ny = m10/12. + m15/12. - m16/12. + m17/12. - m18/12. + m3/6. - m4/6. + m7/12. - m8/12. - m9/12.;
                 nz = m11/12. - m12/12. - m13/12. + m14/12. + m15/12. - m16/12. - m17/12. + m18/12. + m5/6. - m6/6.;
-                
-               
+
 
                 // Compute all of the derivatives using finite differences
-                fx(i,j,k) =  nx;//0.5*(f(i+1,j,k)-f(i-1,j,k));
-                fy(i,j,k) =  ny;//0.5*(f(i,j+1,k)-f(i,j-1,k));
-                fz(i,j,k) =  nz;//0.5*(f(i,j,k+1)-f(i,j,k-1));
-//                fx(i,j,k) = 0.5*(f(i+1,j,k) - f(i-1,j,k));
-//                fy(i,j,k) = 0.5*(f(i,j+1,k) - f(i,j-1,k));
-//                fz(i,j,k) = 0.5*(f(i,j,k+1) - f(i,j,k-1));
+                fx(i,j,k) = nx;
+                fy(i,j,k) = ny;
+                fz(i,j,k) = nz;
             }
         }
     }

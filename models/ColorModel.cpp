@@ -531,7 +531,7 @@ delete[] tmpfq;
 
     ScaLBL_DeviceBarrier(); MPI_Barrier(comm);
 
-    for (int i = 0; i < N; i++) Averages->ID(i) = Mask->id[i];
+   // for (int i = 0; i < N; i++) Averages->ID(i) = Mask->id[i];
 
     delete[] gradphix;
     delete[] gradphiy;
@@ -604,7 +604,7 @@ void ScaLBL_ColorModel::Initialize() {
 
 
         for (size_t n = 0; n < N; n++) Averages->Phase(n)  = PhaseLabel[n];
-        for (size_t n = 0; n < N; n++) Averages->ID(n)  = fluidphaseID[n];
+   //     for (size_t n = 0; n < N; n++) Averages->ID(n)  = Mask->id[n];
         ScaLBL_CopyToDevice(Phi, PhaseLabel, N*sizeof(double));
         ScaLBL_CopyToDevice(Phi2, PhaseLabel, N*sizeof(double));
         ScaLBL_CopyToDevice(DenA, DenALabel, N*sizeof(double));
