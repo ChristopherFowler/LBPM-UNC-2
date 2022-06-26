@@ -1,0 +1,38 @@
+export LBPM_SOURCE=$HOME/LBPM_UNC_042522/LBPM_UNC_042522
+export LBPM_DIR=$HOME/build_LBPM_UNC_042522
+
+export LBPM_MPI_DIR=/nas/longleaf/apps-dogwood/mpi/gcc_6.3.0/openmpi_3.0.0 \
+export LBPM_HDF5_DIR=/nas/longleaf/apps/hdf5/1.10.4 \
+export LBPM_SILO_DIR=$HOME/Dependencies/SILO
+export LBPM_NETCDF_DIR=/nas/longleaf/apps-dogwood/netcdf/4.6.0 \
+
+module load cmake/3.12.4
+module load gcc/6.3.0
+module load openmpi_3.0.0/gcc_6.3.0
+
+rm -rf CMake*
+
+cmake \
+-D CMAKE_BUILD_TYPE:STRING=Release \
+-D CMAKE_C_COMPILER:PATH=$LBPM_MPI_DIR/bin/mpicc \
+-D CMAKE_CXX_COMPILER:PATH=$LBPM_MPI_DIR/bin/mpicxx \
+-D CMAKE_C_FLAGS="-fPIC" \
+-D CMAKE_CXX_FLAGS="-fPIC" \
+-D CMAKE_CXX_STD=14 \
+-D USE_MPI=1 \
+  -D MPIEXEC=mpirun \
+-D USE_TIMER=0 \
+-D USE_NETCDF=0 \
+  -D NETCDF_DIRECTORY=$LBPM_NETCDF_DIR \
+-D USE_SILO=0 \
+-D MPI_DIRECTORY=$LBPM_MPI_DIR \
+-D HDF5_DIRECTORY=$LBPM_HDF5_DIR \
+-D SILO_DIRECTORY=$LBPM_SILO_DIR \
+-D USE_CUDA=0 \
+$LBPM_SOURCE
+
+make -j4
+
+make install
+
+

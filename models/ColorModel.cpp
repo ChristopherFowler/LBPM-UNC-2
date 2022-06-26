@@ -359,7 +359,7 @@ delete[] tmpfq;
 //     ScaLBL_Comm->SendD3Q19AA(savedfq);
 //        ScaLBL_Comm->RecvD3Q19AA(savedfq);
 
-    activeMap = new int[Np]; for (int a = 0; a < Np; a++) activeMap[a] = 0; printf("Np=%d\n",Np);
+    activeMap = new int[Np]; for (int a = 0; a < Np; a++) activeMap[a] = 0; // printf("Np=%d\n",Np);
     for (int k=1; k<Nz-1; k++){
         for (int j=1; j<Ny-1; j++){
             for (int i=1; i<Nx-1; i++){
@@ -408,7 +408,7 @@ delete[] tmpfq;
     for (int n = 0; n < Nx*Ny*Nz; n++) Mask->id[n] = (char)TempDomain(n);
 
     // Check InactiveMap
-    inactiveMap=new int[Ni]; for (int a = 0; a < Ni; a++) inactiveMap[a] = 0; printf("Ni=%d\n",Ni);
+    inactiveMap=new int[Ni]; for (int a = 0; a < Ni; a++) inactiveMap[a] = 0; //printf("Ni=%d\n",Ni);
     for (int k=1; k<Nz-1; k++){
         for (int j=1; j<Ny-1; j++){
             for (int i=1; i<Nx-1; i++){
@@ -461,7 +461,7 @@ delete[] tmpfq;
 
 
 
-    sbMap = new int[Nsb]; for (int a = 0; a < Nsb; a++) sbMap[a] = 0; printf("Nsb=%d\n",Nsb);
+    sbMap = new int[Nsb]; for (int a = 0; a < Nsb; a++) sbMap[a] = 0; //printf("Nsb=%d\n",Nsb);
     for (int k=1; k<Nz-1; k++){
         for (int j=1; j<Ny-1; j++){
             for (int i=1; i<Nx-1; i++){
@@ -790,7 +790,7 @@ void ScaLBL_ColorModel::Initialize() {
 
 void ScaLBL_ColorModel::Run(string filename){
 
-    printf("COLORMODEL: offsetdistance=%f\n",offsetdistance);
+   if (rank==0) printf("COLORMODEL: offsetdistance=%f\n",offsetdistance);
     Averages->offset_distance = offsetdistance;
   //   for (int i = 0; i < 18*Np; i++) { LIBBqA[i] = 0; LIBBqBC[i] = 1; LIBBqD[i] = 0; }
 
@@ -1061,331 +1061,331 @@ void ScaLBL_ColorModel::Run(string filename){
         timestep++;
         
         
-            if (timestep == 2892) {
-                
-                if (rank == 0) {
-                
-                    int n; int VALUE; double DVALUE;
-                    printf("CField:\n");
-                    for (int k=3;k<4;k++){
-                        for (int i=1;i<Nx-1;i++){
-                            for (int j=1;j<Ny-1;j++){
-                                n=k*(Nx)*(Ny)+j*(Nx)+i;
-                                // VALUE = fluidphaseID[n];
-                                DVALUE = CField[n];
-                                // printf("%d ",VALUE);
-                                printf("%.2f ",DVALUE);
-                            }
-                            printf("\n");
-                        }
-                        printf("\n\n");
-                    }
-                
-                }
-                
-                if (nprocs > 1) {
-                    char LocalRankString[8];
-                    char LocalRankFilename[40];
-                
-                    // ID
-                    {
-                        sprintf(LocalRankFilename,"ID_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Mask->id,1,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // ID2
-                    {
-                        sprintf(LocalRankFilename,"ID2_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Mask->id,1,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Phi
-                    {
-                        sprintf(LocalRankFilename,"Phi_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Phi,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // DenA
-                    {
-                        sprintf(LocalRankFilename,"DenA_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(DenA,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // DenB
-                    {
-                        sprintf(LocalRankFilename,"DenB_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(DenB,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // DenA2
-                    {
-                        sprintf(LocalRankFilename,"DenA2_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(DenA2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // DenB2
-                    {
-                        sprintf(LocalRankFilename,"DenB2_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(DenB2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // GradPhiX
-                    {
-                        sprintf(LocalRankFilename,"GradPhiX_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(GradPhiX,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // GradPhiY
-                    {
-                        sprintf(LocalRankFilename,"GradPhiY_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(GradPhiY,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // GradPhiZ
-                    {
-                        sprintf(LocalRankFilename,"GradPhiZ_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(GradPhiZ,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Velx
-                    {
-                        sprintf(LocalRankFilename,"Velx_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Velx,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Vely
-                    {
-                        sprintf(LocalRankFilename,"Vely_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Vely,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Velz
-                    {
-                        sprintf(LocalRankFilename,"Velz_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Velz,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Velx2
-                    {
-                        sprintf(LocalRankFilename,"Velx2_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Velx2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Vely2
-                    {
-                        sprintf(LocalRankFilename,"Vely2_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Vely2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Velz2
-                    {
-                        sprintf(LocalRankFilename,"Velz2_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Velz2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // VFmask
-                    {
-                        sprintf(LocalRankFilename,"VFmask_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(VFmask,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // NormalToSolid_X
-                    {
-                        sprintf(LocalRankFilename,"NormalToSolid_X_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(NormalToSolid_X,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // NormalToSolid_Y
-                    {
-                        sprintf(LocalRankFilename,"NormalToSolid_Y_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(NormalToSolid_Y,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // NormalToSolid_Z
-                    {
-                        sprintf(LocalRankFilename,"NormalToSolid_Z_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(NormalToSolid_Z,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    {
-                        sprintf(LocalRankFilename,"CField_p.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(CField,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                
-                } else {
-                    char LocalRankString[8];
-                    char LocalRankFilename[40];
-                
-                    // ID
-                    {
-                        sprintf(LocalRankFilename,"ID_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Mask->id,1,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // ID2
-                    {
-                        sprintf(LocalRankFilename,"ID2_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Mask->id,1,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Phi
-                    {
-                        sprintf(LocalRankFilename,"Phi_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Phi,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // DenA
-                    {
-                        sprintf(LocalRankFilename,"DenA_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(DenA,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // DenB
-                    {
-                        sprintf(LocalRankFilename,"DenB_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(DenB,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // DenA2
-                    {
-                        sprintf(LocalRankFilename,"DenA2_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(DenA2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // DenB2
-                    {
-                        sprintf(LocalRankFilename,"DenB2_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(DenB2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // GradPhiX
-                    {
-                        sprintf(LocalRankFilename,"GradPhiX_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(GradPhiX,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // GradPhiY
-                    {
-                        sprintf(LocalRankFilename,"GradPhiY_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(GradPhiY,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // GradPhiZ
-                    {
-                        sprintf(LocalRankFilename,"GradPhiZ_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(GradPhiZ,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Velx
-                    {
-                        sprintf(LocalRankFilename,"Velx_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Velx,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Vely
-                    {
-                        sprintf(LocalRankFilename,"Vely_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Vely,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Velz
-                    {
-                        sprintf(LocalRankFilename,"Velz_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Velz,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Velx2
-                    {
-                        sprintf(LocalRankFilename,"Velx2_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Velx2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Vely2
-                    {
-                        sprintf(LocalRankFilename,"Vely2_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Vely2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // Velz2
-                    {
-                        sprintf(LocalRankFilename,"Velz2_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(Velz2,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // VFmask
-                    {
-                        sprintf(LocalRankFilename,"VFmask_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(VFmask,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // NormalToSolid_X
-                    {
-                        sprintf(LocalRankFilename,"NormalToSolid_X_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(NormalToSolid_X,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // NormalToSolid_Y
-                    {
-                        sprintf(LocalRankFilename,"NormalToSolid_Y_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(NormalToSolid_Y,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    // NormalToSolid_Z
-                    {
-                        sprintf(LocalRankFilename,"NormalToSolid_Z_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(NormalToSolid_Z,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                    {
-                        sprintf(LocalRankFilename,"CField_s.%05i",rank);
-                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
-                        fwrite(CField,8,N,MYFILE);
-                        fclose(MYFILE);
-                    }
-                }
-            }
+//            if (timestep == 2892) {
+//                
+////                if (rank == 0) {
+////                
+////                    int n; int VALUE; double DVALUE;
+////                    printf("CField:\n");
+////                    for (int k=3;k<4;k++){
+////                        for (int i=1;i<Nx-1;i++){
+////                            for (int j=1;j<Ny-1;j++){
+////                                n=k*(Nx)*(Ny)+j*(Nx)+i;
+////                                // VALUE = fluidphaseID[n];
+////                                DVALUE = CField[n];
+////                                // printf("%d ",VALUE);
+////                                printf("%.2f ",DVALUE);
+////                            }
+////                            printf("\n");
+////                        }
+////                        printf("\n\n");
+////                    }
+////                
+////                }
+//                
+//                if (nprocs > 1) {
+//                    char LocalRankString[8];
+//                    char LocalRankFilename[40];
+//                
+//                    // ID
+//                    {
+//                        sprintf(LocalRankFilename,"ID_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Mask->id,1,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // ID2
+//                    {
+//                        sprintf(LocalRankFilename,"ID2_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Mask->id,1,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Phi
+//                    {
+//                        sprintf(LocalRankFilename,"Phi_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Phi,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // DenA
+//                    {
+//                        sprintf(LocalRankFilename,"DenA_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(DenA,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // DenB
+//                    {
+//                        sprintf(LocalRankFilename,"DenB_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(DenB,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // DenA2
+//                    {
+//                        sprintf(LocalRankFilename,"DenA2_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(DenA2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // DenB2
+//                    {
+//                        sprintf(LocalRankFilename,"DenB2_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(DenB2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // GradPhiX
+//                    {
+//                        sprintf(LocalRankFilename,"GradPhiX_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(GradPhiX,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // GradPhiY
+//                    {
+//                        sprintf(LocalRankFilename,"GradPhiY_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(GradPhiY,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // GradPhiZ
+//                    {
+//                        sprintf(LocalRankFilename,"GradPhiZ_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(GradPhiZ,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Velx
+//                    {
+//                        sprintf(LocalRankFilename,"Velx_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Velx,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Vely
+//                    {
+//                        sprintf(LocalRankFilename,"Vely_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Vely,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Velz
+//                    {
+//                        sprintf(LocalRankFilename,"Velz_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Velz,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Velx2
+//                    {
+//                        sprintf(LocalRankFilename,"Velx2_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Velx2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Vely2
+//                    {
+//                        sprintf(LocalRankFilename,"Vely2_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Vely2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Velz2
+//                    {
+//                        sprintf(LocalRankFilename,"Velz2_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Velz2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // VFmask
+//                    {
+//                        sprintf(LocalRankFilename,"VFmask_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(VFmask,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // NormalToSolid_X
+//                    {
+//                        sprintf(LocalRankFilename,"NormalToSolid_X_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(NormalToSolid_X,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // NormalToSolid_Y
+//                    {
+//                        sprintf(LocalRankFilename,"NormalToSolid_Y_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(NormalToSolid_Y,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // NormalToSolid_Z
+//                    {
+//                        sprintf(LocalRankFilename,"NormalToSolid_Z_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(NormalToSolid_Z,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    {
+//                        sprintf(LocalRankFilename,"CField_p.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(CField,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                
+//                } else {
+//                    char LocalRankString[8];
+//                    char LocalRankFilename[40];
+//                
+//                    // ID
+//                    {
+//                        sprintf(LocalRankFilename,"ID_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Mask->id,1,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // ID2
+//                    {
+//                        sprintf(LocalRankFilename,"ID2_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Mask->id,1,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Phi
+//                    {
+//                        sprintf(LocalRankFilename,"Phi_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Phi,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // DenA
+//                    {
+//                        sprintf(LocalRankFilename,"DenA_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(DenA,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // DenB
+//                    {
+//                        sprintf(LocalRankFilename,"DenB_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(DenB,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // DenA2
+//                    {
+//                        sprintf(LocalRankFilename,"DenA2_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(DenA2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // DenB2
+//                    {
+//                        sprintf(LocalRankFilename,"DenB2_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(DenB2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // GradPhiX
+//                    {
+//                        sprintf(LocalRankFilename,"GradPhiX_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(GradPhiX,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // GradPhiY
+//                    {
+//                        sprintf(LocalRankFilename,"GradPhiY_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(GradPhiY,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // GradPhiZ
+//                    {
+//                        sprintf(LocalRankFilename,"GradPhiZ_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(GradPhiZ,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Velx
+//                    {
+//                        sprintf(LocalRankFilename,"Velx_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Velx,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Vely
+//                    {
+//                        sprintf(LocalRankFilename,"Vely_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Vely,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Velz
+//                    {
+//                        sprintf(LocalRankFilename,"Velz_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Velz,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Velx2
+//                    {
+//                        sprintf(LocalRankFilename,"Velx2_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Velx2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Vely2
+//                    {
+//                        sprintf(LocalRankFilename,"Vely2_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Vely2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // Velz2
+//                    {
+//                        sprintf(LocalRankFilename,"Velz2_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(Velz2,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // VFmask
+//                    {
+//                        sprintf(LocalRankFilename,"VFmask_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(VFmask,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // NormalToSolid_X
+//                    {
+//                        sprintf(LocalRankFilename,"NormalToSolid_X_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(NormalToSolid_X,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // NormalToSolid_Y
+//                    {
+//                        sprintf(LocalRankFilename,"NormalToSolid_Y_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(NormalToSolid_Y,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    // NormalToSolid_Z
+//                    {
+//                        sprintf(LocalRankFilename,"NormalToSolid_Z_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(NormalToSolid_Z,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                    {
+//                        sprintf(LocalRankFilename,"CField_s.%05i",rank);
+//                        FILE *MYFILE = fopen(LocalRankFilename,"wb");
+//                        fwrite(CField,8,N,MYFILE);
+//                        fclose(MYFILE);
+//                    }
+//                }
+//            }
         
         analysis.run5(timestep, *Averages, Phi, Pressure, Velx2, Vely2, Velz2, fq, GradPhiX, GradPhiY, GradPhiZ, CField, DenA, DenB,Np,Fx,Fy,Fz);
         analysis.finish();
