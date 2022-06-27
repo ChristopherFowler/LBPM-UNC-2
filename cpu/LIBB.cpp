@@ -2108,27 +2108,39 @@ extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi,
                tempnx = nplus_x;
                tempny = nplus_y;
                tempnz = nplus_z;
+               
+               nx = tempnx;
+               ny = tempny;
+               nz = tempnz;
+               
+               C = sqrt(nx*nx + ny*ny + nz*nz);
+               if (C==0) C=1;
+               nx /= C;
+               ny /= C;
+               nz /= C;
            }
            if (Euclidean_distance_minus < Euclidean_distance_plus) {
                tempnx = nminus_x;
                tempny = nminus_y;
                tempnz = nminus_z;
+               
+               nx = tempnx;
+               ny = tempny;
+               nz = tempnz;
+               
+               C = sqrt(nx*nx + ny*ny + nz*nz);
+               if (C==0) C=1;
+               nx /= C;
+               ny /= C;
+               nz /= C;
            }
            if (Euclidean_distance_plus == Euclidean_distance_minus) {
-               tempnx = snx;
-               tempny = sny;
-               tempnz = snz;
+//               tempnx = snx;
+//               tempny = sny;
+//               tempnz = snz;
            }
 
-           nx = tempnx;
-           ny = tempny;
-           nz = tempnz;
-           
-           C = sqrt(nx*nx + ny*ny + nz*nz);
-           if (C==0) C=1;
-           nx /= C;
-           ny /= C;
-           nz /= C;
+         
    #endif
 
            
