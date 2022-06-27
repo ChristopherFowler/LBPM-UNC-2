@@ -2072,6 +2072,7 @@ extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi,
            snz = GradSDsZ[ijk];
 
            SolC = sqrt(snx*snx + sny*sny + snz*snz);
+        if (SolC != 0) {
            if (SolC==0.0) { SolC=1.0;  }
            snx /= SolC;
            sny /= SolC;
@@ -2128,8 +2129,8 @@ extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi,
                ny = tempny;
                nz = tempnz;
                
-               C = sqrt(nx*nx + ny*ny + nz*nz);
-               if (C==0) C=1;
+                C = sqrt(nx*nx + ny*ny + nz*nz);
+                if (C==0) C=1;
                nx /= C;
                ny /= C;
                nz /= C;
@@ -2140,7 +2141,7 @@ extern "C" void ComputeGradPhi(double input_angle, int *Map, double * Phi,
 //               tempnz = snz;
            }
 
-         
+        } // If SolC != 0
    #endif
 
            
