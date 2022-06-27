@@ -1,4 +1,4 @@
-export LBPM_SOURCE=$HOME/LBPM_UNC_042522/LBPM_UNC_042522
+export LBPM_SOURCE=$HOME/LBPM_UNC_042522
 export LBPM_DIR=$HOME/build_LBPM_UNC_042522
 
 export LBPM_MPI_DIR=/nas/longleaf/apps-dogwood/mpi/gcc_6.3.0/openmpi_3.0.0 \
