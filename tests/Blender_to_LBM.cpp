@@ -1076,8 +1076,8 @@ int main(int argc, char **argv)
      
         
         //Produce visualization
-        analysis.run6(0, *Averages, Np, comp_libbqA);
-        analysis.finish();
+//        analysis.run6(0, *Averages, Np, comp_libbqA);
+//        analysis.finish();
 
         // Write the data
         double * TemporaryField = new double[N];

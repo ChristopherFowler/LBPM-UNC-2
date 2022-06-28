@@ -4898,18 +4898,7 @@ inline void pmmc_ConstructLocalCube(DoubleArray &SignDist,
     n_nw_pts=0,n_ns_pts=0,n_ws_pts=0,n_nws_pts=0, map=0;
     n_nw_tris=0, n_ns_tris=0, n_ws_tris=0, n_nws_seg=0;
     
-    // if there is a solid phase interface in the grid cell
-   // printf(".");
-    
-    double a1,a2,b1,b2;
-//    if (i==4 && j==4 && k==4) { printf("Before anything\n");
-//        a1 = Phase(i,j,k);
-//        a2 = Phase(i,j+1,k);
-//        b1 = SignDist(i,j,k);
-//        b2 = SignDist(i,j+1,k);
-////        int kp1 = j+1;
-//    printf("Before anything...: i=%d j=%d k=%d Phase(i,j,k)=%.2f  SignDist(i,j,k)=%.2f  Phase(i,j+1,k)=%.2f  SignDist(i,j+1,k)=%.2f \n",i,j,k,a1,b1,a2,b2);
-//    }
+   
    
     if (Interface(SignDist,0.0,i,j,k) == 1) {
         
